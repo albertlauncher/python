@@ -5,9 +5,14 @@ Use it with care every keystroke triggers an evaluation."""
 
 from albertv0 import *
 from math import *
+from builtins import pow
+try:
+    import numpy as np
+except ImportError:
+    pass
 import os
 
-__iid__ = "PythonInterface/v0.1" 
+__iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Python Eval"
 __version__ = "1.0"
 __trigger__ = "py "
@@ -25,7 +30,7 @@ def handleQuery(query):
 
         if stripped == '':
             item.text = "Enter a python expression"
-            item.subtext = "Math is in the namespace, if installed also Numpy as 'np'"
+            item.subtext = "Math is in the namespace and, if installed, also Numpy as 'np'"
             return [item]
         else:
             try:
