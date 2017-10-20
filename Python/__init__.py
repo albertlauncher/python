@@ -25,7 +25,7 @@ iconPath = os.path.dirname(__file__)+"/python.svg"
 
 def handleQuery(query):
     if query.isTriggered:
-        item = Item(completion=query.rawString, icon=iconPath)
+        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
         stripped = query.string.strip()
 
         if stripped == '':

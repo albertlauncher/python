@@ -14,10 +14,8 @@ __trigger__ = "zl "
 __author__ = "Manuel Schneider"
 __dependencies__ = ["zeal"]
 
-
 if which("zeal") is None:
     raise Exception("'zeal' is not in $PATH.")
-
 
 iconPath = iconLookup('zeal')
 

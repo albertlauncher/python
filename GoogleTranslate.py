@@ -41,8 +41,6 @@ def handleQuery(query):
                 item.addAction(ClipAction("Copy translation to clipboard", result))
                 return [item]
         else:
-            return [Item(id=__prettyname__,
-                         icon=iconPath,
-                         text=__prettyname__,
-                         subtext="Enter a query in the form of <srclang> <dstlang> <text>",
-                         completion=query.rawString)]
+            item.text = __prettyname__
+            item.subtext = "Enter a query in the form of <srclang> <dstlang> <text>"
+            return [item]

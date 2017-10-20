@@ -3,9 +3,7 @@
 """Conver currencies using Googgle finance. Example: exch 5 usd eur"""
 
 from albertv0 import *
-from urllib.request import urlopen
-
-
+import urllib
 import re
 
 __iid__ = "PythonInterface/v0.1"
@@ -14,7 +12,6 @@ __version__ = "1.0"
 __trigger__ = "exch "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
-
 
 iconPath = iconLookup('accessories-calculator')
 if not iconPath:
@@ -27,7 +24,7 @@ def handleQuery(query):
         item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
         if len(fields) == 3:
             url = 'https://finance.google.com/finance/converter?a=%s&from=%s&to=%s' % tuple(fields)
-            with urlopen(url) as response:
+            with urllib.request.urlopen(url) as response:
                 html = response.read().decode("latin-1")
                 m = re.search('<div id=currency_converter_result>.*<span class=bld>(\d+\.\d+).*</span>', html)
                 if m:
@@ -41,8 +38,6 @@ def handleQuery(query):
                     item.subtext = "Maybe google finance changed their website"
                     return [item]
         else:
-            return [Item(id=__prettyname__,
-                         icon=iconPath,
-                         text=__prettyname__,
-                         subtext="Enter a query in the form of <amount> <from> <to>",
-                         completion=query.rawString)]
+            item.text = __prettyname__
+            item.subtext = "Enter a query in the form of <amount> <from> <to>"
+            return [item]
