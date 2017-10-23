@@ -6,7 +6,8 @@ https://cloud.google.com/translate/docs/languages"""
 
 from albertv0 import *
 import json
-import urllib
+import urllib.request
+import urllib.parse
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Google Translate"
