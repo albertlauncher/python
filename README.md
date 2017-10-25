@@ -1,4 +1,4 @@
-This is the official repository for python extensions.
+### This is the official repository for python extensions.
 
 This repository is shipped with albert. If you want to have bleeding edge extensions or share your extension clone the repository. Check the docs on Python extensions.
 
