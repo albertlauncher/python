@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""""""
+"""Convert represetations of numbers"""
 
 from albertv0 import *
 import numpy as np
