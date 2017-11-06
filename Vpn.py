@@ -21,9 +21,11 @@ def handleQuery(query):
             action = "up" if fields[0] == "on" else "down"
             out = check_output('nmcli con', shell=True)
             cli_map = {k:v for v,i,k in map(lambda x: x.split()[:3], out.splitlines())}
-            if "vpn" in cli_map:
-                call(["nmcli", "con", action,
-                    cli_map["vpn"], "--ask"])
+            if "b'vpn'" in cli_map:
+                command = ["nmcli", "con", action,
+                    cli_map["b'vpn'"], "--ask"]
+                action = ProcAction(text="ProcAction",  commandline=command, cwd="~")
+                item.addAction(action)
             return [item]
         else:
             return [item]
