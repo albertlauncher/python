@@ -6,12 +6,15 @@ __prettyname__ = "VPN"
 __version__ = "1.0"
 __trigger__ = "v "
 __author__ = "Raghuram Onti Srinivasan"
-__dependencies__ = []
+__dependencies__ = ['nmcli']
 
 
-iconPath = iconLookup('config-language')
+iconPath = iconLookup('network-wireless')
 if not iconPath:
     iconPath = ":python_module"
+
+if which('nmcli') is None:
+    raise Exception("'nmcli' is not in $PATH.")
 
 def handleQuery(query):
     if query.isTriggered:
@@ -28,4 +31,6 @@ def handleQuery(query):
                 item.addAction(action)
             return [item]
         else:
+            item.text = __prettyname__
+            item.subtext = "Enter a query in the form of on or off"
             return [item]
