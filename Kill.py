@@ -1,71 +1,46 @@
 """ Kill Process Extension """
 
 import os
-import getpass
 from albertv0 import *
-from subprocess import Popen, PIPE
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Kill Process"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "kill "
-__author__ = "Benedict Dudel"
+__author__ = "Benedict Dudel, Manuel Schneider"
 __dependencies__ = []
 
 iconPath = iconLookup('process-stop')
 
+
+def owner(pid):
+    for line in open('/proc/%s/status' % pid):
+        if line.startswith('Uid:'):
+            return int(line.split()[1])  # UID
+
+
 def handleQuery(query):
     if query.isTriggered:
         results = []
-        for process in getProcesses(query.string.strip()):
-            results.append(
-                Item(
-                    id=process['id'],
-                    icon=iconPath,
-                    text=process['name'],
-                    subtext="CPU: %s %%" % process['cpu'],
-                    completion="",
-                    actions=[
-                        ProcAction(
-                            "Request termination",
-                            ["kill", "-SIGTERM", process['id']]
-                        ),
-                        ProcAction(
-                            "Terminate immediately",
-                            ["kill", "-SIGKILL", process['id']]
-                        ),
-                    ]
-                )
-            )
-
+        uid = os.getuid()
+        for pid in (pid for pid in os.listdir('/proc') if pid.isdigit() and owner(pid) == uid):
+            try:
+                proc_command = open(os.path.join('/proc', pid, 'comm'), 'r').read().strip()
+                if query.string in proc_command:
+                    proc_cmdline = open(os.path.join('/proc', pid, 'cmdline'), 'r').read().strip().replace("\0", " ")
+                    results.append(
+                        Item(
+                            id="kill_%s" % pid,
+                            icon=iconPath,
+                            text=proc_command,
+                            subtext=proc_cmdline,
+                            completion=query.rawString,
+                            actions=[
+                                FuncAction("Terminate", lambda pid=pid: os.kill(pid, os.SIGTERM)),
+                                FuncAction("Kill", lambda pid=pid: os.kill(pid, os.SIGKILL))
+                            ]
+                        )
+                    )
+            except IOError:
+                continue
         return results
-
-def getProcesses(searchString):
-    process = Popen(
-        ['ps', '-o' ,'pid,comm,%cpu', '-u', getpass.getuser()],
-        stdout=PIPE, stderr=PIPE
-    )
-    stdout, notused = process.communicate()
-
-    processes = []
-    for line in stdout.splitlines():
-        columns = line.split()
-
-        id = str(columns[0], 'utf-8')
-        if not id:
-            continue
-
-        name = str(columns[1], 'utf-8')
-        if not name:
-            continue
-
-        cpu = str(columns[2], 'utf-8')
-        if not cpu:
-            cpu = "0.0"
-
-        if searchString and searchString not in name:
-            continue
-
-        processes.append({'id': id, 'name': name, 'cpu': cpu})
-
-    return processes
