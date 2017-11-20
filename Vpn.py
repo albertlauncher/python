@@ -24,7 +24,7 @@ def handleQuery(query):
         if len(fields) == 1:
             action = "up" if fields[0] == "on" else "down"
             out = check_output('nmcli con', shell=True)
-            cli_map = {k:v for v,i,k in map(lambda x: x.split()[:3], out.splitlines())}
+            cli_map = {str(k):v for v,i,k in map(lambda x: x.split()[:3], out.splitlines())}
             if "b'vpn'" in cli_map:
                 command = ["nmcli", "con", action,
                     cli_map["b'vpn'"], "--ask"]
