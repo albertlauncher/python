@@ -3,6 +3,8 @@ Use the module docstring to provide a detailed description of the extension"""
 
 from albertv0 import *
 import os
+from time import sleep
+
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Api Test"
@@ -12,6 +14,7 @@ __author__ = "Manuel Schneider"
 __dependencies__ = ["whatever"]
 
 iconPath = iconLookup("albert")
+
 
 # Can be omitted
 def initialize():
@@ -29,6 +32,16 @@ def handleQuery(query):
     # query.isValid. Apart from the query beeing invalid anyway it will crash the appplication.
     # The Python type holds a pointer to the C++ type used for isValid(). The C++ type will be
     # deleted when the query is finished. Therfore getting isValid will result in a SEGFAULT.
+
+    if query.string.startswith("delay"):
+        sleep(2)
+        return [Item(id=__prettyname__,
+                     icon=os.path.dirname(__file__)+"/plugin.svg",
+                     text="Delayed test item",
+                     subtext="Query string: %s" % query.string)]
+
+    if query.string.startswith("throw"):
+        raise ValueError('EXPLICITLY REQUESTED TEST EXCEPTION!')
 
     info(query.string)
     info(query.rawString)
@@ -60,7 +73,7 @@ def handleQuery(query):
     item.addAction(FuncAction("Print warning", lambda: warning(query.string)))
     results.append(item)
 
-    item = Item(id="id",
+    item = Item(id=__prettyname__,
                 icon=os.path.dirname(__file__)+"/plugin.svg",
                 text="This is the primary text",
                 subtext="This is the subtext, some kind of description",
