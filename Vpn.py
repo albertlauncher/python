@@ -1,5 +1,6 @@
 from albertv0 import *
 from subprocess import call, check_output
+from shutil import which
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "VPN"
