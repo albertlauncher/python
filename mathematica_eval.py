@@ -3,6 +3,7 @@
 from albertv0 import *
 import subprocess
 from tempfile import NamedTemporaryFile
+from shutil import which
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Mathematica eval'
@@ -10,6 +11,9 @@ __version__ = '1.0'
 __trigger__ = 'mma '
 __author__ = 'Asger Hautop Drewsen'
 __dependencies__ = ['mathematica']
+
+if not which('wolframscript'):
+    raise Exception("`wolframscript` is not in $PATH.")
 
 ICON_PATH = iconLookup('wolfram-mathematica')
 
