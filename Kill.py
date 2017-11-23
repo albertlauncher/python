@@ -13,12 +13,6 @@ __dependencies__ = []
 iconPath = iconLookup('process-stop')
 
 
-def owner(pid):
-    for line in open('/proc/%s/status' % pid):
-        if line.startswith('Uid:'):
-            return int(line.split()[1])  # UID
-
-
 def handleQuery(query):
     if query.isTriggered:
         results = []

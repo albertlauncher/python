@@ -40,8 +40,8 @@ def handleQuery(query):
                 item.text = result
                 item.subtext = "%s-%s tanslation of %s" % (src.upper(), dst.upper(), txt)
                 item.addAction(ClipAction("Copy translation to clipboard", result))
-                return [item]
+                return item
         else:
             item.text = __prettyname__
             item.subtext = "Enter a query in the form of <srclang> <dstlang> <text>"
-            return [item]
+            return item

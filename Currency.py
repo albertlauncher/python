@@ -32,12 +32,12 @@ def handleQuery(query):
                     item.text = result
                     item.subtext = "Value of %s %s in %s" % tuple([x.upper() for x in fields])
                     item.addAction(ClipAction("Copy result to clipboard", result))
-                    return [item]
+                    return item
                 else:
                     item.text = "Error: HTTP reply does not contain a result"
                     item.subtext = "Maybe google finance changed their website"
-                    return [item]
+                    return item
         else:
             item.text = __prettyname__
             item.subtext = "Enter a query in the form of <amount> <from> <to>"
-            return [item]
+            return item

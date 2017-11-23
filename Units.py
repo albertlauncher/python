@@ -41,4 +41,4 @@ def handleQuery(query):
                 item.text = e.stdout.decode('utf-8').strip().partition('\n')[0]
             item.subtext = "Result of 'units -t %s'" % query.string
             item.addAction(ClipAction("Copy to clipboard", item.text))
-        return [item]
+        return item

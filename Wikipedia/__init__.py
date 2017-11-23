@@ -78,8 +78,8 @@ def handleQuery(query):
 
             return results
         else:
-            return [Item(id=__prettyname__,
-                         icon=iconPath,
-                         text=__prettyname__,
-                         subtext="Enter a query to search on Wikipedia",
-                         completion=query.rawString)]
+            return Item(id=__prettyname__,
+                        icon=iconPath,
+                        text=__prettyname__,
+                        subtext="Enter a query to search on Wikipedia",
+                        completion=query.rawString)

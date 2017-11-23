@@ -31,7 +31,7 @@ def handleQuery(query):
         if stripped == '':
             item.text = "Enter a python expression"
             item.subtext = "Math is in the namespace and, if installed, also Numpy as 'np'"
-            return [item]
+            return item
         else:
             try:
                 result = eval(stripped)
@@ -41,4 +41,4 @@ def handleQuery(query):
             item.subtext = type(result).__name__
             item.addAction(ClipAction("Copy result to clipboard", str(result)))
             item.addAction(FuncAction("Execute", lambda: exec(str(result))))
-        return [item]
+        return item

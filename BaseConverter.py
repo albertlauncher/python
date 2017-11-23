@@ -28,8 +28,8 @@ def handleQuery(query):
             except Exception as e:
                 item.text = e.__class__.__name__
                 item.subtext = str(e)
-            return [item]
+            return item
         else:
             item.text = __prettyname__
             item.subtext = "Enter a query in the form of <srcbase> <dstbase> <number>"
-            return [item]
+            return item

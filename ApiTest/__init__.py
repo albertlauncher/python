@@ -35,10 +35,10 @@ def handleQuery(query):
 
     if query.string.startswith("delay"):
         sleep(2)
-        return [Item(id=__prettyname__,
-                     icon=os.path.dirname(__file__)+"/plugin.svg",
-                     text="Delayed test item",
-                     subtext="Query string: %s" % query.string)]
+        return Item(id=__prettyname__,
+                    icon=os.path.dirname(__file__)+"/plugin.svg",
+                    text="Delayed test item",
+                    subtext="Query string: %s" % query.string)
 
     if query.string.startswith("throw"):
         raise ValueError('EXPLICITLY REQUESTED TEST EXCEPTION!')

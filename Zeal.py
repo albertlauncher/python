@@ -22,13 +22,12 @@ iconPath = iconLookup('zeal')
 
 def handleQuery(query):
     if query.isTriggered:
-        return [
-            Item(
-                id=__prettyname__,
-                icon=iconPath,
-                text=__prettyname__,
-                subtext="Look up %s" % __prettyname__,
-                completion=query.rawString,
-                actions=[ProcAction("Start query in %s" % __prettyname__,
-                                    ["zeal", query.string])])
-        ]
+        return Item(
+            id=__prettyname__,
+            icon=iconPath,
+            text=__prettyname__,
+            subtext="Look up %s" % __prettyname__,
+            completion=query.rawString,
+            actions=[ProcAction("Start query in %s" % __prettyname__,
+                                ["zeal", query.string])]
+        )

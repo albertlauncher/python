@@ -32,14 +32,14 @@ iconPath = iconLookup("system-software-install")
 def handleQuery(query):
     if query.isTriggered:
         if not query.string.strip():
-            return [Item(
+            return Item(
                 id="%s-update" % __prettyname__,
                 icon=iconPath,
                 text="Update all packages on the system",
                 subtext="Synchronizes the repository databases and updates the system's packages",
                 completion=__trigger__,
                 actions=[TermAction("Update the system", ["sudo", "pacman", "-Syu"])]
-            )]
+            )
 
         items = []
         proc = subprocess.Popen(["expac", "-H", "M", "-Ss", "%n\n%v\n%r\n%d\n%u", query.string.strip()],
@@ -67,7 +67,7 @@ def handleQuery(query):
             ))
 
         if not items:
-            return [Item(
+            return Item(
                 id="%s-empty" % __prettyname__,
                 icon=iconPath,
                 text="Search on archlinux.org",
@@ -77,6 +77,6 @@ def handleQuery(query):
                     UrlAction("Search on archlinux.org",
                               "https://www.archlinux.org/packages/?q=%s" % query.string.strip())
                 ]
-            )]
+            )
 
         return items

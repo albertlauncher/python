@@ -34,7 +34,7 @@ def handleQuery(query):
         try:
             if not SessionBus().name_has_owner(BUS):
                 warning("Seems like %s is not running" % __bin__)
-                return []
+                return
 
             obj = SessionBus().get_object(bus_name=BUS, object_path=OBJ)
             iface = Interface(obj, dbus_interface=IFACE)
