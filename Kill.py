@@ -1,6 +1,7 @@
 """ Kill Process Extension """
 
 import os
+from signal import SIGKILL, SIGTERM
 from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
@@ -31,8 +32,8 @@ def handleQuery(query):
                                 subtext=proc_cmdline,
                                 completion=query.rawString,
                                 actions=[
-                                    FuncAction("Terminate", lambda pid=dir_entry.name: os.kill(pid, os.SIGTERM)),
-                                    FuncAction("Kill", lambda pid=dir_entry.name: os.kill(pid, os.SIGKILL))
+                                    FuncAction("Terminate", lambda pid=int(dir_entry.name): os.kill(pid, SIGTERM)),
+                                    FuncAction("Kill", lambda pid=int(dir_entry.name): os.kill(pid, SIGKILL))
                                 ]
                             )
                         )
