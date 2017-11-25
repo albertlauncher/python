@@ -14,6 +14,7 @@ For more information about `pacman` please have a look at:
 from albertv0 import *
 from shutil import which
 import subprocess
+import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "PacMan"
@@ -42,6 +43,7 @@ def handleQuery(query):
             )
 
         items = []
+        pattern = re.compile(query.string, re.IGNORECASE)
         proc = subprocess.Popen(["expac", "-Ss", "%n\n%v\n%r\n%d\n%u", query.string],
                                 stdout=subprocess.PIPE)
         for line in proc.stdout:
@@ -54,8 +56,8 @@ def handleQuery(query):
             items.append(Item(
                 id="%s%s%s" % (__prettyname__, repo, name),
                 icon=iconPath,
-                text="<b>%s</b> <i>%s</i> [%s]" % (name.replace(query.string, "<b><u>%s</u></b>" % query.string), vers, repo),
-                subtext=desc.replace(query.string, "<b><u>%s</u></b>" % query.string),
+                text="<b>%s</b> <i>%s</i> [%s]" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name), vers, repo),
+                subtext=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), desc),
                 completion="%s%s" % (query.trigger, name),
                 actions=[
                     TermAction("Install", ["sudo", "pacman", "-S", name]),
