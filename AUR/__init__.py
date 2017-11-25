@@ -14,6 +14,7 @@ from shlex import split
 from urllib import request, parse
 import json
 import os
+import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Archlinux User Repository"
@@ -60,13 +61,14 @@ def handleQuery(query):
                 )
             else:
                 results = []
+                pattern = re.compile(query.string, re.IGNORECASE)
                 for entry in data['results']:
                     name = entry['Name']
 
                     item = Item(
                         id=__prettyname__,
                         icon=iconPath,
-                        text="<b>%s</b> <i>%s</i> (%s)" % (name.replace(query.string, "<u>%s</u>" % query.string), entry['Version'], entry['NumVotes']),
+                        text="<b>%s</b> <i>%s</i> (%s)" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name), entry['Version'], entry['NumVotes']),
                         completion=query.rawString
                     )
                     subtext = entry['Description'] if entry['Description'] else "<No description>"
