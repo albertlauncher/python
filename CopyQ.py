@@ -5,6 +5,7 @@ import subprocess
 from albertv0 import *
 from shutil import which
 import json
+import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "CopyQ"
@@ -36,7 +37,7 @@ copyq_script_getMatches = r"""
 var result=[];
 var match = "%s";
 for ( var i = 0; i < size(); ++i ) {
-    if (str(read(i)).indexOf(match) !== -1) {
+    if (str(read(i)).search(new RegExp(match, "i")) !== -1) {
         var obj = {};
         obj.row = i;
         obj.mimetypes = str(read("?", i)).split("\n");
@@ -58,13 +59,14 @@ def handleQuery(query):
         json_arr = json.loads(proc.stdout.decode())
 
         items = []
+        pattern = re.compile(query.string, re.IGNORECASE)
         for json_obj in json_arr:
             row = json_obj['row']
             text = json_obj['text']
             if not text:
                 text = "<i>No text</i>"
             else:
-                text = html.escape(" ".join(filter(None, text.replace("\n", " ").split(" ")))).replace(query.string, "<b><u>%s</u></b>" % query.string)
+                text = pattern.sub(lambda m: "<u>%s</u>" % m.group(0), html.escape(" ".join(filter(None, text.replace("\n", " ").split(" ")))))
             items.append(
                 Item(
                     id=__prettyname__,
