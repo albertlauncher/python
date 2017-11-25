@@ -6,6 +6,7 @@ import os
 import subprocess
 from shutil import which
 from albertv0 import *
+import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Locate"
@@ -27,6 +28,7 @@ def handleQuery(query):
     results = []
     if query.isTriggered:
         if len(query.string) > 2:
+            pattern = re.compile(query.string, re.IGNORECASE)
             proc = subprocess.Popen(['locate', '-bi', query.string], stdout=subprocess.PIPE)
             for line in proc.stdout:
                 path = line.decode().strip()
@@ -35,7 +37,7 @@ def handleQuery(query):
                     Item(
                         id=path,
                         icon=iconPath,
-                        text=basename.replace(query.string, "<b><u>%s</u></b>" % query.string),
+                        text=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), basename),
                         subtext=path,
                         completion="%s%s" % (__trigger__, basename),
                         actions=[UrlAction("Open", "file://%s" % path)]))
