@@ -42,7 +42,7 @@ def handleQuery(query):
             )
 
         items = []
-        proc = subprocess.Popen(["expac", "-H", "M", "-Ss", "%n\n%v\n%r\n%d\n%u", query.string.strip()],
+        proc = subprocess.Popen(["expac", "-Ss", "%n\n%v\n%r\n%d\n%u", query.string],
                                 stdout=subprocess.PIPE)
         for line in proc.stdout:
             name = line.decode().rstrip()
@@ -54,8 +54,8 @@ def handleQuery(query):
             items.append(Item(
                 id="%s%s%s" % (__prettyname__, repo, name),
                 icon=iconPath,
-                text="%s %s" % (name, vers),
-                subtext="[%s] %s" % (repo, desc),
+                text="<b>%s</b> <i>%s</i> [%s]" % (name.replace(query.string, "<b><u>%s</u></b>" % query.string), vers, repo),
+                subtext=desc.replace(query.string, "<b><u>%s</u></b>" % query.string),
                 completion="%s%s" % (query.trigger, name),
                 actions=[
                     TermAction("Install", ["sudo", "pacman", "-S", name]),

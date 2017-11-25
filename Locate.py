@@ -35,7 +35,7 @@ def handleQuery(query):
                     Item(
                         id=path,
                         icon=iconPath,
-                        text=basename,
+                        text=basename.replace(query.string, "<b><u>%s</u></b>" % query.string),
                         subtext=path,
                         completion="%s%s" % (__trigger__, basename),
                         actions=[UrlAction("Open", "file://%s" % path)]))

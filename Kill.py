@@ -28,7 +28,7 @@ def handleQuery(query):
                             Item(
                                 id="kill_%s" % dir_entry.name,
                                 icon=iconPath,
-                                text=proc_command,
+                                text=proc_command.replace(query.string, "<b><u>%s</u></b>" % query.string),
                                 subtext=proc_cmdline,
                                 completion=query.rawString,
                                 actions=[
