@@ -61,12 +61,12 @@ def handleQuery(query):
             else:
                 results = []
                 for entry in data['results']:
-                    name = entry['Name'].replace(query.string, "<u>%s</u>" % query.string)
+                    name = entry['Name']
 
                     item = Item(
                         id=__prettyname__,
                         icon=iconPath,
-                        text="<b>%s</b> <i>%s</i> (%s)" % (name, entry['Version'], entry['NumVotes']),
+                        text="<b>%s</b> <i>%s</i> (%s)" % (name.replace(query.string, "<u>%s</u>" % query.string), entry['Version'], entry['NumVotes']),
                         completion=query.rawString
                     )
                     subtext = entry['Description'] if entry['Description'] else "<No description>"
