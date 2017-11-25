@@ -5,13 +5,16 @@ screen, an specific area or the current active window.
 When the screenshot was made you will hear a sound wich indicates that the
 screenshot was taken successfully.
 
-Screenshots will be saved in your home directory by default."""
+Screenshots will be saved in XDG_PICTURES_DIR or in the temp directory."""
 
 from albertv0 import *
 from shutil import which
+import subprocess
+import tempfile
+import os
 
 __iid__ = "PythonInterface/v0.1"
-__prettyname__ = "scrot"
+__prettyname__ = "scrot screenshot utility"
 __version__ = "1.0"
 __trigger__ = "scrot "
 __author__ = "Benedict Dudel"
@@ -25,7 +28,6 @@ if which("xclip") is None:
     raise Exception("'xclip' is not in $PATH.")
 
 iconPath = iconLookup("camera-photo")
-fileName = "%Y-%m-%d-%T-screenshot.png"
 
 
 def handleQuery(query):
@@ -37,13 +39,13 @@ def handleQuery(query):
                 text = "Screen",
                 subtext = "Take a screenshot of the whole screen",
                 actions = [
-                    ProcAction(
+                    FuncAction(
                         "Take screenshot of whole screen",
-                        ["scrot", "--delay", "1", fileName, "--exec", "xclip -selection c -t image/png < $f"]
+                        lambda: doScreenshot([])
                     ),
-                    ProcAction(
+                    FuncAction(
                         "Take screenshot of multiple displays",
-                        ["scrot", "--multidisp", "--delay", "1", fileName, "--exec", "xclip -selection c -t image/png < $f"]
+                        lambda: doScreenshot(["--multidisp"])
                     ),
                 ]
             ),
@@ -51,11 +53,11 @@ def handleQuery(query):
                 id = "%s-area-of-screen" % __prettyname__,
                 icon = iconPath,
                 text = "Area",
-                subtext = "Draw a rectangle with our mouse to capture an area",
+                subtext = "Draw a rectangle with your mouse to capture an area",
                 actions = [
-                    ProcAction(
+                    FuncAction(
                         "Take screenshot of selected area",
-                        ["scrot", "--select", fileName, "--exec", "xclip -selection c -t image/png < $f"]
+                        lambda: doScreenshot(["--select"])
                     ),
                 ]
             ),
@@ -65,14 +67,32 @@ def handleQuery(query):
                 text = "Window",
                 subtext = "Take a screenshot of the current active window",
                 actions = [
-                    ProcAction(
+                    FuncAction(
                         "Take screenshot of window with borders",
-                        ["scrot", "--focused", "--border", "--delay", "1", fileName, "--exec", "xclip -selection c -t image/png < $f"]
+                        lambda: doScreenshot(["--focused", "--border"])
                     ),
-                    ProcAction(
+                    FuncAction(
                         "Take screenshot of window without borders",
-                        ["scrot", "--focused", "--delay", "1", fileName, "--exec", "xclip -selection c -t image/png < $f"]
+                        lambda: doScreenshot(["--focused"])
                     ),
                 ]
             ),
         ]
+
+def getScreenshotDirectory():
+    if which("xdg-user-dir") is None:
+        return tempfile.gettempdir()
+
+    proc = subprocess.run(["xdg-user-dir", "PICTURES"], stdout=subprocess.PIPE)
+
+    pictureDirectory = proc.stdout.decode("utf-8")
+    if pictureDirectory:
+        return pictureDirectory.strip()
+
+    return tempfile.gettempdir()
+
+def doScreenshot(additionalArguments):
+    file = os.path.join(getScreenshotDirectory(), "%Y-%m-%d-%T-screenshot.png")
+
+    command = "sleep 0.1 && scrot --exec 'xclip -selection c -t image/png < $f' %s " % file
+    proc = subprocess.Popen(command + " ".join(additionalArguments), shell=True)
