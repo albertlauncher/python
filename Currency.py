@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Conver currencies using Googgle finance. Example: exch 5 usd eur"""
+"""Convert currencies using Google Finance.
+Usage: exch <amount> <src currency> <dest currency>
+Example: exch 5 usd eur"""
 
 from albertv0 import *
 import urllib
@@ -35,7 +37,7 @@ def handleQuery(query):
                     return item
                 else:
                     item.text = "Error: HTTP reply does not contain a result"
-                    item.subtext = "Maybe google finance changed their website"
+                    item.subtext = "Maybe Google Finance changed their website"
                     return item
         else:
             item.text = __prettyname__

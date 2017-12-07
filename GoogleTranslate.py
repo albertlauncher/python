@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""
-Check available languages here
+"""Translate text using Google Translate.
+Usage: tr <src lang> <dest lang> <text>
+Example: tr en fr hello
+
+Check available languages here:
 https://cloud.google.com/translate/docs/languages"""
 
 from albertv0 import *
@@ -38,7 +41,7 @@ def handleQuery(query):
                 data = json.load(response)
                 result = data[0][0][0]
                 item.text = result
-                item.subtext = "%s-%s tanslation of %s" % (src.upper(), dst.upper(), txt)
+                item.subtext = "%s-%s translation of %s" % (src.upper(), dst.upper(), txt)
                 item.addAction(ClipAction("Copy translation to clipboard", result))
                 return item
         else:
