@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""This is extension is an adaptor for the powerful GNU units.
+"""This extension is an adaptor for the powerful GNU units.
 Synopsis: 'units <from> [to]'
-Note that spaces are separaors."""
+Note that spaces are separators."""
 
 from albertv0 import *
 import subprocess as sp

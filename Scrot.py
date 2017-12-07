@@ -1,8 +1,8 @@
-"""Extension wich basically wraps the commandline utility scrot to make
+"""Extension which basically wraps the command line utility scrot to make
 screenshots from albert. The extension supports taking screenshots of the whole
 screen, an specific area or the current active window.
 
-When the screenshot was made you will hear a sound wich indicates that the
+When the screenshot was made you will hear a sound which indicates that the
 screenshot was taken successfully.
 
 Screenshots will be saved in XDG_PICTURES_DIR or in the temp directory."""

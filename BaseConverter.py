@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Convert represetations of numbers"""
+"""Convert representations of numbers.
+Usage: base <src base> <dest base> <number>
+Example: base 10 16 1234567890"""
 
 from albertv0 import *
 import numpy as np
