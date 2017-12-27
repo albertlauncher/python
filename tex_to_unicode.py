@@ -54,4 +54,4 @@ def handleQuery(query):
     if success:
         item.addAction(ClipAction('Copy result to clipboard', result))
 
-    return [item]
+    return item
