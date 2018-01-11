@@ -1,72 +1,60 @@
 # -*- coding: utf-8 -*-
 
-"""Query CoinmMarketCap.com"""
+"""Shortcut to quickly show the stats of crypto currencies on CoinmMarketCap.com"""
 
 from albertv0 import *
-from urllib import request, parse
+from urllib import request
 import re
 import os
-import time
 import json
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "CoinMarketCap"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "cmc "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__)+"/emblem-money.svg"
+coins = None
+
+
+def initialize():
+    global coins
+    req = request.Request("https://files.coinmarketcap.com/generated/search/quick_search.json")
+    with request.urlopen(req) as response:
+        coins = json.load(response)
 
 
 def handleQuery(query):
     if not query.isTriggered:
         return
 
-    time.sleep(0.2)
-    if not query.isValid:
-        info("saved time")
-        return
-
     stripped = query.string.strip().lower()
-
+    items = []
     if stripped:
-        url = "%s?%s" % ("https://api.coinmarketcap.com/v1/ticker/", parse.urlencode({'limit': 0}))
-        req = request.Request(url)
-
-        with request.urlopen(req) as response:
-            items = []
-            data = json.load(response)
-            pattern = re.compile(query.string, re.IGNORECASE)
-            for coindata in data:
-                coinname = coindata['name']
-                coincode = coindata['symbol']
-                if coinname.lower().startswith(stripped) or coincode.lower().startswith(stripped):
-                    # critical(coindata)
-                    changes = [coindata['percent_change_1h'],
-                               coindata['percent_change_24h'],
-                               coindata['percent_change_7d']]
-                    for idx, change in enumerate(changes):
-                        if float(change) < 0:
-                            changes[idx] = "<font color=\"red\">%s</font>" % change
-                        elif float(change) > 0:
-                            changes[idx] = "<font color=\"green\">%s</font>" % change
-                    items.append(Item(
-                        id=__prettyname__,
-                        icon=iconPath,
-                        text="%s <i>(%s/%s/%s)</i>" % (coindata['price_usd'], *changes),
-                        subtext="%s <b>(%s)</b>" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), coinname),
-                                                    pattern.sub(lambda m: "<u>%s</u>" % m.group(0), coincode)),
-                        completion=query.rawString,
-                        actions=[UrlAction("Show on CoinMarketCap website", "https://coinmarketcap.com/currencies/%s/" % coinname)]
-                    ))
-            return items
+        pattern = re.compile(stripped, re.IGNORECASE)
+        for coin in coins:
+            name = coin['name']
+            symbol = coin['symbol']
+            if name.lower().startswith(stripped) or symbol.lower().startswith(stripped):
+                items.append(Item(
+                    id=__prettyname__,
+                    icon=iconPath,
+                    text="%s <i>(%s)</i>" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name),
+                                      pattern.sub(lambda m: "<u>%s</u>" % m.group(0), symbol)),
+                    subtext="#%s" % coin['rank'],
+                    completion=query.rawString,
+                    actions=[UrlAction("Show on CoinMarketCap website", "https://coinmarketcap.com/currencies/%s/" % coin['slug'])]
+                ))
     else:
-        return Item(
-            id=__prettyname__,
-            icon=iconPath,
-            text="CoinMarketCap",
-            subtext="Enter a crypto currency you want to look up (…and wait. The API is slow.)",
-            completion=query.rawString,
-            actions=[UrlAction("Visit coinmarketcap.com", "https://coinmarketcap.com/")]
-        )
+        for coin in coins:
+            items.append(Item(
+                id=__prettyname__,
+                icon=iconPath,
+                text="%s <i>(%s)</i>" % (coin['name'], coin['symbol']),
+                subtext="#%s" % coin['rank'],
+                completion=query.rawString,
+                actions=[UrlAction("Show on CoinMarketCap website", "https://coinmarketcap.com/currencies/%s/" % coin['slug'])]
+            ))
+    return items
