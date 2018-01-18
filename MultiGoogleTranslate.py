@@ -4,9 +4,9 @@
 Use Google Translate to translate your sentence into multiple languages. 
 Visit the following link to check available languages: 
 https://cloud.google.com/translate/docs/languages
-To add or remove languages go to: 
-'~/.config/albert/org.albert.extension.mtr/language_config.json'
-And add or remove elements based on the ISO-Codes that you found on the google documentation page.
+To add or remove languages use modifier key when trigger is activated or go to: 
+'~/.config/albert/org.albert.extension.translate/config.json'
+Add or remove elements based on the ISO-Codes that you found on the google documentation page.
 """
 
 from albertv0 import *
@@ -51,8 +51,13 @@ else:
 def handleQuery(query):
     if query.isTriggered:
         results = []
-        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
-        item.text = __prettyname__
+        item = Item(
+	        	id=__prettyname__, 
+	        	icon=iconPath, 
+	        	completion=query.rawString, 
+	        	text=__prettyname__, 
+	        	actions=[ProcAction("Open the language configuration file.", commandline=["xdg-open", language_configuration_file])]
+        	)
         if len(query.string) >= 2:
             for lang in languages:
                 try:
@@ -78,8 +83,8 @@ def handleQuery(query):
                                 )
                             )
                 except urllib.error.URLError as urlerr:
-                    print("Connection error: %s" % urlerr)
-                    item.subtext = "Connection error."
+                    print("Check your internet connection: %s" % urlerr)
+                    item.subtext = "Check your internet connection."
                     return item
         else:
             item.subtext = "Enter a query in the form of 'mtr <text>'. Languages {%s}" % ", ".join(languages)
