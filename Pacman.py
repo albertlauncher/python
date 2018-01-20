@@ -36,10 +36,9 @@ def handleQuery(query):
             return Item(
                 id="%s-update" % __prettyname__,
                 icon=iconPath,
-                text="Update all packages on the system",
-                subtext="Synchronizes the repository databases and updates the system's packages",
-                completion=__trigger__,
-                actions=[TermAction("Update the system", ["sudo", "pacman", "-Syu"])]
+                text="Pacman package manager",
+                subtext="Enter the name of the package you are looking for",
+                completion=__trigger__
             )
 
         items = []
@@ -82,3 +81,13 @@ def handleQuery(query):
             )
 
         return items
+
+    elif len(query.string.strip()) > 0 and ("pacman".startswith(query.string.lower()) or "update".startswith(query.string.lower())):
+        return Item(
+            id="%s-update" % __prettyname__,
+            icon=iconPath,
+            text="Update all packages on the system",
+            subtext="Synchronizes the repository databases and updates the system's packages",
+            completion=__trigger__,
+            actions=[TermAction("Update the system", ["sudo", "pacman", "-Syu"])]
+        )
