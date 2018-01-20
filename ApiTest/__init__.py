@@ -27,6 +27,8 @@ def finalize():
 
 
 def handleQuery(query):
+    if not query.isTriggered:
+        return
 
     # Note that when storing a reference to query, e.g. in a closure, you must not use
     # query.isValid. Apart from the query beeing invalid anyway it will crash the appplication.
@@ -94,5 +96,11 @@ def handleQuery(query):
                                cwd="~/git")  # optional
                 ])
     results.append(item)
+
+
+    # Api v 0.2
+    info(configLocation())
+    info(cacheLocation())
+    info(dataLocation())
 
     return results
