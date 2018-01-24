@@ -5,7 +5,7 @@ Usage: exch <amount> <src currency> <dest currency>
 Example: exch 5 usd eur"""
 
 from albertv0 import *
-import urllib
+from urllib.request import urlopen
 import re
 
 __iid__ = "PythonInterface/v0.1"
@@ -26,7 +26,7 @@ def handleQuery(query):
         item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
         if len(fields) == 3:
             url = 'https://finance.google.com/finance/converter?a=%s&from=%s&to=%s' % tuple(fields)
-            with urllib.request.urlopen(url) as response:
+            with urlopen(url) as response:
                 html = response.read().decode("latin-1")
                 m = re.search('<div id=currency_converter_result>.*<span class=bld>(\d+\.\d+).*</span>', html)
                 if m:
