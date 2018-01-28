@@ -1,6 +1,6 @@
-"""locate adapter extension
+"""Apt extension
 
-Note that it is up to you to ensure that the database is up to date"""
+Note that it is up to you to ensure that the package lists are up to date"""
 
 import os
 import subprocess
