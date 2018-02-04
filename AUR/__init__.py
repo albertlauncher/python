@@ -28,8 +28,10 @@ baseurl = 'https://aur.archlinux.org/rpc/'
 install_cmdline = None
 
 if which("yaourt"):
+    install_cmd = "yaourt"
     install_cmdline = "yaourt -S aur/%s"
 elif which("pacaur"):
+    install_cmd = "pacaur"
     install_cmdline = "pacaur -S aur/%s"
 
 
@@ -78,11 +80,11 @@ def handleQuery(query):
                         subtext = '<font color="red">[Orphan]</font> %s' % subtext
                     item.subtext = subtext
 
-                    if install_cmdline:
-                        item.addAction(TermAction("Install with yaourt", split(install_cmdline % name)))
+                    if install_cmd:
+                        item.addAction(TermAction("Install with %s" % install_cmd, split(install_cmdline % name)))
 
-                    if install_cmdline:
-                        item.addAction(TermAction("Install with yaourt (noconfirm)", split(install_cmdline % name) + ["--noconfirm"]))
+                    if install_cmd:
+                        item.addAction(TermAction("Install with %s (noconfirm)" % install_cmd, split(install_cmdline % name) + ["--noconfirm"]))
 
                     item.addAction(UrlAction("Open AUR website", "https://aur.archlinux.org/packages/%s/" % name))
 
