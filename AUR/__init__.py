@@ -77,17 +77,17 @@ def handleQuery(query):
                     if entry['Maintainer'] is None:
                         subtext = '<font color="red">[Orphan]</font> %s' % subtext
                     item.subtext = subtext
+                    
+                    item.addAction(UrlAction("Open AUR website", "https://aur.archlinux.org/packages/%s/" % name))
+
+                    if entry['URL']:
+                        item.addAction(UrlAction("Open project website", entry['URL']))
 
                     if install_cmdline:
                         item.addAction(TermAction("Install with yaourt", split(install_cmdline % name)))
 
                     if install_cmdline:
                         item.addAction(TermAction("Install with yaourt (noconfirm)", split(install_cmdline % name) + ["--noconfirm"]))
-
-                    item.addAction(UrlAction("Open AUR website", "https://aur.archlinux.org/packages/%s/" % name))
-
-                    if entry['URL']:
-                        item.addAction(UrlAction("Open project website", entry['URL']))
 
                     results.append(item)
                 return results
