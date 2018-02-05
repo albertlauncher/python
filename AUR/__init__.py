@@ -18,7 +18,7 @@ import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Archlinux User Repository"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "aur "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -79,10 +79,9 @@ def handleQuery(query):
                     item.subtext = subtext
 
                     if install_cmdline:
-                        item.addAction(TermAction("Install with yaourt", split(install_cmdline % name)))
-
-                    if install_cmdline:
-                        item.addAction(TermAction("Install with yaourt (noconfirm)", split(install_cmdline % name) + ["--noconfirm"]))
+                        tokens = split(install_cmdline % name)
+                        item.addAction(TermAction("Install with %s" % tokens[0], tokens))
+                        item.addAction(TermAction("Install with %s (noconfirm)" % tokens[0], tokens + ["--noconfirm"]))
 
                     item.addAction(UrlAction("Open AUR website", "https://aur.archlinux.org/packages/%s/" % name))
 
