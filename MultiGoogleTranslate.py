@@ -5,7 +5,7 @@ Use Google Translate to translate your sentence into multiple languages.
 Visit the following link to check available languages: 
 https://cloud.google.com/translate/docs/languages
 To add or remove languages use modifier key when trigger is activated or go to: 
-'~/.config/albert/org.albert.extension.translate/config.json'
+'~/.config/albert/org.albert.extension.mtr/config.json'
 Add or remove elements based on the ISO-Codes that you found on the google documentation page.
 """
 
@@ -13,51 +13,56 @@ from albertv0 import *
 import json
 import urllib.request
 import urllib.parse
+import urllib.error
 import os
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Multi Google Translate"
-__version__ = "1.0"
-__trigger__ = "mtr"
-__author__ = "David Britt, Manuel Schneider"
+__iid__ = "PythonInterface/v0.2"
+__prettyname__ = "MultiTranslate"
+__version__ = "1.1"
+__trigger__ = "mtr "
+__author__ = "David Britt"
 __dependencies__ = []
-
-ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36"
-urltmpl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=%s&dt=t&q=%s"
-urlbrowser = "https://translate.google.com/#auto/%s/%s"
-
-configuration_directory = os.path.expanduser("~/.config/albert/org.albert.extension.mtr")
-language_configuration_file = os.path.expanduser("~/.config/albert/org.albert.extension.mtr/language_config.json")
 
 iconPath = iconLookup('config-language')
 if not iconPath:
     iconPath = ":python_module"
 
-if os.path.exists(language_configuration_file):
-    with open(language_configuration_file) as json_config:
-        languages = json.load(json_config)["languages"]
-else:
-    languages = ["en", "zh-CN", "hi", "es", "ru", "pt", "id", "bn", "ar", "ms", "jp", "fr", "de"]
-    try:
-        os.makedirs(configuration_directory, exist_ok=True)
+ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36"
+urltmpl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=%s&dt=t&q=%s"
+urlbrowser = "https://translate.google.com/#auto/%s/%s"
+configurationFileName = "language_config.json"
+configuration_directory = os.path.join(configLocation(), __prettyname__)
+language_configuration_file = os.path.join(configuration_directory, configurationFileName)
+languages = []
+
+def initialize():
+    if os.path.exists(language_configuration_file):
+        with open(language_configuration_file) as json_config:
+            languages.extend(json.load(json_config)["languages"])
+    else:
+        languages.extend(["en", "zh-CN", "hi", "es", "ru", "pt", "id", "bn", "ar", "ms", "jp", "fr", "de"])
         try:
-            with open(language_configuration_file, "w") as output_file:
-                json.dump({"languages": languages}, output_file) 
+            os.makedirs(configuration_directory, exist_ok=True)
+            try:
+                with open(language_configuration_file, "w") as output_file:
+                    json.dump({"languages": languages}, output_file)
+            except OSError:
+                print("There was an error opening the file: %s" % language_configuration_file)
         except OSError:
-            print("There was an error opening the file: %s" % language_configuration_file)
-    except OSError:
-        print("There was an error making the directory: %s" % configuration_directory)
+            print("There was an error making the directory: %s" % configuration_directory)
+
 
 def handleQuery(query):
+    results = []
     if query.isTriggered:
-        results = []
         item = Item(
-	        	id=__prettyname__, 
-	        	icon=iconPath, 
-	        	completion=query.rawString, 
-	        	text=__prettyname__, 
-	        	actions=[ProcAction("Open the language configuration file.", commandline=["xdg-open", language_configuration_file])]
-        	)
+            id=__prettyname__,
+            icon=iconPath,
+            completion=query.rawString,
+            text=__prettyname__,
+            actions=[ProcAction("Open the language configuration file.",
+                                commandline=["xdg-open", language_configuration_file])]
+        )
         if len(query.string) >= 2:
             for lang in languages:
                 try:
@@ -77,9 +82,9 @@ def handleQuery(query):
                                     text="%s" % (translText),
                                     subtext="%s" % lang.upper(),
                                     actions=[
-                                      ClipAction("Copy translation to clipboard", translText),
-                                      UrlAction("Open in your Browser", urlbrowser % (lang, query.string))
-                                    ] 
+                                        ClipAction("Copy translation to clipboard", translText),
+                                        UrlAction("Open in your Browser", urlbrowser % (lang, query.string))
+                                    ]
                                 )
                             )
                 except urllib.error.URLError as urlerr:
@@ -87,6 +92,6 @@ def handleQuery(query):
                     item.subtext = "Check your internet connection."
                     return item
         else:
-            item.subtext = "Enter a query in the form of 'mtr <text>'. Languages {%s}" % ", ".join(languages)
+            item.subtext = "Enter a query: 'mtr <text>'. Languages {%s}" % ", ".join(languages)
             return item
     return results
