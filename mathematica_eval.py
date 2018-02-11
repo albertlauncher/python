@@ -32,13 +32,9 @@ def handleQuery(query):
         result = str(output.strip(), 'utf-8')
         item.text = result
         item.subtext = 'Result'
-        success = True
+        item.addAction(ClipAction('Copy result to clipboard', result))
     else:
         item.text = ''
         item.subtext = 'Type a Mathematica expression'
-        success = False
-
-    if success:
-        item.addAction(ClipAction('Copy result to clipboard', result))
 
     return item
