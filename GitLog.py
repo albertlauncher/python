@@ -1,4 +1,17 @@
-"""shell adapter extension
+""" 
+
+`git log` extension
+
+It will detect every GIT in the directories
+`~/*` and `~/git/*`. It's conifigurable via
+`~/.config/albert/org.albert.extension.gitlog/config.yaml`.
+
+Use this as template for `config.yaml`:
+
+---
+git-directories:
+ - ~/git/*/*
+ - ~/src/*/*
 
 """
 
@@ -23,14 +36,6 @@ __dependencies__ = []
 #   `~/.config/albert/org.albert.extension.gitlog/config.yaml`.
 
 CONFIG_FILENAME = os.path.expanduser('~/.config/albert/org.albert.extension.gitlog/config.yaml')
-
-#   If you need a configuration, create a new file
-#   `~/.config/albert/org.albert.extension.gitlog/config.yaml`
-#   and use this as template
-#   ---
-#   git-directories:
-#     - ~/git/source.lab/*/*
-#     - ~/git/source.lab/*/*/*
 
 config = {
     'git-directories': [
