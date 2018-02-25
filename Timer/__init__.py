@@ -47,6 +47,7 @@ def startTimer(interval):
 def deleteTimer(timer):
     global timers
     timers.remove(timer)
+    timer.cancel()
 
 
 def formatSeconds(seconds):
@@ -63,8 +64,8 @@ def handleQuery(query):
             if not all(field.isdigit() for field in fields):
                 return Item(
                     id=__prettyname__,
-                    text=identifier,
-                    subtext="bbla",
+                    text="Invalid input",
+                    subtext="Enter a query in the form of '%s[[hours:]minutes:]'" % __trigger__,
                     icon=iconPath,
                     completion=query.rawString
                 )
