@@ -12,7 +12,7 @@ from albertv0 import iconLookup, Item, FuncAction
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Work Log"
 __version__ = "0.1"
-__trigger__ = "worklog "
+__trigger__ = "worklog"
 __author__ = "alswl"
 __dependencies__ = []
 
@@ -22,6 +22,8 @@ DIR_PATH = 'Desktop/md/work-log'
 APP = "gvim"
 
 def handleQuery(query):
+    if not query.isTriggered:
+        return
     results = []
     results.append(
         Item(
