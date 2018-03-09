@@ -11,22 +11,18 @@ from threading import Thread, Event
 from locale import format as lformat
 from urllib import request
 from urllib.parse import urlencode
-from urllib.request import urlretrieve
 import re
 import os
-from concurrent.futures import ThreadPoolExecutor
-
 import json
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "CoinMarketCap"
-__version__ = "1.2"
+__version__ = "1.3"
 __trigger__ = "cmc "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__)+"/emblem-money.svg"
-cachePath = os.path.join(cacheLocation(), __name__)
 thread = None
 coins = None
 
@@ -91,20 +87,6 @@ class UpdateThread(Thread):
                 global coins
                 coins = newCoins
 
-            # Create cache path if not exists
-            if not os.path.isdir(cachePath):
-                os.mkdir(cachePath)
-
-            # Download all the coin pictures
-            for coin in coins:
-                filename = "%s.png" % coin.identifier
-                url = "https://files.coinmarketcap.com/static/img/coins/128x128/%s" % filename
-                filePath = os.path.join(cachePath, filename)
-                executor = ThreadPoolExecutor(max_workers=40)
-                if not os.path.isfile(filePath):
-                    executor.submit(urlretrieve, url, filePath)
-                executor.shutdown()
-
             self._stopevent.wait(900)  # Sleep 15 min, wakeup on stop event
             if self._stopevent.is_set():
                 return
@@ -134,22 +116,20 @@ def handleQuery(query):
         pattern = re.compile(stripped, re.IGNORECASE)
         for coin in coins:
             if coin.name.lower().startswith(stripped) or coin.symbol.lower().startswith(stripped):
-                coinIconPath = os.path.join(cachePath, "%s.png" % coin.identifier)
                 items.append(Item(
                     id=__prettyname__,
-                    icon=coinIconPath if os.path.isfile(coinIconPath) else iconPath,
+                    icon=iconPath,
                     text="#%s %s <i>(%s) <b>%s$</b></i>" % (coin.rank, pattern.sub(lambda m: "<u>%s</u>" % m.group(0), coin.name),
                                                             pattern.sub(lambda m: "<u>%s</u>" % m.group(0), coin.symbol), coin.price),
                     subtext="Change: <i>%s/%s/%s</i>, Cap: <i>%s</i>, Volume: <i>%s</i>" % (coin.change_hour, coin.change_day, coin.change_week, coin.cap, coin.vol),
-                    completion=query.rawString,
+                    completion=coin.price,
                     actions=[UrlAction("Show on CoinMarketCap website", "https://coinmarketcap.com/currencies/%s/" % coin.identifier)]
                 ))
     else:
         for coin in coins:
-            coinIconPath = os.path.join(cachePath, "%s.png" % coin.identifier)
             items.append(Item(
                 id=__prettyname__,
-                icon=coinIconPath if os.path.isfile(coinIconPath) else iconPath,
+                icon=iconPath,
                 text="#%s %s <i>(%s) <b>%s$</b></i>" % (coin.rank, coin.name, coin.symbol, coin.price),
                 subtext="Change: <i>%s/%s/%s</i>, Cap: <i>%s</i>, Volume: <i>%s</i>" % (coin.change_hour, coin.change_day, coin.change_week, coin.cap, coin.vol),
                 completion=query.rawString,
