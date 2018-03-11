@@ -33,5 +33,5 @@ def handleQuery(query):
             return item
         else:
             item.text = __prettyname__
-            item.subtext = "Enter a query in the form of <srcbase> <dstbase> <number>"
+            item.subtext = "Enter a query in the form of \"&lt;srcbase&gt; &lt;dstbase&gt; &lt;number&gt;\""
             return item

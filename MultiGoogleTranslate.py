@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Use Google Translate to translate your sentence into multiple languages. 
-Visit the following link to check available languages: 
+Use Google Translate to translate your sentence into multiple languages.
+Visit the following link to check available languages:
 https://cloud.google.com/translate/docs/languages
-To add or remove languages use modifier key when trigger is activated or go to: 
+To add or remove languages use modifier key when trigger is activated or go to:
 '~/.config/albert/org.albert.extension.mtr/config.json'
 Add or remove elements based on the ISO-Codes that you found on the google documentation page.
 """
@@ -92,6 +92,6 @@ def handleQuery(query):
                     item.subtext = "Check your internet connection."
                     return item
         else:
-            item.subtext = "Enter a query: 'mtr <text>'. Languages {%s}" % ", ".join(languages)
+            item.subtext = "Enter a query: 'mtr &lt;text&gt;'. Languages {%s}" % ", ".join(languages)
             return item
     return results

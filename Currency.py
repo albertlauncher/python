@@ -41,5 +41,5 @@ def handleQuery(query):
                     return item
         else:
             item.text = __prettyname__
-            item.subtext = "Enter a query in the form of <amount> <from> <to>"
+            item.subtext = "Enter a query in the form of &lt;amount&gt; &lt;from&gt; &lt;to&gt;"
             return item

@@ -71,7 +71,7 @@ def handleQuery(query):
                         text="<b>%s</b> <i>%s</i> (%s)" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name), entry['Version'], entry['NumVotes']),
                         completion=query.rawString
                     )
-                    subtext = entry['Description'] if entry['Description'] else "<No description>"
+                    subtext = entry['Description'] if entry['Description'] else "[No description]"
                     if entry['OutOfDate']:
                         subtext = '<font color="red">[Out of date: %s]</font> %s' % (datetime.fromtimestamp(entry['OutOfDate']).strftime("%F"), subtext)
                     if entry['Maintainer'] is None:
