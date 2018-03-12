@@ -2,7 +2,7 @@
 
 """
 Use machinelearning to find the relevant emoji.
-If your emojis are not rendering properly go to and install the emoji fonts at the following link: 
+If your emojis are not rendering properly go to and install the emoji fonts at the following link:
 https://github.com/eosrei/emojione-color-font
 """
 
@@ -10,12 +10,14 @@ from albertv0 import *
 import json
 import os
 import urllib.error
-import requests
+from urllib.request import urlopen, Request
+from urllib.parse import urlencode
+
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "Dango Emoji"
 __version__ = "1.0"
-__trigger__ = "emoji "
+__trigger__ = "emo "
 __author__ = "David Britt"
 __dependencies__ = []
 
@@ -38,8 +40,10 @@ def handleQuery(query):
 
         if len(query.string) >= 2:
             try:
-                with requests.get(dangoUrl, params={"q": query.string, "syn": 0}) as api_response:
-                    json_data = json.loads(api_response.text)
+                url = "%s?%s" % (dangoUrl, urlencode({"q": query.string, "syn": 0}))
+                with urlopen(Request(url)) as api_response:
+
+                    json_data = json.load(api_response)
 
                     if json_data["results"][0]["score"] > 0.025:
                         all_emojis = []

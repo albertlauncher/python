@@ -8,7 +8,8 @@ from albertv0 import *
 import os
 import json
 import urllib.error
-import requests
+from urllib.request import urlopen, Request
+from urllib.parse import urlencode
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "Dango Kaomoji"
@@ -36,8 +37,9 @@ def handleQuery(query):
 
         if len(query.string) >= 2:
             try:
-                with requests.get(dangoUrl, params={"q": query.string}) as api_response:
-                    json_data = json.loads(api_response.text)
+                url = "%s?%s" % (dangoUrl, urlencode({"q": query.string}))
+                with urlopen(Request(url)) as api_response:
+                    json_data = json.load(api_response)
                     for emoj in json_data["items"]:
                         results.append(Item(
                             id=__prettyname__,
@@ -48,6 +50,7 @@ def handleQuery(query):
                                     "Copy translation to clipboard", emoj["text"])
                             ]
                         ))
+                    warning(str(json_data))
             except urllib.error.URLError as urlerr:
                 print("Troubleshoot internet connection: %s" % urlerr)
                 item.subtext = "Connection error"
