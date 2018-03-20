@@ -13,7 +13,7 @@ import json
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Binance"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "bnc "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -53,13 +53,17 @@ def updateMarkets():
 
 
 def makeItem(market):
+    url = tradeUrl % (market.market, market.base)
     return Item(
         id="%s_%s%s" % (__prettyname__, market.market, market.base),
         icon=iconPath,
         text="%s/%s" % (market.market, market.base),
         subtext="Open the %s/%s market on binance.com" % (market.market, market.base),
         completion="%s%s%s" % (__trigger__, market.market, market.base),
-        actions=[UrlAction("Show market in browser", tradeUrl % (market.market, market.base))]
+        actions=[
+            UrlAction("Show market in browser", url),
+            ClipAction('Copy URL to clipboard', url)
+        ]
     )
 
 
