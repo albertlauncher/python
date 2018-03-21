@@ -10,7 +10,7 @@ import os
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Wikipedia"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "wiki "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -19,7 +19,7 @@ iconPath = iconLookup('wikipedia')
 if not iconPath:
     iconPath = os.path.dirname(__file__)+"/wikipedia.svg"
 baseurl = 'https://en.wikipedia.org/w/api.php'
-user_agent = "org.arlbert.extension.python.wikipedia"
+user_agent = "org.albert.extension.python.wikipedia"
 limit = 20
 
 
@@ -74,7 +74,10 @@ def handleQuery(query):
                                         text=title,
                                         subtext=summary if summary else url,
                                         completion=title,
-                                        actions=[UrlAction("Open Wikipedia", url)]))
+                                        actions=[
+                                            UrlAction("Open article on Wikipedia", url),
+                                            ClipAction("Copy URL", url)
+                                        ]))
 
             return results
         else:
