@@ -50,7 +50,6 @@ def handleQuery(query):
                                     "Copy translation to clipboard", emoj["text"])
                             ]
                         ))
-                    warning(str(json_data))
             except urllib.error.URLError as urlerr:
                 print("Troubleshoot internet connection: %s" % urlerr)
                 item.subtext = "Connection error"
