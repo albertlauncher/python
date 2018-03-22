@@ -16,12 +16,12 @@ from urllib.parse import urlencode
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "Dango Emoji"
-__version__ = "1.0"
-__trigger__ = "emo "
+__version__ = "1.1"
+__trigger__ = ":"
 __author__ = "David Britt"
 __dependencies__ = []
 
-icon_path = os.path.dirname(__file__) + "/emojicon.svg"
+icon_path = "%s/%s.png" % (os.path.dirname(__file__), __name__)
 dangoUrl = "https://emoji.getdango.com/api/emoji"
 emojipedia_url = "https://emojipedia.org/%s"
 
