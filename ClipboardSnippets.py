@@ -1,6 +1,17 @@
-"""locate adapter extension
+"""clipboard snippet store
 
-Note that it is up to you to ensure that the database is up to date"""
+This clipboard archive will give you access to your clipboard favorites.
+The selected value will be pasted into the clipboard, ready for the next `CTRL-v`.
+
+The snippets will be maintained in a little configuration file
+`~/.config/albert/org.albert.extension.clipboard-snippets/clipboard-snippets.yaml`.
+That file can be edited with a simple text editor.
+
+The file will be autocreated at the first startup with some little examples.
+The editor can be called as action if the search string is empty.
+
+The activation for this plugin is `cp`.
+"""
 
 import os
 import os.path
@@ -112,17 +123,14 @@ def wrapper_for_fire_command(command):
 
     return a
 
-# pyperclip.copy('The text to be copied to the clipboard.')
-# pyperclip.paste()
-
 def handleQuery(query):
     results = []
     if query.isTriggered:
         if len(query.string) >= 1:
             pattern = re.compile(query.string, re.IGNORECASE)
-            
+
             configuration = load_configuration(CLIPBOARD_ARCHIVE_FILENAME)
-            
+
             for key, value in configuration['snippets'].items():
                 if pattern.search(key) or pattern.search(value):
 
@@ -148,8 +156,6 @@ def handleQuery(query):
                             icon       = iconPath,
                             text       = pattern.sub(lambda m: "<u>%s</u>" % m.group(0), key),
                             subtext    = value,
-                            #completion = "%s%s" % (__trigger__, basename),
-                            #completion = 'doof ohren',
                             actions    = actions,
                             ))
         else:
