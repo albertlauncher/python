@@ -18,7 +18,7 @@ __author__ = "Marek Mazur"
 __dependencies__ = []
 
 
-dict_file = '~/.local/share/albert/org.albert.extension.python/modules/Spell/dictionaries/{language}.dict'
+dict_file = os.path.dirname(__file__) + "/dictionaries/{language}.dict"
 icon_path = os.path.dirname(__file__) + "/spell.svg"
 limit = 5
 
@@ -68,10 +68,9 @@ def find_in_dictionary(language, phrase):
     :return str
     """
     a_dict_file = dict_file.format(language=language)
-    cmd = "grep '^{phrase}' -m {limit} {dict_file}".format(phrase=phrase, limit=limit, dict_file=a_dict_file)
     results = ''
     try:
-        results = subprocess.check_output(cmd, shell=True)
+        results = subprocess.check_output(['grep', "^{}".format(re.escape(phrase)), '-m', str(limit), a_dict_file])
     except subprocess.CalledProcessError:
         pass
     results = results.splitlines()
