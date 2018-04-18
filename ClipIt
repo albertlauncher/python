@@ -1,0 +1,89 @@
+'''
+Scan ClipIt history file for matches and put selection into clipboard
+for immediate paste
+'''
+
+from albertv0 import *
+import struct, os
+
+__iid__ = 'PythonInterface/v0.1'
+__prettyname__ = 'Clipit'
+__version__ = '1.0'
+__trigger__ = ' ' # add your own prefix here. I use <SPACE> key.
+__author__ = 'Gunther Klessinger'
+__dependencies__ = []
+
+fn_hist = '%(HOME)s/.local/share/clipit/history' % os.environ
+max_matches = 10 # more albert won't show anyway
+ICON_PATH = iconLookup('clipit')
+
+# avoid reads on no change, this is a cache by os.stat:
+hist = [0, []]
+
+def get_hist():
+    '''return a list of all history entries, cached'''
+    ts = os.stat(fn_hist).st_mtime
+    if not ts > hist[0]:
+        return hist[1]
+    hist[0] = ts
+    hist[1] = H = [] # all entries
+
+    def add(lines, H):
+        s = ''.join(lines)
+        if s.strip() and not s in H:
+            H.append(s)
+
+    with open(fn_hist,'rb') as f:
+        f.read(68)
+        size,_ = struct.unpack('2i',f.read(8))
+        lines = ()
+        while (size > 0):
+            item = str(f.read(size), 'utf-8')
+            lines += (item,)
+            _,_,_,size,_ = struct.unpack('5i',f.read(20))
+            if size > 0:
+                add(lines, H)
+                lines = ()
+                if len(H) > max_matches:
+                    return H
+    add(lines, H) if lines else 0
+    return H
+
+
+def make_item(lines, query, i):
+    '''One item per found match in the history'''
+    l = lines.strip().split('\n')
+    res, lens = '', ''
+    if len(l) > 1:
+        res = '...' + l[-1][-20:]
+        lens = ':%s lines' % len(l)
+    res += '[#%s%s]' % (i, lens)
+    item = Item(id='clipit%s' % i, text=lines, subtext=res)
+    item.addAction(ClipAction('Copy result to clipboard', item.text))
+    return item
+
+
+
+def handleQuery(query):
+    '''api entry'''
+    if not query.isTriggered:
+        return
+
+    stripped = query.string.strip()
+
+    if not stripped:
+        item = Item(completion=query.rawString, icon=ICON_PATH)
+        item.text = ''
+        item.subtext = 'Type substring matching ClipIt history'
+        return [item]
+
+    hist = get_hist()
+    items, i = [], 0
+    for lines in hist:
+        i += 1
+        if not stripped in lines:
+            continue
+        items.append(make_item(lines, query, i))
+
+    return items
+
