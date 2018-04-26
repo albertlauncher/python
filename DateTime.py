@@ -38,7 +38,10 @@ def handleQuery(query):
                             "Current date")
         elif "time".startswith(fields[0]) and len(fields) == 1:
             return makeItem(datetime.datetime.now().strftime("%X"),
-                            "Current time")
+                            "Current time (local)")
+        elif "utc".startswith(fields[0]) and len(fields) == 1:
+            return makeItem(datetime.datetime.utcnow().strftime("%X"),
+                            "Current time (UTC)")
         elif "datetime".startswith(fields[0]) and len(fields) == 1:
             return makeItem(datetime.datetime.now().strftime("%c"),
                             "Current date and time")
