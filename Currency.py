@@ -25,10 +25,10 @@ def handleQuery(query):
         fields = query.string.split()
         item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
         if len(fields) == 3:
-            url = 'https://finance.google.com/finance/converter?a=%s&from=%s&to=%s' % tuple(fields)
+            url = 'https://search.yahoo.com/search?p=%s+%s+to+%s' % tuple(fields)
             with urlopen(url) as response:
                 html = response.read().decode("latin-1")
-                m = re.search('<div id=currency_converter_result>.*<span class=bld>(\d+\.\d+).*</span>', html)
+                m = re.search('<span class=.*convert-to.*>(\d+(\.\d+)?)', html)
                 if m:
                     result = m.group(1)
                     item.text = result
