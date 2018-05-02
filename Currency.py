@@ -43,11 +43,12 @@ def handleQuery(query):
             for url in urls:
                 try:
                     response = urlopen(url)
-                except urllib.error.HTTPError as e:
-                    response = e
+                    html = response.read().decode("latin-1")
+                    m = re.search(reDict[url], html)
+                except Exception as e:
+                    response = None
+                    m = None
 
-                html = response.read().decode("latin-1")
-                m = re.search(reDict[url], html)
                 if m:
                     result = m.group(1)
                     item.text = result
