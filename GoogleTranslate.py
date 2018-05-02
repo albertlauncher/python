@@ -38,7 +38,7 @@ def handleQuery(query):
             url = urltmpl % (src, dst, urllib.parse.quote_plus(txt))
             req = urllib.request.Request(url, headers={'User-Agent': ua})
             with urllib.request.urlopen(req) as response:
-                data = json.load(response)
+                data = json.loads(response.read().decode('utf-8'))
                 result = data[0][0][0]
                 item.text = result
                 item.subtext = "%s-%s translation of %s" % (src.upper(), dst.upper(), txt)
