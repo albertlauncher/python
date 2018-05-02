@@ -69,7 +69,11 @@ def handleQuery(query):
                     url = urltmpl % (lang, urllib.parse.quote_plus(query.string))
                     req = urllib.request.Request(url, headers={'User-Agent': ua})
                     with urllib.request.urlopen(req) as response:
-                        data = json.load(response)
+                        #print(type())
+                        #try:
+                        data = json.loads(response.read().decode("utf-8"))
+                        #except TypeError as typerr:
+                        #    print("Urgh this type.error. %s" % typerr)
                         translText = data[0][0][0]
                         sourceText = data[2]
                         if sourceText == lang:
@@ -87,7 +91,7 @@ def handleQuery(query):
                                     ]
                                 )
                             )
-                except urllib.error.URLError as urlerr:
+                except urllib.error.URLError as urlerr :
                     print("Check your internet connection: %s" % urlerr)
                     item.subtext = "Check your internet connection."
                     return item
