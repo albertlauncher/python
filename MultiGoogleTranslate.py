@@ -40,7 +40,7 @@ def initialize():
         with open(language_configuration_file) as json_config:
             languages.extend(json.load(json_config)["languages"])
     else:
-        languages.extend(["en", "zh-CN", "hi", "es", "ru", "pt", "id", "bn", "ar", "ms", "jp", "fr", "de"])
+        languages.extend(["en", "zh-CN", "hi", "es", "ru", "pt", "id", "bn", "ar", "ms", "ja", "fr", "de"])
         try:
             os.makedirs(configuration_directory, exist_ok=True)
             try:
