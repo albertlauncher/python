@@ -36,7 +36,7 @@ def initialize():
     get_url = "%s?%s" % (baseurl, parse.urlencode(params))
     req = request.Request(get_url, headers={'User-Agent': user_agent})
     with request.urlopen(req) as response:
-        data = json.load(response)
+        data = json.loads(response.read().decode('utf-8'))
         languages = [lang['code'] for lang in data['query']['languages']]
         local_lang_code = getlocale()[0][0:2]
         if local_lang_code in languages:
@@ -62,7 +62,7 @@ def handleQuery(query):
             req = request.Request(get_url, headers={'User-Agent': user_agent})
 
             with request.urlopen(req) as response:
-                data = json.load(response)
+                data = json.loads(response.read().decode('utf-8'))
 
                 for i in range(0, min(limit, len(data[1]))):
                     title = data[1][i]
