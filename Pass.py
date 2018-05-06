@@ -82,7 +82,7 @@ def getPasswords():
 def getPasswordsFromSearch(query):
     passwords = []
     for password in getPasswords():
-        if query.string.strip() not in password:
+        if query.string.strip().lower() not in password.lower():
             continue
 
         passwords.append(password)
