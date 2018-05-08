@@ -13,7 +13,7 @@ import json
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Binance"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "bnc "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -26,10 +26,9 @@ markets = []
 
 
 class Market():
-    def __init__(self, market, base, status):
+    def __init__(self, market, base):
         self.market = market
         self.base = base
-        self.status = status
 
 
 def updateMarkets():
@@ -43,13 +42,12 @@ def updateMarkets():
         markets.clear()
         for symbol in symbols:
 
-            # Skip this strage 123456 market
+            # Skip this strange 123456 market
             if symbol['baseAsset'] == "123":
                 continue
 
             markets.append(Market(market=symbol['baseAsset'],
-                                  base=symbol['quoteAsset'],
-                                  status=symbol['status']))
+                                  base=symbol['quoteAsset']))
 
 
 def makeItem(market):
