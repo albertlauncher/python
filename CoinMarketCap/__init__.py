@@ -67,7 +67,7 @@ class UpdateThread(Thread):
                         return value
 
                 # Get coin data
-                data = json.load(response)
+                data = json.loads(response.read().decode('utf-8'))
                 newCoins = []
                 for coindata in data:
                     cap = coindata['market_cap_usd']
