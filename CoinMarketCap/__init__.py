@@ -74,11 +74,15 @@ class UpdateThread(Thread):
                     cap = lformat("%d", float(cap), True) if cap else "?"
                     vol = coindata['24h_volume_usd']
                     vol = lformat("%d", float(vol), True) if vol else "?"
+                    price = coindata['price_usd']
+                    price = lformat("%f", float(price), True) if price else "?"
+                    if "," in price:
+                        price = price.rstrip("0").rstrip(",")
                     newCoins.append(Coin(identifier=coindata['id'],
                                          name=coindata['name'],
                                          symbol=coindata['symbol'],
                                          rank=coindata['rank'],
-                                         price=coindata['price_usd'],
+                                         price=price,
                                          cap=cap,
                                          vol=vol,
                                          change_hour=colorize_float(coindata['percent_change_1h']),
@@ -137,7 +141,7 @@ def handleQuery(query):
                 icon=iconPath,
                 text="#%s %s <i>(%s) <b>%s$</b></i>" % (coin.rank, coin.name, coin.symbol, coin.price),
                 subtext="Change: <i>%s/%s/%s</i>, Cap: <i>%s</i>, Volume: <i>%s</i>" % (coin.change_hour, coin.change_day, coin.change_week, coin.cap, coin.vol),
-                completion=query.rawString,
+                completion=coin.price,
                 actions=[
                     UrlAction("Show on CoinMarketCap website", url),
                     ClipAction('Copy URL to clipboard', url)
