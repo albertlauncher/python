@@ -61,7 +61,7 @@ def handleQuery(query):
 
         if query.string.strip():
             fields = query.string.strip().split(":")
-            if not all(field.isdigit() for field in fields):
+            if not all(field.isdigit() or field == '' for field in fields):
                 return Item(
                     id=__prettyname__,
                     text="Invalid input",
@@ -73,7 +73,7 @@ def handleQuery(query):
             seconds = 0
             fields.reverse()
             for i in range(len(fields)):
-                seconds += int(fields[i])*(60**i)
+                seconds += int(fields[i] if fields[i] else 0)*(60**i)
 
             return Item(
                 id=__prettyname__,
