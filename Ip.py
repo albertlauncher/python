@@ -1,21 +1,16 @@
 """The extension finds out your internal and external ip address"""
 
-from shutil import which
-from albertv0 import *
-import subprocess
 import socket
-import os
+from urllib import request
 
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "IP Addresses"
 __version__ = "1.0"
 __trigger__ = "ip "
-__author__ = "Benedict Dudel"
-__dependencies__ = ["curl"]
-
-if which("curl") is None:
-    raise Exception("'curl' is not in $PATH.")
+__author__ = "Manuel Schneider, Benedict Dudel"
+__dependencies__ = []
 
 iconPath = iconLookup("preferences-system-network")
 
@@ -24,8 +19,8 @@ def handleQuery(query):
     if not query.isTriggered:
         return None
 
-    proc = subprocess.run(["curl", "ipecho.net/plain"], stdout=subprocess.PIPE)
-    externalIP = proc.stdout.decode("utf-8")
+    with request.urlopen("http://ipecho.net/plain") as response:
+        externalIP = response.read().decode()
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("10.255.255.255", 1))
