@@ -62,7 +62,7 @@ def handleQuery(query):
             else:
                 results = []
                 pattern = re.compile(query.string, re.IGNORECASE)
-                for entry in data['results']:
+                for entry in sorted(data['results'], key=lambda item: item['Name']):
                     name = entry['Name']
 
                     item = Item(
