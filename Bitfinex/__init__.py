@@ -34,7 +34,7 @@ class Market():
 def updateMarkets():
     global markets
     with urllib.request.urlopen(symbolsEndpoint) as response:
-        symbols = json.load(response)
+        symbols = json.loads(response.read().decode())
         markets.clear()
         for symbol in symbols:
             symbol = symbol.upper()

@@ -9,12 +9,13 @@ To add or remove languages use modifier key when trigger is activated or go to:
 Add or remove elements based on the ISO-Codes that you found on the google documentation page.
 """
 
-from albertv0 import *
 import json
-import urllib.request
-import urllib.parse
-import urllib.error
 import os
+import urllib.error
+import urllib.parse
+import urllib.request
+
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "MultiTranslate"
@@ -71,7 +72,7 @@ def handleQuery(query):
                     with urllib.request.urlopen(req) as response:
                         #print(type())
                         #try:
-                        data = json.loads(response.read().decode("utf-8"))
+                        data = json.loads(response.read().decode())
                         #except TypeError as typerr:
                         #    print("Urgh this type.error. %s" % typerr)
                         translText = data[0][0][0]

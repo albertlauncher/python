@@ -39,7 +39,7 @@ def handleQuery(query):
             req = request.Request(get_url, headers={'User-Agent': user_agent})
 
             with request.urlopen(req) as response:
-                data = json.load(response)
+                data = json.loads(response.read().decode())
                 for i in range(0, len(data[1])):
                     title = data[1][i]
                     summary = data[2][i]

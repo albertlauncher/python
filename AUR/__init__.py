@@ -50,7 +50,7 @@ def handleQuery(query):
         req = request.Request(url)
 
         with request.urlopen(req) as response:
-            data = json.load(response)
+            data = json.loads(response.read().decode())
             if data['type'] == "error":
                 return Item(
                     id=__prettyname__,

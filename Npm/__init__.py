@@ -65,7 +65,7 @@ def getSearchResults(query):
     proc = subprocess.run(["npm", "search", "--json", query], stdout=subprocess.PIPE)
 
     items = []
-    for module in json.loads(proc.stdout.decode('utf-8')):
+    for module in json.loads(proc.stdout.decode()):
         items.append(
             Item(
                 id = __prettyname__,

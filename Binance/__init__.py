@@ -36,7 +36,7 @@ def updateMarkets():
     global markets
     req = request.Request(apiBaseUrl + "api/v1/exchangeInfo")
     with request.urlopen(req) as response:
-        data = json.load(response)
+        data = json.loads(response.read().decode())
         symbols = data['symbols']
 
         markets.clear()

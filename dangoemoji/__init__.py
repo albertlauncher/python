@@ -41,9 +41,9 @@ def handleQuery(query):
         if len(query.string) >= 2:
             try:
                 url = "%s?%s" % (dangoUrl, urlencode({"q": query.string, "syn": 0}))
-                with urlopen(Request(url)) as api_response:
+                with urlopen(Request(url)) as response:
 
-                    json_data = json.load(api_response)
+                    json_data = json.loads(response.read().decode())
 
                     if json_data["results"][0]["score"] > 0.025:
                         all_emojis = []

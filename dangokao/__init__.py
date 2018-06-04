@@ -38,8 +38,8 @@ def handleQuery(query):
         if len(query.string) >= 2:
             try:
                 url = "%s?%s" % (dangoUrl, urlencode({"q": query.string}))
-                with urlopen(Request(url)) as api_response:
-                    json_data = json.load(api_response)
+                with urlopen(Request(url)) as response:
+                    json_data = json.loads(response.read().decode())
                     for emoj in json_data["items"]:
                         results.append(Item(
                             id=__prettyname__,
