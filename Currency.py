@@ -2,9 +2,7 @@
 
 """Convert currencies.
 
-Synopsis: <amount> <src currency> [to|as|in] <dest currency>
-
-Example: exch 5 usd eur"""
+Synopsis: <amount> <src currency> [to|as|in] <dest currency>"""
 
 import re
 import time
@@ -70,7 +68,7 @@ providers = [EuropeanCentralBank(), Yahoo()]
 regex = re.compile(r"(\d+\.?\d*)\s+(\w{3})(?:\s+(?:to|in|as))?\s+(\w{3})")
 
 def handleQuery(query):
-    match = regex.match(query.string)
+    match = regex.fullmatch(query.string.strip())
     if match:
         prep = (float(match.group(1)), match.group(2).upper(), match.group(3).upper())
         item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)

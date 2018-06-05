@@ -33,8 +33,7 @@ icon = iconLookup('calc')
 if not icon:
     icon = ":python_module"
 
-regex = re.compile(r"(\S+)(?:\s+to)?\s+(\S+)")
-strict_regex = re.compile(r"(\S+)(?:\s+to)\s+(\S+)")
+regex = re.compile(r"(\S+)(?:\s+to)\s+(\S+)")
 
 def handleQuery(query):
 
@@ -54,7 +53,7 @@ def handleQuery(query):
         return item
 
     else:
-        match = strict_regex.match(query.string)
+        match = regex.fullmatch(query.string.strip())
         if match:
             args = match.group(1, 2)
             try:
