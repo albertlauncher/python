@@ -9,6 +9,7 @@ from albertv0 import *
 import time
 import os
 import urllib.request
+import urllib.error
 import json
 
 __iid__ = "PythonInterface/v0.1"
@@ -19,7 +20,7 @@ __author__ = "Manuel Schneider"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__) + "/%s.svg" % __name__
-lastUpdate = 0
+nextUpdate = 0
 symbolsEndpoint = "https://api.bitfinex.com/v1/symbols"
 tradeUrl = "https://www.bitfinex.com/t/%s:%s"
 markets = []
@@ -32,13 +33,21 @@ class Market():
 
 
 def updateMarkets():
-    global markets
-    with urllib.request.urlopen(symbolsEndpoint) as response:
-        symbols = json.loads(response.read().decode())
-        markets.clear()
-        for symbol in symbols:
-            symbol = symbol.upper()
-            markets.append(Market(base=symbol[0:3], quote=symbol[3:6]))
+    # Update if older than an hour
+    global nextUpdate
+    if nextUpdate < time.time():
+        try:
+            global markets
+            with urllib.request.urlopen(symbolsEndpoint) as response:
+                symbols = json.loads(response.read().decode())
+                markets.clear()
+                for symbol in symbols:
+                    symbol = symbol.upper()
+                    markets.append(Market(base=symbol[0:3], quote=symbol[3:6]))
+            nextUpdate = time.time() + 3600
+        except Exception as e:
+            nextUpdate = time.time() + 60
+            warning(e)
 
 
 def makeItem(market):
@@ -58,12 +67,7 @@ def makeItem(market):
 
 def handleQuery(query):
 
-    # Update if older than an hour
-    global lastUpdate
-    now = time.time()
-    if lastUpdate < now - 3600:
-        lastUpdate = now
-        updateMarkets()
+    updateMarkets()
 
     items = []
     stripped = query.string.strip().upper()

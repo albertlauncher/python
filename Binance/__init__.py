@@ -8,7 +8,8 @@ the markets by using the trigger and filter, e.g 'bnc [filter]'"""
 from albertv0 import *
 import time
 import os
-from urllib import request
+import urllib.request
+import urllib.error
 import json
 
 __iid__ = "PythonInterface/v0.1"
@@ -19,8 +20,8 @@ __author__ = "Manuel Schneider"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__) + "/%s.svg" % __name__
-lastUpdate = 0
-apiBaseUrl = "https://api.binance.com/"
+nextUpdate = 0
+exchangeInfoUrl = "https://api.binance.com/api/v1/exchangeInfo"
 tradeUrl = "https://www.binance.com/tradeDetail.html?symbol=%s_%s"
 markets = []
 
@@ -32,22 +33,23 @@ class Market():
 
 
 def updateMarkets():
-
-    global markets
-    req = request.Request(apiBaseUrl + "api/v1/exchangeInfo")
-    with request.urlopen(req) as response:
-        data = json.loads(response.read().decode())
-        symbols = data['symbols']
-
-        markets.clear()
-        for symbol in symbols:
-
-            # Skip this strange 123456 market
-            if symbol['baseAsset'] == "123":
-                continue
-
-            markets.append(Market(market=symbol['baseAsset'],
-                                  base=symbol['quoteAsset']))
+    # Update if older than an hour
+    global nextUpdate
+    if nextUpdate < time.time():
+        try:
+            global markets
+            with urllib.request.urlopen(exchangeInfoUrl) as response:
+                symbols = json.loads(response.read().decode())['symbols']
+                markets.clear()
+                for symbol in symbols:
+                    # Skip this strange 123456 market
+                    if symbol['baseAsset'] != "123":
+                        markets.append(Market(market=symbol['baseAsset'],
+                                              base=symbol['quoteAsset']))
+            nextUpdate = time.time() + 3600
+        except Exception as e:
+            nextUpdate = time.time() + 60
+            warning(e)
 
 
 def makeItem(market):
@@ -67,12 +69,7 @@ def makeItem(market):
 
 def handleQuery(query):
 
-    # Update if older than an hour
-    global lastUpdate
-    now = time.time()
-    if lastUpdate < now - 3600:
-        lastUpdate = now
-        updateMarkets()
+    updateMarkets()
 
     items = []
     stripped = query.string.strip().upper()
