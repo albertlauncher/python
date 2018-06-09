@@ -11,6 +11,8 @@ import os
 import urllib.request
 import urllib.error
 import json
+from collections import namedtuple
+from threading import Thread, Event
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = __name__
@@ -20,35 +22,53 @@ __author__ = "Manuel Schneider"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__) + "/%s.svg" % __name__
-nextUpdate = 0
 symbolsEndpoint = "https://api.bitfinex.com/v1/symbols"
 tradeUrl = "https://www.bitfinex.com/t/%s:%s"
 markets = []
+thread = None
+
+Market = namedtuple("Market" , ["base", "quote"])
+
+class UpdateThread(Thread):
+    def __init__(self):
+        super().__init__()
+        self._stopevent = Event()
+
+    def run(self):
+        while True:
+            global thread
+            try:
+                global markets
+                with urllib.request.urlopen(symbolsEndpoint) as response:
+                    symbols = json.loads(response.read().decode())
+                    markets.clear()
+                    for symbol in symbols:
+                        symbol = symbol.upper()
+                        markets.append(Market(base=symbol[0:3], quote=symbol[3:6]))
+                    info("Bitfinex markets updated.")
+                self._stopevent.wait(3600)  # Sleep 1h, wakeup on stop event
+            except Exception as e:
+                warning("Updating Bitfinex markets failed: %s" % str(e))
+                self._stopevent.wait(60)  # Sleep 1 min, wakeup on stop event
+
+            if self._stopevent.is_set():
+                return
+
+    def stop(self):
+        self._stop_event.set()
 
 
-class Market():
-    def __init__(self, base, quote):
-        self.base = base
-        self.quote = quote
+def initialize():
+    global thread
+    thread = UpdateThread()
+    thread.start()
 
 
-def updateMarkets():
-    # Update if older than an hour
-    global nextUpdate
-    if nextUpdate < time.time():
-        try:
-            global markets
-            with urllib.request.urlopen(symbolsEndpoint) as response:
-                symbols = json.loads(response.read().decode())
-                markets.clear()
-                for symbol in symbols:
-                    symbol = symbol.upper()
-                    markets.append(Market(base=symbol[0:3], quote=symbol[3:6]))
-            nextUpdate = time.time() + 3600
-        except Exception as e:
-            nextUpdate = time.time() + 60
-            warning(e)
-
+def finalize():
+    global thread
+    if thread is not None:
+        thread.stop()
+        thread.join()
 
 def makeItem(market):
     url = tradeUrl % (market.base, market.quote)
@@ -66,9 +86,6 @@ def makeItem(market):
 
 
 def handleQuery(query):
-
-    updateMarkets()
-
     items = []
     stripped = query.string.strip().upper()
 
