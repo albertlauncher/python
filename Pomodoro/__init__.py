@@ -14,7 +14,7 @@ __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Pomodoro"
 __version__ = "1.0"
 __author__ = "Manuel Schneider"
-__dependencies__ = [""]
+__dependencies__ = []
 
 
 class PomodoroTimer:
