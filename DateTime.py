@@ -2,13 +2,14 @@
 
 """Retrieve and convert datetime strings.
 
-This extension provides items for 'time', 'date', 'datetime' and 'epoch' respectively 'unixtime'.
-The latter two yield the unix timestamp and also accept a unix timestamp as parameter which will be
-converted to a datetime string."""
+This extension provides items for 'time', 'date', 'datetime' and 'epoch' respectively 'unixtime'. \
+The latter two yield the unix timestamp and also accept a unix timestamp as parameter which will \
+be converted to a datetime string."""
 
-from albertv0 import *
 import datetime
 import time
+
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "DateTime"

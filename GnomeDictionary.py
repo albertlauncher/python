@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""Search in Gnome dictionary. Needs 'gnome-dictionary' to be already installed.
-Uses similar keyword to Google's dictionary feature: 'def'.
+"""Search in Gnome dictionary. Needs 'gnome-dictionary' to be already installed. \
+Uses similar keyword to Google's dictionary feature: 'def'. \
 To search, type 'def <query>'"""
 
-from albertv0 import *
-from subprocess import run
 from shutil import which
+from subprocess import run
+
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Gnome Dictionary"

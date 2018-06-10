@@ -1,20 +1,23 @@
-"""Extension for the package manager `pacman`
+# -*- coding: utf-8 -*-
 
-The extension provides a way to install, remove and search for packages in the
-archlinux.org database. To trigger the extension you just need to type `pacman `
+"""Extension for the package manager `pacman`.
+
+The extension provides a way to install, remove and search for packages in the \
+archlinux.org database. To trigger the extension you just need to type `pacman ` \
 in albert.
 
-If no search query is supplied you have the option to do a system update.
-Otherwise albert will try to search for packages with the search query within
+If no search query is supplied you have the option to do a system update. \
+Otherwise albert will try to search for packages with the search query within \
 the package name.
 
-For more information about `pacman` please have a look at:
-    - https://wiki.archlinux.org/index.php/pacman"""
+For more information about `pacman` please have a look at: \
+https://wiki.archlinux.org/index.php/pacman"""
+
+import re
+import subprocess
+from shutil import which
 
 from albertv0 import *
-from shutil import which
-import subprocess
-import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "PacMan"

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""Fire up an external search in GoldenDict.
-Just type gd <query>"""
+"""Fire up an external search in GoldenDict. Just type gd <query>"""
+
+from shutil import which
+from subprocess import run
 
 from albertv0 import *
-from subprocess import run
-from shutil import which
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "GoldenDict"

@@ -4,13 +4,13 @@
 Usage: tr <src lang> <dest lang> <text>
 Example: tr en fr hello
 
-Check available languages here:
-https://cloud.google.com/translate/docs/languages"""
+Check available languages here: https://cloud.google.com/translate/docs/languages"""
+
+import json
+import urllib.parse
+import urllib.request
 
 from albertv0 import *
-import json
-import urllib.request
-import urllib.parse
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Google Translate"

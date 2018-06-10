@@ -1,4 +1,6 @@
-"""This is a simple python template extension that should show the API in a comprehensible way.
+# -*- coding: utf-8 -*-
+
+"""This is a simple python template extension that should show the API in a comprehensible way. \
 Use the module docstring to provide a detailed description of the extension"""
 
 from albertv0 import *

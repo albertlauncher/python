@@ -1,4 +1,6 @@
-""" Kill Process Extension """
+# -*- coding: utf-8 -*-
+
+"""Unix 'kill' wrapper extension."""
 
 import os
 from signal import SIGKILL, SIGTERM

@@ -1,9 +1,12 @@
-'''Evaulate Mathematica expressions'''
+# -*- coding: utf-8 -*-
+
+'''Evaulate Mathematica expressions.'''
+
+import subprocess
+from shutil import which
+from tempfile import NamedTemporaryFile
 
 from albertv0 import *
-import subprocess
-from tempfile import NamedTemporaryFile
-from shutil import which
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Mathematica eval'

@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""
-Use Google Translate to translate your sentence into multiple languages.
-Visit the following link to check available languages:
-https://cloud.google.com/translate/docs/languages
-To add or remove languages use modifier key when trigger is activated or go to:
-'~/.config/albert/org.albert.extension.mtr/config.json'
-Add or remove elements based on the ISO-Codes that you found on the google documentation page.
-"""
+"""Use Google Translate to translate your sentence into multiple languages. \
+Visit the following link to check available languages: \
+https://cloud.google.com/translate/docs/languages \
+To add or remove languages use modifier key when trigger is activated or go to: \
+'~/.config/albert/org.albert.extension.mtr/config.json' \
+Add or remove elements based on the ISO-Codes that you found on the google documentation page."""
 
 import json
 import os

@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+
+"""List and open JetBrains IDE projects."""
+
 import os
 from shutil import which
 from xml.etree import ElementTree
+
 from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
@@ -77,7 +82,7 @@ def handleQuery(query):
             configpath = "config/options/recentProjectDirectories.xml"
             if app[0] == "IntelliJIdea":
                 configpath = "config/options/recentProjects.xml"
-            
+
             #dirs contains possibly multiple directories for a program (eg. .GoLand2018.1 and .GoLand2017.3). take the newest.
             dirs = [f for f in os.listdir(HOME_DIR) if
                     os.path.isdir(os.path.join(HOME_DIR, f)) and f.startswith("." + app[0])]

@@ -1,9 +1,13 @@
-'''Convert TeX mathmode commands to unicode characters'''
+# -*- coding: utf-8 -*-
 
-from albertv0 import *
+'''Convert TeX mathmode commands to unicode characters.'''
+
 import re
 import unicodedata
+
 from pylatexenc.latex2text import LatexNodes2Text
+
+from albertv0 import *
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'TeX to unicode'

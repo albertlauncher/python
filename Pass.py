@@ -1,9 +1,12 @@
-""" Passwordstore Extension """
+# -*- coding: utf-8 -*-
 
-import os
+"""'pass' wrapper extension."""
+
 import fnmatch
-from albertv0 import *
+import os
 from shutil import which
+
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Pass"

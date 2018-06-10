@@ -1,6 +1,6 @@
-"""Pomodoro extension
+# -*- coding: utf-8 -*-
 
-https://en.wikipedia.org/wiki/Pomodoro_Technique"""
+"""Pomodoro extension. See https://en.wikipedia.org/wiki/Pomodoro_Technique"""
 
 from albertv0 import *
 from shutil import which

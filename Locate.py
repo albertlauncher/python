@@ -1,12 +1,14 @@
-"""locate adapter extension
+# -*- coding: utf-8 -*-
 
-Note that it is up to you to ensure that the database is up to date"""
+"""Unix 'locate' wrapper extension. Note that it is up to you to ensure that the database is up to \
+date"""
 
 import os
+import re
 import subprocess
 from shutil import which
+
 from albertv0 import *
-import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Locate"

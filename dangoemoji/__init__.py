@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-"""
-Use machinelearning to find the relevant emoji.
-If your emojis are not rendering properly go to and install the emoji fonts at the following link:
-https://github.com/eosrei/emojione-color-font
-"""
+"""Use machinelearning to find the relevant emoji. If your emojis are not rendering properly go to \
+ and install the emoji fonts at the following link: https://github.com/eosrei/emojione-color-font"""
 
 from albertv0 import *
 import json

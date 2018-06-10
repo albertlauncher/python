@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
-Find relevant Kaomoji's using machine learning.
-"""
+"""Find relevant Kaomoji's using machine learning."""
 
 from albertv0 import *
 import os

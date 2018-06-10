@@ -1,9 +1,10 @@
-"""Trash extension
+# -*- coding: utf-8 -*-
 
-This is a simple trash extension providing a single item which opens the systems virtual trash
+"""This is a simple trash extension providing a single item which opens the systems virtual trash \
 location in your default file manager on activation."""
 
 import re
+
 from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"

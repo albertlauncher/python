@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""Fire up an external search in Zeal.
-Just type zl <query>"""
+"""Fire up an external search in Zeal. Just type zl <query>"""
+
+from shutil import which
+from subprocess import run
 
 from albertv0 import *
-from subprocess import run
-from shutil import which
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Zeal"

@@ -1,12 +1,8 @@
-"""Extension for the JavaScript package manager `npm`
+# -*- coding: utf-8 -*-
 
-The extension provides a way to install, remove and search for packages in the
-npmjs.com database. To trigger the extension you just need to type `npm `
-in albert.
-
-If no search query is supplied you have the option to update all globally
-installed packages.
-"""
+"""Provides a way to install, remove and search for packages in the npmjs.com database. To trigger \
+the extension you just need to type `npm ` in albert. If no search query is supplied you have the \
+option to update all globally installed packages."""
 
 from albertv0 import *
 from shutil import which

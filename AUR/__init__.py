@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 
-"""Arch User Repository extension
-
-This extension adapts the AUR web interface. You can search for packages and open their URLs.
-
-This extension is also intended to be used to quickly install the packages. Currently yaourt and
+"""This extension adapts the AUR web interface. You can search for packages and open their URLs. \
+This extension is also intended to be used to quickly install the packages. Currently yaourt and \
 pacaur can be used. If you are missing your favorite AUR helper tool send a PR."""
 
 from albertv0 import *

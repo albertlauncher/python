@@ -1,11 +1,14 @@
-"""CopyQ Clipboard Management"""
+# -*- coding: utf-8 -*-
+
+"""CopyQ clipboard management."""
 
 import html
-import subprocess
-from albertv0 import *
-from shutil import which
 import json
 import re
+import subprocess
+from shutil import which
+
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "CopyQ"

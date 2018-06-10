@@ -1,5 +1,7 @@
-"""Simple extension to search for PHP packages on Packagist. To install packages
-you need to have installed composer. By default this extension will search by
+# -*- coding: utf-8 -*-
+
+"""Simple extension to search for PHP packages on Packagist. To install packages \
+you need to have installed composer. By default this extension will search by \
 package name. But searching for packages by type or tag is supported as well."""
 
 from albertv0 import *

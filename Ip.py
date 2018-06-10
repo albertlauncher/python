@@ -1,4 +1,6 @@
-"""The extension finds out your internal and external ip address"""
+# -*- coding: utf-8 -*-
+
+"""The extension finds out your internal and external IP address."""
 
 import socket
 from urllib import request

@@ -1,17 +1,20 @@
-"""Extension which basically wraps the command line utility scrot to make
-screenshots from albert. The extension supports taking screenshots of the whole
+# -*- coding: utf-8 -*-
+
+"""Extension which basically wraps the command line utility scrot to make \
+screenshots from albert. The extension supports taking screenshots of the whole \
 screen, an specific area or the current active window.
 
-When the screenshot was made you will hear a sound which indicates that the
+When the screenshot was made you will hear a sound which indicates that the \
 screenshot was taken successfully.
 
 Screenshots will be saved in XDG_PICTURES_DIR or in the temp directory."""
 
-from albertv0 import *
-from shutil import which
+import os
 import subprocess
 import tempfile
-import os
+from shutil import which
+
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "scrot screenshot utility"

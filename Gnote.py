@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-"""Access Gnotes
+"""Search, open, create and delete notes."""
 
-Search, open, create and delete notes."""
+import re
+from datetime import datetime
+from shutil import which
+
+from dbus import DBusException, Interface, SessionBus
 
 from albertv0 import *
-from dbus import SessionBus, Interface, DBusException
-from shutil import which
-from datetime import datetime
-import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Gnote"
