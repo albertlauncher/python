@@ -20,14 +20,14 @@ from albertv0 import *
 
 from datetime import datetime
 import time
-import dateparser
+# import dateparser
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "Timestamps"
 __version__ = "1.0"
 __trigger__ = "ts "
 __author__ = "Matthew Bogner (matt@ibogner.net)"
-__dependencies__ = ["dateparser"]
+__dependencies__ = []
 
 iconPath = iconLookup('edit-copy')
 
@@ -106,18 +106,18 @@ def handleQuery(query):
             ),
         ]
 
-    else:
-        # This is probably a formatted string.
-        # TODO: how to utilize dateparser even when available on system default python install?
-        dt = dateparser.parse(query.string)
-        formattedDateUTC = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
-        return [
-            Item(
-                id=str(formattedDateUTC),
-                icon=iconPath,
-                text=str(formattedDateUTC),
-                subtext=str(formattedDateUTC),
-                completion=str(formattedDateUTC),
-                actions=[ClipAction('Copy TS to clipboard', str(formattedDateUTC))]
-            )
-        ]
+    # else:
+    #     # This is probably a formatted string.
+    #     # TODO: how to utilize dateparser even when available on system default python install?
+    #     dt = dateparser.parse(query.string)
+    #     formattedDateUTC = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
+    #     return [
+    #         Item(
+    #             id=str(formattedDateUTC),
+    #             icon=iconPath,
+    #             text=str(formattedDateUTC),
+    #             subtext=str(formattedDateUTC),
+    #             completion=str(formattedDateUTC),
+    #             actions=[ClipAction('Copy TS to clipboard', str(formattedDateUTC))]
+    #         )
+    #     ]
