@@ -6,7 +6,7 @@ This extension provides items for 'time', 'date', 'datetime' and 'epoch' respect
 The latter two yield the unix timestamp and also accept a unix timestamp as parameter which will \
 be converted to a datetime string."""
 
-import datetime
+from datetime import datetime, date
 import time
 
 from albertv0 import *
@@ -26,7 +26,7 @@ def handleQuery(query):
     if fields:
         def makeItem(text: str, subtext: str):
             return Item(
-                id=__prettyname__,
+                id=text,
                 icon=iconPath,
                 text=text,
                 subtext=subtext,
@@ -35,23 +35,35 @@ def handleQuery(query):
             )
 
         if "date".startswith(fields[0]) and len(fields) == 1:
-            return makeItem(datetime.date.today().strftime("%x"),
+            return makeItem(date.today().strftime("%x"),
                             "Current date")
         elif "time".startswith(fields[0]) and len(fields) == 1:
-            return makeItem(datetime.datetime.now().strftime("%X"),
+            return makeItem(datetime.now().strftime("%X"),
                             "Current time (local)")
         elif "utc".startswith(fields[0]) and len(fields) == 1:
-            return makeItem(datetime.datetime.utcnow().strftime("%X"),
+            return makeItem(datetime.utcnow().strftime("%X"),
                             "Current time (UTC)")
         elif "datetime".startswith(fields[0]) and len(fields) == 1:
-            return makeItem(datetime.datetime.now().strftime("%c"),
+            return makeItem(datetime.now().strftime("%c"),
                             "Current date and time")
-        elif "unixtime".startswith(fields[0]) or "epoch".startswith(fields[0]):
+        elif "unixtime".startswith(fields[0]) or "epoch".startswith(fields[0]) or "ts".startswith(fields[0]):
             if len(fields) == 2:
                 if fields[1].isdigit():
-                    return makeItem(time.strftime("%c", time.localtime(int(fields[1]))),
-                                    "Date and time of '%s'" % fields[1])
+                    timestamp = int(fields[1])
+                    if len(fields[1]) > 10:
+                        timestamp = timestamp / 1000
+
+                    return [
+                        makeItem(time.strftime("%c", time.localtime(timestamp)),
+                                 "Date and time of '%s'" % fields[1]),
+                        makeItem(datetime.fromtimestamp(timestamp).astimezone().strftime("%Y-%m-%d %H:%M:%S.%f %Z"),
+                                 "Date and time of '%s'" % fields[1]),
+                        makeItem(datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S.%f UTC"),
+                                 "UTC Date and time of '%s'" % fields[1])
+                    ]
                 else:
+                    # TODO: how to utilize dateparser even when available on system default python install?
+                    # dt = dateparser.parse(query.string)
                     return Item(
                         id=__prettyname__,
                         icon=iconPath,
@@ -60,5 +72,13 @@ def handleQuery(query):
                         completion=query.rawString
                     )
             else:
-                return makeItem(datetime.datetime.now().strftime("%s"),
-                                "Current unixtime")
+                return [
+                    makeItem(datetime.now().strftime("%s"),
+                             "Current unixtime"),
+                    makeItem(str(round(time.time() * 1000)),
+                             "Millis since Epoch"),
+                    makeItem(datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S.%f UTC"),
+                             "UTC timestamp"),
+                    makeItem(datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S.%f %Z"),
+                             "Local timestamp")
+                ]
