@@ -39,10 +39,6 @@ def is_number(s):
         return False
 
 def handleQuery(query):
-    info("I'm in timestamp-converter.py")
-    info("query.isTriggered: {0}".format(query.isTriggered))
-    info("query.string: {0}".format(query.string))
-
     if not query.isTriggered:
         return
 
