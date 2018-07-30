@@ -18,7 +18,7 @@ __author__ = "Marek Mazur"
 __dependencies__ = []
 
 
-dict_file = os.path.dirname(__file__) + "/dictionaries/{language}.dict"
+dict_file = os.path.dirname(__file__) + "/dictionaries/{language}.gz"
 icon_path = os.path.dirname(__file__) + "/spell.svg"
 limit = 5
 
@@ -70,7 +70,7 @@ def find_in_dictionary(language, phrase):
     a_dict_file = dict_file.format(language=language)
     results = ''
     try:
-        results = subprocess.check_output(['grep', "^{}".format(re.escape(phrase)), '-m', str(limit), a_dict_file])
+        results = subprocess.check_output(['zgrep', "^{}".format(re.escape(phrase)), '-m', str(limit), a_dict_file])
     except subprocess.CalledProcessError:
         pass
     results = results.splitlines()
