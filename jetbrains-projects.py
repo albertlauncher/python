@@ -19,7 +19,7 @@ paths = [#<Name for config directory>, <possible names for the binary>, <possibl
     ["CLion", "clion", "jetbrains-clion"],
     ["DataGrip", "datagrip", "jetbrains-datagrip"],
     ["GoLand", "goland", "jetbrains-goland"],
-    ["IntelliJIdea", "intellij-idea-ue-bundled-jre intellij-idea-ultimate-edition idea-ce-eap idea-ue-eap idea-ultimate", "jetbrains-idea"],
+    ["IntelliJIdea", "intellij-idea-ue-bundled-jre intellij-idea-ultimate-edition idea-ce-eap idea-ue-eap idea idea-ultimate", "jetbrains-idea"],
     ["PhpStorm", "phpstorm", "jetbrains-phpstorm"],
     ["PyCharm", "pycharm pycharm-eap charm", "jetbrains-pycharm"],
     ["WebStorm", "webstorm", "jetbrains-webstorm"],
