@@ -3,6 +3,7 @@
 """
 Check spelling of any word in any language you want. Example: spell en great
 """
+from time import sleep
 
 from albertv0 import Item
 from albertv0 import ClipAction
@@ -10,7 +11,7 @@ import os
 import re
 import subprocess
 
-__iid__ = "PythonInterface/v0.1"
+__iid__ = "PythonInterface/v0.2"
 __prettyname__ = "Spell checker"
 __version__ = "2.0"
 __trigger__ = "spell "
@@ -19,8 +20,43 @@ __dependencies__ = []
 
 
 dict_file = os.path.dirname(__file__) + "/dictionaries/{language}.gz"
+dicts_path = os.path.dirname(__file__) + "/dictionaries"
 icon_path = os.path.dirname(__file__) + "/spell.svg"
 limit = 5
+
+
+def initialize():
+    """
+    Initialize
+    """
+    aspellDictionaries = findInstalledAspellDictionaries()
+    for language in aspellDictionaries:
+        if not dictionaryExists(language):
+            dumpAspellDictionary(language)
+
+
+def findInstalledAspellDictionaries():
+    """
+    Find installed Aspell dictionaries
+    """
+    results = ''
+    try:
+        results = subprocess.check_output(['aspell', 'dump', 'dicts'])
+    except subprocess.CalledProcessError:
+        pass
+    results = results.splitlines()
+    return [result.decode('utf-8') for result in results if result.isalpha()]
+
+
+def dumpAspellDictionary(language):
+    """
+    Dump aspell dictionary
+
+    :param str language: Language
+    """
+    command = 'aspell -l {} dump master | aspell -l {} expand | gzip -c > {}/{}.gz'
+    command = command.format(language, language, dicts_path, language)
+    subprocess.call(command, shell=True)
 
 
 def handleQuery(query):
@@ -35,15 +71,15 @@ def handleQuery(query):
         return
 
     if len(query.string.split()) < 2:
-        return prepare_error_message("Enter a query in the form of 'spell [language] [phrase]'")
+        return prepareErrorMessage("Enter a query in the form of 'spell [language] [phrase]'")
 
     language, phrase = prepareParams(query)
 
     if not dictionaryExists(language):
-        return prepare_error_message("Dictionary '{language}' not found!".format(language=language))
+        return prepareErrorMessage("Dictionary '{language}' not found!".format(language=language))
 
-    results = find_in_dictionary(language, phrase)
-    return [prepare_results_item(query, result) for result in results]
+    results = findInDictionary(language, phrase)
+    return [prepareResultsItem(query, result) for result in results]
 
 
 def prepareParams(query):
@@ -58,7 +94,7 @@ def prepareParams(query):
     return (match.group('language'), match.group('phrase'))
 
 
-def find_in_dictionary(language, phrase):
+def findInDictionary(language, phrase):
     """
     Find in dictionary
 
@@ -77,7 +113,7 @@ def find_in_dictionary(language, phrase):
     return results
 
 
-def prepare_results_item(query, result):
+def prepareResultsItem(query, result):
     """
     Prepare resuls item
 
@@ -94,7 +130,7 @@ def prepare_results_item(query, result):
     return item
 
 
-def prepare_error_message(message):
+def prepareErrorMessage(message):
     """
     Prepare error messae
 
