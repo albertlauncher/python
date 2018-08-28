@@ -13,13 +13,12 @@ Be sure that you have installed needed packages.
 ```bash
 sudo apt install xclip aspell aspell-en aspell-pl aspell-de
 ```
-Dump dictionary of any language you need.
-```bash
-aspell -l en dump master | aspell -l en expand | gzip -c > ~/.local/share/albert/org.albert.extension.python/modules/Spell/dictionaries/en.gz
-aspell -l pl dump master | aspell -l pl expand | gzip -c > ~/.local/share/albert/org.albert.extension.python/modules/Spell/dictionaries/pl.gz
-aspell -l de dump master | aspell -l de expand | gzip -c > ~/.local/share/albert/org.albert.extension.python/modules/Spell/dictionaries/de.gz
-
+All installed aspell language will be automatically used by this plugin. Some languages are be installed in your system by default. If you need more just install them with:
 ```
+audo apt install aspell-XX
+```
+where XX is language iso code.
+
 ## Usage examples
 ```
 spell en great
