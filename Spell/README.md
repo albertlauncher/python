@@ -16,11 +16,15 @@ sudo apt install xclip aspell aspell-en aspell-pl aspell-de
 
 ## Additional dictionaries
 
-All installed aspell language will be automatically used by this plugin. Some languages are installed in your system by default. If you need more just install them with:
+All installed aspell language will be automatically used by this plugin. By default your system should have some languages already installed, like your current default system language. You can list all installed languages with command:
+```bash
+aspell dump dicts
+```
+If you need more languages just install them with:
 ```bash
 audo apt install aspell-XX
 ```
-where XX is language iso code.
+where XX is your language iso code.
 
 ## Usage examples
 ```
