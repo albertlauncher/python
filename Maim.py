@@ -58,7 +58,7 @@ def command_notify(title, message):
     interface = "org.freedesktop.Notifications"
     app_name = "Maim for Albert"
     id_num_to_replace = 0
-    icon = None
+    icon = ''
     actions_list = ''
     hint = ''
     time = 5000   # Use seconds x 1000
