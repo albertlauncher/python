@@ -24,11 +24,6 @@ from albertv0 import *
 import dbus
 
 
-ACTION_SCREENSHOT_AND_COPY = 0
-ACTION_UPLOAD_TO_IMGUR_AND_COPY = 1
-ACTION_OPEN_IN_BROWSER = 2
-
-
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "maim/slop screenshot utility"
 __version__ = "1.0"
