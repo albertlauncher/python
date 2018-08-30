@@ -13,11 +13,21 @@ Screenshots will be saved in XDG_PICTURES_DIR or in the temp directory."""
 
 import os
 import subprocess
+import multiprocessing
 import datetime
 import tempfile
+from functools import partial
 from shutil import which
 
 from albertv0 import *
+
+import dbus
+
+
+ACTION_SCREENSHOT_AND_COPY = 0
+ACTION_UPLOAD_TO_IMGUR_AND_COPY = 1
+ACTION_OPEN_IN_BROWSER = 2
+
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "maim/slop screenshot utility"
@@ -35,54 +45,146 @@ for dependency in __dependencies__:
 iconPath = iconLookup("camera-photo")
 
 
-def _parseDelay(query):
-    delay = []
+def parse_delay(query):
+    delay = ''
     try:
         if query:
             delay = int(query.split()[-1])
-            delay = ['--delay=%s' % delay]
+            delay = '--delay=%s' % delay
     except ValueError:
         pass
 
     return delay
 
 
+def command_notify(title, message):
+    item = "org.freedesktop.Notifications"
+    path = "/org/freedesktop/Notifications"
+    interface = "org.freedesktop.Notifications"
+    app_name = "Maim for Albert"
+    id_num_to_replace = 0
+    icon = None
+    actions_list = ''
+    hint = ''
+    time = 5000   # Use seconds x 1000
+
+    bus = dbus.SessionBus()
+    notif = bus.get_object(item, path)
+    notify = dbus.Interface(notif, interface)
+    notify.Notify(app_name, id_num_to_replace, icon,
+                  title, message, actions_list, hint, time)
+
+    return message
+
+
+def command_screenshot(maim_args, _previous_result):
+    filename = "%s-maim-screenshot.png" % datetime.datetime.now().isoformat()
+    filename = os.path.join(get_screenshot_dir(), filename)
+
+    cmd_sleep = 'sleep 1.0'
+    cmd_maim = 'maim %s %s' % (maim_args, filename)
+    cmd_copy = '{ echo "%s" | xclip -i -selection clipboard; }' % filename
+    command = ' && '.join([cmd_sleep, cmd_maim, cmd_copy])
+    subprocess.Popen(command, shell=True).wait()
+    return filename
+
+
+def command_open(url):
+    subprocess.Popen('xdg-open %s' % url, shell=True).wait()
+    return url
+
+
+def command_imgur(filename):
+    url = subprocess.check_output(
+        'imgur %s ' % filename, shell=True).decode('utf8').splitlines()[0]
+    cmd_copy = '{ echo -n "%s" | xclip -i -selection clipboard; }' % url
+    subprocess.Popen(cmd_copy, shell=True).wait()
+    return url
+
 
 def handleQuery(query):
-    if query.isTriggered:
-        stripped_query = query.string.strip()
-        delay = _parseDelay(stripped_query)
-        enable_imgur = 'imgur' in stripped_query.split()
+    if not query.isTriggered:
+        return None
 
-        return [
-            Item(
-                id="%s-area-of-screen" % __prettyname__,
-                icon=iconPath,
-                text="Area/Window [imgur] [delay_seconds]",
-                subtext="Draw a rectangle with your mouse to capture an area or pick a window",
-                actions=[
-                    FuncAction(
-                        "Take screenshot of selected area",
-                        lambda: doScreenshot(["--select"] + delay, enable_imgur)
-                    ),
-                ]
-            ),
-            Item(
-                id="%s-whole-screen" % __prettyname__,
-                icon=iconPath,
-                text="Screen: maim [imgur] [delay_seconds]",
-                subtext="Take a screenshot of the whole screen",
-                actions=[
-                    FuncAction(
-                        "Take screenshot of whole screen",
-                        lambda: doScreenshot([] + delay, enable_imgur)
-                    ),
-                ]
-            ),
-        ]
+    stripped_query = query.string.strip()
+    delay = parse_delay(stripped_query)
+
+    command_screenshot_area_delay = partial(command_screenshot, "--select " + delay)
+    command_screenshot_screen_delay = partial(command_screenshot, delay)
+    command_notify_filename = partial(command_notify, 'Filename')
+    command_notify_url = partial(command_notify, 'URL')
+
+    return [
+        Item(
+            id="%s-area-of-screen-imgur" % __prettyname__,
+            icon=iconPath,
+            text="Area/Window, upload to Imgur [delay_seconds]",
+            subtext="Draw a rectangle with your mouse to capture an area or pick a window",
+            actions=[
+                FuncAction(
+                    "Take screenshot of selected area",
+                    lambda: do_screenshot([
+                        command_screenshot_area_delay,
+                        command_imgur,
+                        command_notify_url,
+                        command_open,
+                    ])
+                ),
+            ]
+        ),
+        Item(
+            id="%s-area-of-screen" % __prettyname__,
+            icon=iconPath,
+            text="Area/Window [delay_seconds]",
+            subtext="Draw a rectangle with your mouse to capture an area or pick a window",
+            actions=[
+                FuncAction(
+                    "Take screenshot of selected area",
+                    lambda: do_screenshot([
+                        command_screenshot_area_delay,
+                        command_notify_filename,
+                        command_open,
+                    ])
+                ),
+            ]
+        ),
+        Item(
+            id="%s-whole-screen-imgur" % __prettyname__,
+            icon=iconPath,
+            text="Screen, upload to Imgur [delay_seconds]",
+            subtext="Take a screenshot of the whole screen",
+            actions=[
+                FuncAction(
+                    "Take screenshot of whole screen",
+                    lambda: do_screenshot([
+                        command_screenshot_screen_delay,
+                        command_imgur,
+                        command_notify_url,
+                        command_open,
+                    ])
+                ),
+            ]
+        ),
+        Item(
+            id="%s-whole-screen" % __prettyname__,
+            icon=iconPath,
+            text="Screen [delay_seconds]",
+            subtext="Take a screenshot of the whole screen",
+            actions=[
+                FuncAction(
+                    "Take screenshot of whole screen",
+                    lambda: do_screenshot([
+                        command_screenshot_screen_delay,
+                        command_notify_filename,
+                        command_open,
+                    ])
+                ),
+            ]
+        ),
+    ]
 
 
-def getScreenshotDirectory():
+def get_screenshot_dir():
     if which("xdg-user-dir") is None:
         return tempfile.gettempdir()
 
@@ -95,23 +197,14 @@ def getScreenshotDirectory():
     return tempfile.gettempdir()
 
 
-def doScreenshot(additionalArguments, enable_imgur):
-    filename = "%s-maim-screenshot.png" % datetime.datetime.now().isoformat()
-    filename = os.path.join(getScreenshotDirectory(), filename)
+def run_in_process(commands, result):
+    for command in commands:
+        result = command(result)
 
-    args = ' '.join(additionalArguments)
-    cmd_sleep = 'sleep 1.0'
-    cmd_maim = 'maim %s %s' % (args, filename)
-    cmd_copy = '{ echo "%s" | xclip -i -selection clipboard; }' % filename
-    cmd_notify = 'notify-send -t 5000 "Screenshot Filename" "%s"' % filename
 
-    command = ' && '.join([cmd_sleep, cmd_maim, cmd_copy, cmd_notify])
+def do_screenshot(commands):
+    proc = multiprocessing.Process(target=run_in_process,
+                                   args=(commands, None))
+    proc.start()
+    # we don't call wait() here to avoid blocking albert
 
-    if enable_imgur:
-        cmd_imgur = 'URL=$(imgur %s | head -1) ' % filename
-        cmd_copy = '{ echo -n "$URL" | xclip -i -selection clipboard; }'
-        cmd_notify = 'notify-send -t 5000 "Screenshot URL" "$URL"'
-        command = ' && '.join([command, cmd_imgur, cmd_copy, cmd_notify])
-
-    info('maim command: %s' % command)
-    proc = subprocess.Popen(command, shell=True)
