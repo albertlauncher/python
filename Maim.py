@@ -40,6 +40,13 @@ for dependency in __dependencies__:
 iconPath = iconLookup("camera-photo")
 
 
+TIMEOUT_SECONDS = 10
+
+
+class CommandException(Exception):
+    pass
+
+
 def parse_delay(query):
     delay = ''
     try:
@@ -50,6 +57,42 @@ def parse_delay(query):
         pass
 
     return delay
+
+
+def expect(command):
+    proc = subprocess.Popen(command,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            shell=True)
+    try:
+        proc.wait(TIMEOUT_SECONDS)
+    except subprocess.TimeoutExpired as e:
+        raise CommandException('Command "%s" timed out: %s' % (command, e))
+
+    stdout = proc.stdout.read().decode('utf8')
+    stderr = proc.stderr.read().decode('utf8')
+
+
+    if proc.returncode != 0:
+        message = '\n'.join([str(proc.returncode), stdout, stderr])
+        raise CommandException(
+            'Command "%s" terminated with non-zero exit code %s' % (
+                command, message))
+
+    return stdout
+
+
+def get_screenshot_dir():
+    if which("xdg-user-dir") is None:
+        return tempfile.gettempdir()
+
+    proc = subprocess.run(["xdg-user-dir", "PICTURES"], stdout=subprocess.PIPE)
+
+    pictureDirectory = proc.stdout.decode("utf-8")
+    if pictureDirectory:
+        return os.path.expanduser(pictureDirectory.strip())
+
+    return tempfile.gettempdir()
 
 
 def command_notify(title, message):
@@ -72,15 +115,18 @@ def command_notify(title, message):
     return message
 
 
+def command_copy(text):
+    subprocess.Popen('echo -n "%s" | xclip -i -selection clipboard' % text,
+                     shell=True).wait()
+    return text
+
+
 def command_screenshot(maim_args, _previous_result):
     filename = "%s-maim-screenshot.png" % datetime.datetime.now().isoformat()
     filename = os.path.join(get_screenshot_dir(), filename)
 
-    cmd_sleep = 'sleep 1.0'
-    cmd_maim = 'maim %s %s' % (maim_args, filename)
-    cmd_copy = '{ echo "%s" | xclip -i -selection clipboard; }' % filename
-    command = ' && '.join([cmd_sleep, cmd_maim, cmd_copy])
-    subprocess.Popen(command, shell=True).wait()
+    expect('sleep 1.0 && maim %s %s' % (maim_args, filename))
+    command_copy(filename)
     return filename
 
 
@@ -90,10 +136,13 @@ def command_open(url):
 
 
 def command_imgur(filename):
-    url = subprocess.check_output(
-        'imgur %s ' % filename, shell=True).decode('utf8').splitlines()[0]
-    cmd_copy = '{ echo -n "%s" | xclip -i -selection clipboard; }' % url
-    subprocess.Popen(cmd_copy, shell=True).wait()
+    stdout = expect('imgur %s ' % filename)
+    lines = stdout.splitlines()
+    if len(lines) == 0:
+        raise CommandException('Unexpected output from imgur: %s' % stdout)
+
+    url = lines[0].strip()
+    command_copy(url)
     return url
 
 
@@ -179,22 +228,12 @@ def handleQuery(query):
     ]
 
 
-def get_screenshot_dir():
-    if which("xdg-user-dir") is None:
-        return tempfile.gettempdir()
-
-    proc = subprocess.run(["xdg-user-dir", "PICTURES"], stdout=subprocess.PIPE)
-
-    pictureDirectory = proc.stdout.decode("utf-8")
-    if pictureDirectory:
-        return os.path.expanduser(pictureDirectory.strip())
-
-    return tempfile.gettempdir()
-
-
 def run_in_process(commands, result):
-    for command in commands:
-        result = command(result)
+    try:
+        for command in commands:
+            result = command(result)
+    except CommandException as e:
+        command_notify('Error', str(e))
 
 
 def do_screenshot(commands):
