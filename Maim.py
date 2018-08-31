@@ -6,8 +6,9 @@ screen, an specific area or the current active window.
 Also supports upload to imgur:
 https://github.com/tangphillip/Imgur-Uploader/blob/master/imgur
 
-When the screenshot is made, notify-send message will be sent to indicate that
-the screenshot has been taken successfully.
+When the screenshot is made, notification message using dbus module will be
+sent to indicate that the screenshot has been taken successfully or that an
+error has occurred.
 
 Screenshots will be saved in XDG_PICTURES_DIR or in the temp directory."""
 
@@ -30,7 +31,7 @@ __version__ = "1.0"
 __trigger__ = "maim "
 __author__ = "Yuri Bochkarev"
 # imgur is optional
-__dependencies__ = ["maim", "slop", "notify-send", "xclip"]
+__dependencies__ = ["maim", "slop", "xclip"]
 
 
 for dependency in __dependencies__:
@@ -71,7 +72,6 @@ def expect(command):
 
     stdout = proc.stdout.read().decode('utf8')
     stderr = proc.stderr.read().decode('utf8')
-
 
     if proc.returncode != 0:
         message = '\n'.join([str(proc.returncode), stdout, stderr])
@@ -241,4 +241,3 @@ def do_screenshot(commands):
                                    args=(commands, None))
     proc.start()
     # we don't call wait() here to avoid blocking albert
-
