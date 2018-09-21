@@ -36,9 +36,14 @@ def find_exec(namestr: str, dnamestr: str):
 
     if binpath is None:
         return None
+
     for dname in dnamestr.split(" "):
-        s = iconLookup(name)
+        s = iconLookup(dname)
         if s is not None:
+            s = iconLookup('jetbrains')
+        if s is not None:
+            s = os.path.dirname(__file__) + "/jetbrains.svg"
+        if s:
             return (binpath, s)
 
     return None
