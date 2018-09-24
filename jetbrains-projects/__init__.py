@@ -10,23 +10,25 @@ from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Jetbrains IDE Projects"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "jb "
 __author__ = "Markus Richter"
 __dependencies__ = []
 
-paths = [#<Name for config directory>, <possible names for the binary>, <possible names of the .desktop file>
-    ["CLion", "clion", "jetbrains-clion"],
-    ["DataGrip", "datagrip", "jetbrains-datagrip"],
-    ["GoLand", "goland", "jetbrains-goland"],
-    ["IntelliJIdea", "intellij-idea-ue-bundled-jre intellij-idea-ultimate-edition idea-ce-eap idea-ue-eap idea idea-ultimate", "jetbrains-idea"],
-    ["PhpStorm", "phpstorm", "jetbrains-phpstorm"],
-    ["PyCharm", "pycharm pycharm-eap charm", "jetbrains-pycharm"],
-    ["WebStorm", "webstorm", "jetbrains-webstorm"],
+
+
+paths = [#<Name for config directory>, <possible names for the binary/icon>
+    ["CLion", "clion"],
+    ["DataGrip", "datagrip"],
+    ["GoLand", "goland"],
+    ["IntelliJIdea", "intellij-idea-ue-bundled-jre intellij-idea-ultimate-edition idea-ce-eap idea-ue-eap idea idea-ultimate"],
+    ["PhpStorm", "phpstorm"],
+    ["PyCharm", "pycharm pycharm-eap charm"],
+    ["WebStorm", "webstorm"],
 ]
 
 #find the executable path and icon of a program described by space-separated lists of possible binary-names / .desktop-file names
-def find_exec(namestr: str, dnamestr: str):
+def find_exec(namestr: str):
     binpath = None
     for name in namestr.split(" "):
         s = which(name)
@@ -37,16 +39,16 @@ def find_exec(namestr: str, dnamestr: str):
     if binpath is None:
         return None
 
-    for dname in dnamestr.split(" "):
+    for dname in namestr.split(" "):
         s = iconLookup(dname)
-        if s is not None:
-            s = iconLookup('jetbrains')
-        if s is not None:
-            s = os.path.dirname(__file__) + "/jetbrains.svg"
-        if s:
+        if s is not None and s is not "":
             return (binpath, s)
 
-    return None
+    # if no icon could be found, use a generic one:
+    s = iconLookup('jetbrains')
+    if s is None or s is "":
+        s = os.path.dirname(__file__) + "/jetbrains.svg"
+    return (binpath, s)
 
 
 HOME_DIR = os.environ["HOME"]
@@ -74,7 +76,7 @@ def get_proj(path):
             for o in i[0][0]:
                 if o.attrib["name"] == 'projectOpenTimestamp':
                     items[i.attrib["key"]] = int(o.attrib["value"])
-    return [(items[e], e.replace("$USER_HOME$", HOME_DIR)) for e in items]
+    return [ (items[e], e.replace("$USER_HOME$", HOME_DIR) ) for e in items]
 
 
 def handleQuery(query):
@@ -96,7 +98,7 @@ def handleQuery(query):
             configpath = os.path.join(HOME_DIR, dirs[0], configpath)
 
             #extract the binary name and icon
-            binaries[app[0]] = find_exec(app[1], app[2])
+            binaries[app[0]] = find_exec(app[1])
 
             #add all recently opened projects
             projects.extend([[e[0], e[1], app[0]] for e in get_proj(configpath)])
