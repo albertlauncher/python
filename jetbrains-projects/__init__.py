@@ -12,7 +12,7 @@ __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Jetbrains IDE Projects"
 __version__ = "1.1"
 __trigger__ = "jb "
-__author__ = "Markus Richter"
+__author__ = "Markus Richter, Thomas Queste"
 __dependencies__ = []
 
 default_icon = os.path.dirname(__file__) + "/jetbrains.svg"
