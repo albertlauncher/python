@@ -27,28 +27,19 @@ paths = [#<Name for config directory>, <possible names for the binary/icon>
     ["WebStorm", "webstorm"],
 ]
 
-#find the executable path and icon of a program described by space-separated lists of possible binary-names / .desktop-file names
+
+default_icon = os.path.dirname(__file__) + "/jetbrains.svg"
+
+
+#find the executable path and icon of a program described by space-separated lists of possible binary-names
 def find_exec(namestr: str):
-    binpath = None
     for name in namestr.split(" "):
-        s = which(name)
-        if s is not None:
-            binpath = s
-            break
-
-    if binpath is None:
+        exec = which(name)
+        if exec:
+            icon = iconLookup(name) or default_icon
+            return exec, icon
+    else:
         return None
-
-    for dname in namestr.split(" "):
-        s = iconLookup(dname)
-        if s is not None and s is not "":
-            return (binpath, s)
-
-    # if no icon could be found, use a generic one:
-    s = iconLookup('jetbrains')
-    if s is None or s is "":
-        s = os.path.dirname(__file__) + "/jetbrains.svg"
-    return (binpath, s)
 
 
 HOME_DIR = os.environ["HOME"]
