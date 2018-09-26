@@ -15,37 +15,33 @@ __trigger__ = "jb "
 __author__ = "Markus Richter"
 __dependencies__ = []
 
+default_icon = os.path.dirname(__file__) + "/jetbrains.svg"
+HOME_DIR = os.environ["HOME"]
 
-
-paths = [#<Name for config directory>, <possible names for the binary/icon>
+paths = [  # <Name for config directory>, <possible names for the binary/icon>
     ["CLion", "clion"],
     ["DataGrip", "datagrip"],
     ["GoLand", "goland"],
-    ["IntelliJIdea", "intellij-idea-ue-bundled-jre intellij-idea-ultimate-edition idea-ce-eap idea-ue-eap idea idea-ultimate"],
+    ["IntelliJIdea",
+     "intellij-idea-ue-bundled-jre intellij-idea-ultimate-edition idea-ce-eap idea-ue-eap idea idea-ultimate"],
     ["PhpStorm", "phpstorm"],
     ["PyCharm", "pycharm pycharm-eap charm"],
     ["WebStorm", "webstorm"],
 ]
 
 
-default_icon = os.path.dirname(__file__) + "/jetbrains.svg"
-
-
-#find the executable path and icon of a program described by space-separated lists of possible binary-names
+# find the executable path and icon of a program described by space-separated lists of possible binary-names
 def find_exec(namestr: str):
     for name in namestr.split(" "):
-        exec = which(name)
-        if exec:
+        executable = which(name)
+        if executable:
             icon = iconLookup(name) or default_icon
-            return exec, icon
+            return executable, icon
     else:
         return None
 
 
-HOME_DIR = os.environ["HOME"]
-
-
-#parse the xml at path, return all recent project paths and the time they were last open
+# parse the xml at path, return all recent project paths and the time they were last open
 def get_proj(path):
     r = ElementTree.parse(path).getroot()  # type:ElementTree.Element
     add_info = None
@@ -67,7 +63,7 @@ def get_proj(path):
             for o in i[0][0]:
                 if o.attrib["name"] == 'projectOpenTimestamp':
                     items[i.attrib["key"]] = int(o.attrib["value"])
-    return [ (items[e], e.replace("$USER_HOME$", HOME_DIR) ) for e in items]
+    return [(items[e], e.replace("$USER_HOME$", HOME_DIR)) for e in items]
 
 
 def handleQuery(query):
@@ -80,18 +76,19 @@ def handleQuery(query):
             if app[0] == "IntelliJIdea":
                 configpath = "config/options/recentProjects.xml"
 
-            #dirs contains possibly multiple directories for a program (eg. .GoLand2018.1 and .GoLand2017.3). take the newest.
+            # dirs contains possibly multiple directories for a program (eg. .GoLand2018.1 and .GoLand2017.3)
             dirs = [f for f in os.listdir(HOME_DIR) if
                     os.path.isdir(os.path.join(HOME_DIR, f)) and f.startswith("." + app[0])]
+            # take the newest
             dirs.sort(reverse=True)
             if len(dirs) == 0:
                 continue
             configpath = os.path.join(HOME_DIR, dirs[0], configpath)
 
-            #extract the binary name and icon
+            # extract the binary name and icon
             binaries[app[0]] = find_exec(app[1])
 
-            #add all recently opened projects
+            # add all recently opened projects
             projects.extend([[e[0], e[1], app[0]] for e in get_proj(configpath)])
         projects.sort(key=lambda s: s[0], reverse=True)
         return [Item(
