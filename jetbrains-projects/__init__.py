@@ -37,8 +37,7 @@ def find_exec(namestr: str):
         if executable:
             icon = iconLookup(name) or default_icon
             return executable, icon
-    else:
-        return None
+    return None
 
 
 # parse the xml at path, return all recent project paths and the time they were last open
