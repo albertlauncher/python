@@ -82,7 +82,10 @@ def handleQuery(query):
             dirs.sort(reverse=True)
             if len(dirs) == 0:
                 continue
+
             config_path = os.path.join(HOME_DIR, dirs[0], config_path)
+            if not os.path.exists(config_path):
+                continue
 
             # extract the binary name and icon
             binaries[app[0]] = find_exec(app[1])
