@@ -66,7 +66,7 @@ def get_proj(path):
 
 
 def handleQuery(query):
-    if query.isTriggered or query.string is not "":
+    if query.isTriggered and query.string:
         binaries = {}
         projects = []
 
@@ -93,6 +93,7 @@ def handleQuery(query):
             # add all recently opened projects
             projects.extend([[e[0], e[1], app[0]] for e in get_proj(config_path)])
         projects.sort(key=lambda s: s[0], reverse=True)
+        print('Projects', projects)
         return [Item(
             id="-" + str(p[0]),
             icon=binaries[p[2]][1],
