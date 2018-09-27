@@ -71,9 +71,9 @@ def handleQuery(query):
         projects = []
 
         for app in paths:
-            configpath = "config/options/recentProjectDirectories.xml"
+            config_path = "config/options/recentProjectDirectories.xml"
             if app[0] == "IntelliJIdea":
-                configpath = "config/options/recentProjects.xml"
+                config_path = "config/options/recentProjects.xml"
 
             # dirs contains possibly multiple directories for a program (eg. .GoLand2018.1 and .GoLand2017.3)
             dirs = [f for f in os.listdir(HOME_DIR) if
@@ -82,13 +82,13 @@ def handleQuery(query):
             dirs.sort(reverse=True)
             if len(dirs) == 0:
                 continue
-            configpath = os.path.join(HOME_DIR, dirs[0], configpath)
+            config_path = os.path.join(HOME_DIR, dirs[0], config_path)
 
             # extract the binary name and icon
             binaries[app[0]] = find_exec(app[1])
 
             # add all recently opened projects
-            projects.extend([[e[0], e[1], app[0]] for e in get_proj(configpath)])
+            projects.extend([[e[0], e[1], app[0]] for e in get_proj(config_path)])
         projects.sort(key=lambda s: s[0], reverse=True)
         return [Item(
             id="-" + str(p[0]),
