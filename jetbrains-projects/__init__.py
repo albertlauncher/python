@@ -66,7 +66,7 @@ def get_proj(path):
 
 
 def handleQuery(query):
-    if query.isTriggered and query.string:
+    if query.isTriggered:
         binaries = {}
         projects = []
 
@@ -93,14 +93,33 @@ def handleQuery(query):
             # add all recently opened projects
             projects.extend([[e[0], e[1], app[0]] for e in get_proj(config_path)])
         projects.sort(key=lambda s: s[0], reverse=True)
-        print('Projects', projects)
-        return [Item(
-            id="-" + str(p[0]),
-            icon=binaries[p[2]][1],
-            text=p[1].split("/")[-1],
-            subtext=p[1],
-            completion=__trigger__ + p[1].split("/")[-1],
-            actions=[
-                ProcAction("Open in %s" % p[2], [binaries[p[2]][0], p[1]])
-            ]
-        ) for p in projects if p[1].lower().find(query.string.lower()) != -1]
+
+        # List all projects or the one corresponding to the query
+        if query.string:
+            projects = [p for p in projects if p[1].lower().find(query.string.lower()) != -1]
+
+        items = []
+        for p in projects:
+            last_update = p[0]
+            project_path = p[1]
+            project_dir = project_path.split("/")[-1]
+            product_name = p[2]
+            binary = binaries[product_name]
+            if not binary:
+                continue
+
+            executable = binaries[p[2]][0]
+            icon = binaries[p[2]][1]
+
+            items.append(Item(
+                id="-" + str(last_update),
+                icon=icon,
+                text=project_dir,
+                subtext=project_path,
+                completion=__trigger__ + project_dir,
+                actions=[
+                    ProcAction("Open in %s" % product_name, [executable, project_path])
+                ]
+            ))
+
+        return items
