@@ -108,8 +108,8 @@ def handleQuery(query):
             if not binary:
                 continue
 
-            executable = binaries[p[2]][0]
-            icon = binaries[p[2]][1]
+            executable = binary[0]
+            icon = binary[1]
 
             items.append(Item(
                 id="-" + str(last_update),
