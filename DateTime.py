@@ -26,7 +26,7 @@ def handleQuery(query):
     if fields:
         def makeItem(text: str, subtext: str):
             return Item(
-                id=text,
+                id=__prettyname__,
                 icon=iconPath,
                 text=text,
                 subtext=subtext,
