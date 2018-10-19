@@ -3,14 +3,15 @@
 """Search Wikipedia articles."""
 
 from albertv0 import *
-from locale import getlocale
+from locale import getdefaultlocale
 from urllib import request, parse
 import json
+import time
 import os
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Wikipedia"
-__version__ = "1.2"
+__version__ = "1.3"
 __trigger__ = "wiki "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -38,13 +39,18 @@ def initialize():
     with request.urlopen(req) as response:
         data = json.loads(response.read().decode('utf-8'))
         languages = [lang['code'] for lang in data['query']['languages']]
-        local_lang_code = getlocale()[0][0:2]
+        local_lang_code = getdefaultlocale()[0][0:2]
         if local_lang_code in languages:
             baseurl = baseurl.replace("en", local_lang_code)
 
 
 def handleQuery(query):
     if query.isTriggered:
+
+        # avoid rate limiting
+        time.sleep(0.1)
+        if not query.isValid:
+            return
 
         stripped = query.string.strip()
 
