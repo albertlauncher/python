@@ -54,7 +54,7 @@ class UpdateThread(Thread):
                 return
 
     def stop(self):
-        self._stop_event.set()
+        self._stopevent.set()
 
 
 def initialize():
