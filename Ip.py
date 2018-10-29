@@ -21,7 +21,7 @@ def handleQuery(query):
     if not query.isTriggered:
         return None
 
-    with request.urlopen("http://ipecho.net/plain") as response:
+    with request.urlopen("https://ipecho.net/plain") as response:
         externalIP = response.read().decode()
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
