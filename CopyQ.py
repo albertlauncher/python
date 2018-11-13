@@ -93,7 +93,11 @@ def handleQuery(query):
             if not text:
                 text = "<i>No text</i>"
             else:
-                text = pattern.sub(lambda m: "<u>%s</u>" % m.group(0), html.escape(" ".join(filter(None, text.replace("\n", " ").split(" ")))))
+                U_BEGIN = "@U_BEGIN_XXXXX@"
+                U_END = "@U_END_XXXXX@"
+                raw_text = " ".join(filter(None, text.replace("\n", " ").split(" ")))
+                underlined_text = pattern.sub(lambda m: U_BEGIN + m.group(0) + U_END, raw_text)
+                text = html.escape(underlined_text).replace(U_BEGIN, "<u>").replace(U_END, "</u>")
             items.append(
                 Item(
                     id=__prettyname__,
