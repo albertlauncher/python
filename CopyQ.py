@@ -69,7 +69,8 @@ def handleQuery(query):
                 )
             ]
 
-        script = copyq_script_getMatches % query.string if query.string else copyq_script_getAll
+        escaped_query = query.string.replace('\\', '\\\\').replace('"', '\\"')
+        script = copyq_script_getMatches % escaped_query if query.string else copyq_script_getAll
 
         proc = subprocess.run(['copyq', '-'], input=script.encode(), stdout=subprocess.PIPE)
         json_arr = json.loads(proc.stdout.decode())
