@@ -55,6 +55,19 @@ JSON.stringify(result);
 
 def handleQuery(query):
     if query.isTriggered:
+        try:
+            pattern = re.compile(query.string, re.IGNORECASE)
+            critical(query.string)
+        except re.error:
+            return [
+                Item(
+                    id=__prettyname__,
+                    icon=iconPath,
+                    text="<b>Invalid regex!</b>",
+                    subtext="",
+                    actions=[],
+                )
+            ]
 
         script = copyq_script_getMatches % query.string if query.string else copyq_script_getAll
 
@@ -62,7 +75,6 @@ def handleQuery(query):
         json_arr = json.loads(proc.stdout.decode())
 
         items = []
-        pattern = re.compile(query.string, re.IGNORECASE)
         for json_obj in json_arr:
             row = json_obj['row']
             text = json_obj['text']
