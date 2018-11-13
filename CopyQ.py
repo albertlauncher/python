@@ -57,7 +57,6 @@ def handleQuery(query):
     if query.isTriggered:
         try:
             pattern = re.compile(query.string, re.IGNORECASE)
-            critical(query.string)
         except re.error:
             return [
                 Item(
