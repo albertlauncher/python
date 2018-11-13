@@ -12,7 +12,7 @@ from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "CopyQ"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "cq "
 __author__ = "Manuel Schneider"
 __dependencies__ = ["copyq"]
