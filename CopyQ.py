@@ -75,6 +75,17 @@ def handleQuery(query):
         proc = subprocess.run(['copyq', '-'], input=script.encode(), stdout=subprocess.PIPE)
         json_arr = json.loads(proc.stdout.decode())
 
+        if not json_arr:
+            return [
+                Item(
+                    id=__prettyname__,
+                    icon=iconPath,
+                    text="<b>No results found.</b>",
+                    subtext="",
+                    actions=[],
+                )
+            ]
+
         items = []
         for json_obj in json_arr:
             row = json_obj['row']
