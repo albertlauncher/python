@@ -73,7 +73,8 @@ class UpdateThread(Thread):
                     vol = coindata['24h_volume_usd']
                     vol = lformat("%d", float(vol), True) if vol else "?"
                     price = coindata['price_usd']
-                    price = lformat("%f", float(price), True) if price else "?"
+                    price_precision = "%.2f" if float(price) > 1 else "%.6f"
+                    price = lformat(price_precision, float(price), True) if price else "?"
                     if "," in price:
                         price = price.rstrip("0").rstrip(",")
                     newCoins.append(Coin(identifier=coindata['id'],
