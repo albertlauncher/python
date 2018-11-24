@@ -46,7 +46,7 @@ def handleQuery(query):
 
         items = []
         pattern = re.compile(query.string, re.IGNORECASE)
-        proc = subprocess.Popen(["expac", "-Ss", "%n\n%v\n%r\n%d\n%u", query.string],
+        proc = subprocess.Popen(["expac", "-Ss", "%n\n%v\n%r\n%d\n%u\n%E", query.string],
                                 stdout=subprocess.PIPE)
         for line in proc.stdout:
             name = line.decode().rstrip()
@@ -54,12 +54,13 @@ def handleQuery(query):
             repo = proc.stdout.readline().decode().rstrip()
             desc = proc.stdout.readline().decode().rstrip()
             purl = proc.stdout.readline().decode().rstrip()
+            deps = proc.stdout.readline().decode().rstrip()
 
             items.append(Item(
                 id="%s%s%s" % (__prettyname__, repo, name),
                 icon=iconPath,
                 text="<b>%s</b> <i>%s</i> [%s]" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name), vers, repo),
-                subtext=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), desc),
+                subtext="%s <i>(<b>%s</b>)</i>" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), desc), deps) if deps else pattern.sub(lambda m: "<u>%s</u>" % m.group(0), desc),
                 completion="%s%s" % (query.trigger, name),
                 actions=[
                     TermAction("Install", ["sudo", "pacman", "-S", name]),
