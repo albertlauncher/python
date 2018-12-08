@@ -12,7 +12,7 @@ from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "CopyQ"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "cq "
 __author__ = "Manuel Schneider"
 __dependencies__ = ["copyq"]
@@ -52,24 +52,32 @@ for ( var i = 0; i < size(); ++i ) {
 JSON.stringify(result);
 """
 
+def copyq_get_matches(substring):
+    script = copyq_script_getMatches % substring
+    proc = subprocess.run(['copyq', '-'], input=script.encode(), stdout=subprocess.PIPE)
+    return json.loads(proc.stdout.decode())
+
+
+def copyq_get_all():
+    proc = subprocess.run(['copyq', '-'], input=copyq_script_getAll.encode(), stdout=subprocess.PIPE)
+    return json.loads(proc.stdout.decode())
+
 
 def handleQuery(query):
     if query.isTriggered:
 
-        script = copyq_script_getMatches % query.string if query.string else copyq_script_getAll
-
-        proc = subprocess.run(['copyq', '-'], input=script.encode(), stdout=subprocess.PIPE)
-        json_arr = json.loads(proc.stdout.decode())
-
         items = []
         pattern = re.compile(query.string, re.IGNORECASE)
+        json_arr = copyq_get_matches(query.string) if query.string else copyq_get_all()
         for json_obj in json_arr:
             row = json_obj['row']
             text = json_obj['text']
             if not text:
                 text = "<i>No text</i>"
             else:
-                text = pattern.sub(lambda m: "<u>%s</u>" % m.group(0), html.escape(" ".join(filter(None, text.replace("\n", " ").split(" ")))))
+                text = html.escape(" ".join(filter(None, text.replace("\n", " ").split(" "))))
+                if query.string:
+                    text = pattern.sub(lambda m: "<u>%s</u>" % m.group(0), text)
             items.append(
                 Item(
                     id=__prettyname__,
