@@ -9,7 +9,7 @@ from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Kill Process"
-__version__ = "1.3"
+__version__ = "1.4"
 __trigger__ = "kill "
 __author__ = "Benedict Dudel, Manuel Schneider"
 __dependencies__ = []
@@ -29,7 +29,7 @@ def handleQuery(query):
                         proc_cmdline = open(os.path.join(dir_entry.path, 'cmdline'), 'r').read().strip().replace("\0", " ")
                         results.append(
                             Item(
-                                id="kill_%s" % dir_entry.name,
+                                id="kill_%s" % proc_command,
                                 icon=iconPath,
                                 text=proc_command.replace(query.string, "<u>%s</u>" % query.string),
                                 subtext=proc_cmdline,
