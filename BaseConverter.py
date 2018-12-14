@@ -2,10 +2,10 @@
 
 """Convert representations of numbers.
 Usage: base <src base> <dest base> <number>
-   Or: <src base name> <number>
+   Or: <src base name> <number> [padding]
 Examples: base 10 16 1234567890
           dec 1024
-          hex ff"""
+          hex 5f 8"""
 
 from albertv0 import *
 import numpy as np
@@ -19,12 +19,16 @@ __dependencies__ = ["numpy"]
 
 base_keywords = {"bin": 2, "oct": 8, "dec": 10, "hex": 16}
 
-def buildItem(completion, src, dst, number):
+def buildItem(completion, src, dst, number, padding=0):
     item = Item(id=__prettyname__, completion=completion)
     try:
         src = int(src)
         dst = int(dst)
-        item.text = np.base_repr(int(number, src), dst)
+        padding = int(padding)
+        integer = int(number, src)
+        item.text = np.base_repr(integer, dst)
+        if integer >= 0 and len(item.text) < padding:
+            item.text = '0'*(padding-len(item.text)) + item.text
         item.subtext = "Base %s representation of %s (base %s)" % (dst, number, src)
         item.addAction(ClipAction("Copy to clipboard", item.text))
     except Exception as e:
@@ -44,11 +48,12 @@ def handleQuery(query):
             return item
     else:
         fields = query.string.split()
-        if len(fields) < 1 or fields[0] not in base_keywords:
+        if len(fields) < 2 or fields[0] not in base_keywords:
             return
         src = base_keywords[fields[0]]
-        number = 0 if len(fields) < 2 else fields[1]
+        number = fields[1]
+        padding = 0 if len(fields) < 3 else fields[2]
         results = []
         for dst in sorted(base_keywords.values()):
-            results.append(buildItem(query.rawString, src, dst, number))
+            results.append(buildItem(query.rawString, src, dst, number, padding))
         return results
