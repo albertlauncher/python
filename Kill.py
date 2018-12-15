@@ -29,7 +29,7 @@ def handleQuery(query):
                         proc_cmdline = open(os.path.join(dir_entry.path, 'cmdline'), 'r').read().strip().replace("\0", " ")
                         results.append(
                             Item(
-                                id="kill_%s" % proc_command,
+                                id="kill_%s" % proc_cmdline,
                                 icon=iconPath,
                                 text=proc_command.replace(query.string, "<u>%s</u>" % query.string),
                                 subtext=proc_cmdline,
