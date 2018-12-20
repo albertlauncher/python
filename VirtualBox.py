@@ -98,7 +98,7 @@ def buildVmItem(vm):
     if vm.state == MachineState.running:  #5
         item.addAction(FuncAction(text="Save virtual machine", callable=lambda: saveVm(vm)))
         item.addAction(FuncAction(text="Power off via ACPI event (Power button)", callable=lambda: acpiPowerVm(vm)))
-        item.addAction(FuncAction(text="Shut down virtual machine", callable=lambda: stopVm(vm)))
+        item.addAction(FuncAction(text="Turn off virtual machine", callable=lambda: stopVm(vm)))
         item.addAction(FuncAction(text="Pause virtual machine", callable=lambda: pauseVm(vm)))
     if vm.state == MachineState.paused:  #6
         item.addAction(FuncAction(text="Resume virtual machine", callable=lambda: resumeVm(vm)))
