@@ -55,5 +55,7 @@ def handleQuery(query):
         padding = 0 if len(fields) < 3 else fields[2]
         results = []
         for dst in sorted(base_keywords.values()):
+            if dst == src:
+                continue
             results.append(buildItem(query.rawString, src, dst, number, padding))
         return results
