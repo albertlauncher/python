@@ -14,7 +14,7 @@ Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Window Switcher"
-__version__ = "1.3"
+__version__ = "1.4"
 __trigger__ = None
 __author__ = "Ed Perez, Manuel Schneider"
 __dependencies__ = ["wmctrl"]
@@ -36,5 +36,7 @@ def handleQuery(query):
                                     actions=[ProcAction("Switch Window",
                                                         ["wmctrl", '-i', '-a', win.wid] ),
                                              ProcAction("Move window to this desktop",
-                                                        ["wmctrl", '-i', '-R', win.wid] )]))
+                                                        ["wmctrl", '-i', '-R', win.wid] ),
+                                             ProcAction("Close the window gracefully.",
+                                                        ["wmctrl", '-c', win.wid])]))
         return results
