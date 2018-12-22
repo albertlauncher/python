@@ -4,6 +4,7 @@
 
 Synopsis: <amount> <src currency> [to|as|in] <dest currency>"""
 
+import json
 import re
 import time
 from urllib.request import urlopen
@@ -50,21 +51,22 @@ class EuropeanCentralBank:
             dst_rate = self.exchange_rates[dst]
             return str(amount / src_rate * dst_rate)
 
-class Yahoo:
+class Api:
 
     def __init__(self):
-        self.name = "Yahoo"
+        self.name = "Currency Converter API"
 
     def convert(self, amount, src, dst):
-        url = 'https://search.yahoo.com/search?p=%s+%s+to+%s' % (amount, src, dst)
+        currency = '%s_%s' % (src, dst)
+        url = 'http://free.currencyconverterapi.com/api/v5/convert?q=%s&compact=y' % (currency)
         with urlopen(url) as response:
-            html = response.read().decode()
-            m = re.search('<span class=.*convert-to.*>(\d+(\.\d+)?)', html)
-            if m:
-                return m.group(1)
+            value = response.read().decode()
+            result = json.loads(value)
+            rate = result[currency]['val']
+            return str(amount * float(rate))
 
 
-providers = [EuropeanCentralBank(), Yahoo()]
+providers = [EuropeanCentralBank(), Api()]
 regex = re.compile(r"(\d+\.?\d*)\s+(\w{3})(?:\s+(?:to|in|as))?\s+(\w{3})")
 
 def handleQuery(query):
@@ -81,3 +83,8 @@ def handleQuery(query):
                 return item
         else:
             warning("None of the foreign exchange rate providers came up with a result for %s" % str(prep))
+    else:
+        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
+        item.text = __prettyname__
+        item.subtext = "Enter a query in the form of \"&lt;amount&gt; &lt;src currency&gt; &lt;dst currency&gt;\""
+        return item
