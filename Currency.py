@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """Convert currencies.
-
 Synopsis: <amount> <src currency> [to|as|in] <dest currency>"""
 
-import json
 import re
 import time
 from urllib.request import urlopen
@@ -15,7 +13,6 @@ from albertv0 import *
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Currency converter"
 __version__ = "1.0"
-__trigger__ = "cc "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 
@@ -52,7 +49,20 @@ class EuropeanCentralBank:
             dst_rate = self.exchange_rates[dst]
             return str(amount / src_rate * dst_rate)
 
-class Api:
+class Yahoo:
+
+    def __init__(self):
+        self.name = "Yahoo"
+
+    def convert(self, amount, src, dst):
+        url = 'https://search.yahoo.com/search?p=%s+%s+to+%s' % (amount, src, dst)
+        with urlopen(url) as response:
+            html = response.read().decode()
+            m = re.search('<span class=.*convert-to.*>(\d+(\.\d+)?)', html)
+            if m:
+                return m.group(1)
+
+class CurrencyConverterApi:
 
     def __init__(self):
         self.name = "Currency Converter API"
@@ -66,27 +76,20 @@ class Api:
             rate = result[currency]['val']
             return str(amount * float(rate))
 
-
-providers = [EuropeanCentralBank(), Api()]
+providers = [EuropeanCentralBank(), CurrencyConverterApi(), Yahoo()]
 regex = re.compile(r"(\d+\.?\d*)\s+(\w{3})(?:\s+(?:to|in|as))?\s+(\w{3})")
 
 def handleQuery(query):
-    if query.isTriggered:
-        match = regex.fullmatch(query.string.strip())
-        if match:
-            prep = (float(match.group(1)), match.group(2).upper(), match.group(3).upper())
-            item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
-            for provider in providers:
-                result = provider.convert(*prep)
-                if result:
-                    item.text = result
-                    item.subtext = "Value of %s %s in %s (Source: %s)" % (*prep, provider.name)
-                    item.addAction(ClipAction("Copy result to clipboard", result))
-                    return item
-            else:
-                warning("None of the foreign exchange rate providers came up with a result for %s" % str(prep))
+    match = regex.fullmatch(query.string.strip())
+    if match:
+        prep = (float(match.group(1)), match.group(2).upper(), match.group(3).upper())
+        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
+        for provider in providers:
+            result = provider.convert(*prep)
+            if result:
+                item.text = result
+                item.subtext = "Value of %s %s in %s (Source: %s)" % (*prep, provider.name)
+                item.addAction(ClipAction("Copy result to clipboard", result))
+                return item
         else:
-            item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
-            item.text = __prettyname__
-            item.subtext = "Enter a query in the form of \"&lt;amount&gt; &lt;src currency&gt; &lt;dst currency&gt;\""
-            return item
+            warning("None of the foreign exchange rate providers came up with a result for %s" % str(prep))
