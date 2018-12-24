@@ -3,6 +3,7 @@
 """Convert currencies.
 Synopsis: <amount> <src currency> [to|as|in] <dest currency>"""
 
+import json
 import re
 import time
 from urllib.request import urlopen
