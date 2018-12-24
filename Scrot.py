@@ -17,7 +17,7 @@ from shutil import which
 from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
-__prettyname__ = "scrot screenshot utility"
+__prettyname__ = "SCReenshOT utility"
 __version__ = "1.0"
 __trigger__ = "scrot "
 __author__ = "Benedict Dudel"
