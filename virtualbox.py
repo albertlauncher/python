@@ -29,6 +29,7 @@ for iconName in ["virtualbox", "unknown"]:
         break
 
 def initialize():
+    global vbox
     vbox = VirtualBox()
 
 def finalize():
