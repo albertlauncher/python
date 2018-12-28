@@ -2,20 +2,21 @@
 
 """Fortune wrapper extension"""
 
-from albertv0 import *
-from shutil import which
 import subprocess as sp
+from shutil import which
+
+from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Fortune"
 __version__ = "1.0"
 __trigger__ = "fortune"
 __author__ = "Kelvin Wong"
-__bin__ = "fortune"
-__dependencies__ = [__bin__]
+__dependencies__ = ["fortune"]
 
-if which(__bin__) is None:
-    raise Exception("'%s' is not in $PATH." % __bin__)
+cmd = __dependencies__[0]
+if which(cmd) is None:
+    raise Exception("'%s' is not in $PATH." % cmd)
 
 iconPath = iconLookup("font")
 

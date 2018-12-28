@@ -14,7 +14,7 @@ from collections import namedtuple
 from threading import Thread, Event
 
 __iid__ = "PythonInterface/v0.1"
-__prettyname__ = __name__
+__prettyname__ = "BitFinex"
 __version__ = "1.0"
 __trigger__ = "bfx "
 __author__ = "Manuel Schneider"

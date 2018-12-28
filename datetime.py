@@ -14,7 +14,6 @@ from albertv0 import *
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "DateTime"
 __version__ = "1.0"
-__trigger__ = None
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 

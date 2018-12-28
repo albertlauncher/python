@@ -15,17 +15,17 @@ __prettyname__ = "Tomboy"
 __version__ = "1.1"
 __trigger__ = "tb "
 __author__ = "Manuel Schneider"
-__bin__ = __prettyname__.lower()
-__dependencies__ = [__bin__, "python-dbus"]
+__dependencies__ = ["tomboy", "python-dbus"]
 
 BUS = "org.gnome.%s" % __prettyname__
 OBJ = "/org/gnome/%s/RemoteControl" % __prettyname__
 IFACE = 'org.gnome.%s.RemoteControl' % __prettyname__
 
-if which(__bin__) is None:
-    raise Exception("'%s' is not in $PATH." % __bin__)
+cmd = __dependencies__[0]
+if which(cmd) is None:
+    raise Exception("'%s' is not in $PATH." % cmd)
 
-iconPath = iconLookup(__bin__)
+iconPath = iconLookup(cmd)
 
 
 def handleQuery(query):
@@ -33,7 +33,7 @@ def handleQuery(query):
     if query.isTriggered:
         try:
             if not SessionBus().name_has_owner(BUS):
-                warning("Seems like %s is not running" % __bin__)
+                warning("Seems like %s is not running" % cmd)
                 return
 
             obj = SessionBus().get_object(bus_name=BUS, object_path=OBJ)
@@ -42,7 +42,7 @@ def handleQuery(query):
             if query.string.strip():
                 for note in iface.SearchNotes(query.string.lower(), False):
                     results.append(
-                        Item(id="%s%s" % (__prettyname__, note),
+                        Item(id="%s%s" % (cmd, note),
                              icon=iconPath,
                              text=iface.GetNoteTitle(note),
                              subtext="%s%s" % ("".join(["#%s " % re.search('.+:.+:(.+)', s).group(1) for s in iface.GetTagsForNote(note)]),
@@ -59,7 +59,7 @@ def handleQuery(query):
                     note = iface.CreateNote()
                     iface.DisplayNote(note)
 
-                results.append(Item(id="%s-create" % __prettyname__,
+                results.append(Item(id="%s-create" % cmd,
                                     icon=iconPath,
                                     text=__prettyname__,
                                     subtext="%s notes" % __prettyname__,

@@ -15,17 +15,17 @@ __prettyname__ = "Gnote"
 __version__ = "1.1"
 __trigger__ = "gn "
 __author__ = "Manuel Schneider"
-__bin__ = __prettyname__.lower()
-__dependencies__ = [__bin__, "python-dbus"]
+__dependencies__ = ["gnote", "python-dbus"]
 
 BUS = "org.gnome.%s" % __prettyname__
 OBJ = "/org/gnome/%s/RemoteControl" % __prettyname__
 IFACE = 'org.gnome.%s.RemoteControl' % __prettyname__
 
-if which(__bin__) is None:
-    raise Exception("'%s' is not in $PATH." % __bin__)
+cmd  = __prettyname__.lower()
+if which(cmd) is None:
+    raise Exception("'%s' is not in $PATH." % cmd)
 
-iconPath = iconLookup(__bin__)
+iconPath = iconLookup(cmd)
 
 
 def handleQuery(query):
@@ -33,7 +33,7 @@ def handleQuery(query):
     if query.isTriggered:
         try:
             if not SessionBus().name_has_owner(BUS):
-                warning("Seems like %s is not running" % __bin__)
+                warning("Seems like %s is not running" % cmd)
                 return
 
             obj = SessionBus().get_object(bus_name=BUS, object_path=OBJ)
