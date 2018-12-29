@@ -15,7 +15,7 @@ import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Archlinux User Repository"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "aur "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -59,9 +59,12 @@ def handleQuery(query):
             else:
                 results = []
                 pattern = re.compile(query.string, re.IGNORECASE)
-                for entry in sorted(data['results'], key=lambda item: item['Name']):
-                    name = entry['Name']
+                results_json = data['results']
+                results_json.sort(key=lambda item: item['Name'])
+                results_json.sort(key=lambda item: len(item['Name']))
 
+                for entry in results_json:
+                    name = entry['Name']
                     item = Item(
                         id=__prettyname__,
                         icon=iconPath,
