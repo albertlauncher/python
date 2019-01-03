@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""Extension for the package manager `pacman`.
+"""Arch Linux Package Manager (pacman) extension.
 
-The extension provides a way to install, remove and search for packages in the \
-archlinux.org database. To trigger the extension you just need to type `pacman ` \
-in albert.
+The extension provides a way to install, remove and search for packages in the archlinux.org \
+database. If no search query is supplied, you have the option to do a system update. \
+Otherwise albert will try to find for packages matching the filter. For more information about \
+`pacman` please have a look at: https://wiki.archlinux.org/index.php/pacman
 
-If no search query is supplied you have the option to do a system update. \
-Otherwise albert will try to search for packages with the search query within \
-the package name.
-
-For more information about `pacman` please have a look at: \
-https://wiki.archlinux.org/index.php/pacman"""
+Synopsis: <trigger> [filter]"""
 
 import re
 import subprocess
@@ -21,14 +17,14 @@ from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "PacMan"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "pacman "
 __author__ = "Manuel Schneider, Benedict Dudel"
 __dependencies__ = ["pacman", "expac"]
 
-
-if which("pacman") is None:
-    raise Exception("'pacman' is not in $PATH.")
+for dep in __dependencies__:
+    if which(dep) is None:
+        raise Exception("'%s' is not in $PATH." % dep)
 
 iconPath = iconLookup("system-software-install")
 
