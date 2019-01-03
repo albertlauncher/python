@@ -1,23 +1,27 @@
 # -*- coding: utf-8 -*-
 
-"""Use Google Translate to translate your sentence into multiple languages. \
+"""Use Google Translate to translate your sentence into multiple languages.
+
 Visit the following link to check available languages: \
-https://cloud.google.com/translate/docs/languages \
-To add or remove languages use modifier key when trigger is activated or go to: \
-'~/.config/albert/org.albert.extension.mtr/config.json' \
-Add or remove elements based on the ISO-Codes that you found on the google documentation page."""
+https://cloud.google.com/translate/docs/languages. To add or remove languages use modifier key \
+when trigger is activated or go to: '~/.config/albert/org.albert.extension.mtr/config.json' \
+Add or remove elements based on the ISO-Codes that you found on the google documentation page.
+
+Synopsis: <trigger> [query]"""
 
 import json
 import os
 import urllib.error
 import urllib.parse
 import urllib.request
+from time import sleep
 
-from albertv0 import *
+from albertv0 import (ClipAction, Item, ProcAction, UrlAction, configLocation,
+                      iconLookup)
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "MultiTranslate"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "mtr "
 __author__ = "David Britt"
 __dependencies__ = []
@@ -54,6 +58,12 @@ def initialize():
 def handleQuery(query):
     results = []
     if query.isTriggered:
+
+        # avoid rate limiting
+        sleep(0.2)
+        if not query.isValid:
+            return
+
         item = Item(
             id=__prettyname__,
             icon=iconPath,
