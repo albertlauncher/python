@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""This extension is a wrapper for the (extremely) powerful GNU units tool. \
-Note that spaces are separators.
+"""Convert units.
 
-Synopsis: units <input>
-Synopsis: <from> to <to>
+This extension is a wrapper for the (extremely) powerful GNU units tool. Note that spaces are \
+interpreted as separators, i.e. dont use spaces between numbers and units.
 
-Examples:
-
-mach to km/hr
-0.7day to hour;min
-barrel to decimeter^3;inch^3
-"""
+Synopsis:
+    <trigger> <src> [dst]
+    <src> to <dst>"""
 
 import re
 import subprocess as sp

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Search in Gnome dictionary. Needs 'gnome-dictionary' to be already installed. \
-Uses similar keyword to Google's dictionary feature: 'def'. \
-To search, type 'def <query>'"""
+"""Gnome dictionary.
+
+Needs 'gnome-dictionary' to be already installed.
+
+Sysnopsis: <trigger> <query>"""
 
 from shutil import which
 from subprocess import run

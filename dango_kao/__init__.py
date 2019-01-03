@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""Find relevant Kaomoji's using machine learning."""
+"""Find kaomojis using getdango.com
+
+Dango uses a form of artificial intelligence called deep learning to understand the nuances of \
+human emotion, and predict emoji based on what you type.
+
+Synopsis: <trigger> <query>"""
 
 from albertv0 import *
 import os

@@ -1,9 +1,12 @@
-"""This plugin allows to open a chat window from albert
-Usage: pidgin <contact>
-Matching contacts will be suggested"""
+"""Open Pidgin chats.
+
+Matching contacts will be suggested.
+
+Synopsis: <trigger> <filter>"""
+
+import dbus
 
 from albertv0 import *
-import dbus
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Pidgin"

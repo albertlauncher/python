@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Search Wikipedia articles."""
+"""Search Wikipedia articles.
+
+Synopsis: <trigger> <filter>"""
 
 from albertv0 import *
 from locale import getdefaultlocale

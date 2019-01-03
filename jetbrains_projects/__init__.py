@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""List and open JetBrains IDE projects."""
+"""List and open JetBrains IDE projects.
+
+Synopsis: <trigger> <filter>"""
 
 import os
 from shutil import which

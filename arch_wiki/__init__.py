@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Search Arch Linux Wiki articles."""
+"""Search Arch Linux Wiki articles.
+
+Synopsis: <trigger> <filter>"""
 
 from albertv0 import *
 from urllib import request, parse

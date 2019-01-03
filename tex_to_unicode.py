@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-'''Convert TeX mathmode commands to unicode characters.'''
+'''Convert TeX mathmode commands to unicode characters.
+
+Synopsis: <trigger> <tex input>'''
 
 import re
 import unicodedata

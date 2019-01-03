@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Evaluate simple python expressions. Use it with care every keystroke triggers an evaluation."""
+"""Evaluate simple python expressions.
+
+Synopsis: <trigger> <python expression>"""
 
 from albertv0 import *
 from math import *

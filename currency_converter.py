@@ -2,6 +2,8 @@
 
 """Convert currencies.
 
+Current backends: ECB, Yahoo.
+
 Synopsis: <amount> <src currency> [to|as|in] <dest currency>"""
 
 import re

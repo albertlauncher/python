@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Fortune wrapper extension"""
+"""Display random poignant, inspirational, silly or snide phrase.
+
+Fortune wrapper extension.
+
+Synopsis: <trigger>"""
 
 import subprocess as sp
 from shutil import which

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""List and open your Atom projects."""
+"""List and open your Atom projects.
+
+Synopsis: <trigger> [filter]"""
 
 import os
 import re

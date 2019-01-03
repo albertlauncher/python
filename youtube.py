@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Query and open YouTube videos and channels."""
+"""Query and open YouTube videos and channels.
+
+Synopsis: <trigger> <query>"""
 
 import json
 import re
@@ -9,14 +11,13 @@ from os import path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albertv0 import *
+from albertv0 import Item, UrlAction, iconLookup
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Youtube'
 __version__ = '1.0'
 __trigger__ = 'yt '
 __author__ = 'Manuel Schneider'
-__dependencies__ = []
 __icon__ = iconLookup('youtube')  # path.dirname(__file__) + '/icons/YouTube.png'
 
 HEADERS = {

@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
-"""Unix 'kill' wrapper extension."""
+"""Kill processes.
+
+Unix 'kill' wrapper extension.
+
+Synopsis: <trigger> <filter>"""
 
 import os
 from signal import SIGKILL, SIGTERM
 
-from albertv0 import *
+from albertv0 import FuncAction, Item, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Kill Process"

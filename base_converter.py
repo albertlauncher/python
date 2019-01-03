@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """Convert representations of numbers.
-Usage: base <src base> <dest base> <number>
-   Or: <src base name> <number> [padding]
-Examples: base 10 16 1234567890
-          dec 1024
-          hex 5f 8"""
+
+Synopsis:
+    <trigger> <src base> <dest base> <src>
+    <bin|oct|dec|hex> <number> [padding]"""
+
+import numpy as np
 
 from albertv0 import *
-import numpy as np
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Base Converter"

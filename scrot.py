@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
-"""Extension which basically wraps the command line utility scrot to make \
-screenshots from albert. The extension supports taking screenshots of the whole \
-screen, an specific area or the current active window.
+"""Take screenshots of screens, areas or windows.
 
-When the screenshot was made you will hear a sound which indicates that the \
-screenshot was taken successfully.
+This extension wraps the command line utility scrot to make screenshots from albert. When the \
+screenshot was made you will hear a sound which indicates that the screenshot was taken \
+successfully.Screenshots will be saved in XDG_PICTURES_DIR or in the temp directory.
 
-Screenshots will be saved in XDG_PICTURES_DIR or in the temp directory."""
+Synopsis: <trigger>"""
 
 import os
 import subprocess
 import tempfile
 from shutil import which
 
-from albertv0 import *
+from albertv0 import FuncAction, Item, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "SCReenshOT utility"
@@ -23,12 +22,9 @@ __trigger__ = "scrot "
 __author__ = "Benedict Dudel"
 __dependencies__ = ["scrot", "xclip"]
 
-
-if which("scrot") is None:
-    raise Exception("'scrot' is not in $PATH.")
-
-if which("xclip") is None:
-    raise Exception("'xclip' is not in $PATH.")
+for dep in __dependencies__:
+    if not which(dep):
+        raise Exception("'%s' is not in $PATH." % dep)
 
 iconPath = iconLookup("camera-photo")
 

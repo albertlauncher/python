@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""Show and access crypto currencies on CoinmMarketCap.com. For max readability the units are \
-omitted. The values of "Change" are the hourly, daily and weekly changes of the price in percent. \
-"Cap" is the market capitalisation in USD. Volume is the volume of the last 24 hours in USD."""
+"""Show and access crypto currencies on CoinmMarketCap.com.
+
+The values of "Change" are the hourly, daily and weekly changes of the price in percent. "Cap" is \
+the market capitalisation in USD. Volume is the volume of the last 24 hours in USD.
+
+Synopsis: <trigger> [filter]"""
 
 from albertv0 import *
 from threading import Thread, Event

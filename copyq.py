@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""CopyQ clipboard management."""
+"""Access CopyQ clipboard.
+
+Synopsis: <trigger> [filter]"""
 
 import html
 import json

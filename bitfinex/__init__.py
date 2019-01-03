@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Quickly access the Bitfinex markets. You can either search the items directly by typing the \
-market name, e.g. xrpbtc, or list and filter the markets by using the trigger and filter, e.g \
-'bfx [filter]'"""
+"""Access the Bitfinex markets.
+
+Synopsis:
+    filter
+    <trigger> [filter]"""
 
 from albertv0 import *
 import time

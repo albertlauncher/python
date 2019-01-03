@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Fire up an external search in Zeal. Just type zl <query>"""
+"""Open and search in Zeal offline docs.
+
+ Synopsis: <trigger> <query>"""
 
 from shutil import which
 from subprocess import run

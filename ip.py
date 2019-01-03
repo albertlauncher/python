@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""The extension finds out your internal and external IP address."""
+"""Get internal and external IP address.
+
+Synopsis: <trigger>"""
 
 import socket
 from urllib import request
@@ -12,7 +14,6 @@ __prettyname__ = "IP Addresses"
 __version__ = "1.0"
 __trigger__ = "ip "
 __author__ = "Manuel Schneider, Benedict Dudel"
-__dependencies__ = []
 
 iconPath = iconLookup("preferences-system-network")
 
@@ -36,9 +37,7 @@ def handleQuery(query):
             icon = iconPath,
             text = externalIP,
             subtext = "Your external ip address from ipecho.net",
-            actions = [
-                ClipAction("Copy ip address to clipboard", externalIP)
-            ]
+            actions = [ClipAction("Copy ip address to clipboard", externalIP)]
         ))
 
     if internalIP:
@@ -47,9 +46,7 @@ def handleQuery(query):
             icon = iconPath,
             text = internalIP,
             subtext = "Your internal ip address",
-            actions = [
-                ClipAction("Copy ip address to clipboard", internalIP)
-            ]
+            actions = [ClipAction("Copy ip address to clipboard", internalIP)]
         ))
 
     return items

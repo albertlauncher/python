@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Quickly access the Binance markets. You can either search the items directly by typing the \
-market name, e.g. xrpbtc, or list and filter markets by using the trigger and filter, e.g 'bnc \
-[filter]'"""
+"""Access the Binance markets.
+
+Synopsis:
+    filter
+    <trigger> [filter]"""
 
 from albertv0 import *
 import time

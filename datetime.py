@@ -4,7 +4,11 @@
 
 This extension provides items for 'time', 'date', 'datetime' and 'epoch' respectively 'unixtime'. \
 The latter two yield the unix timestamp and also accept a unix timestamp as parameter which will \
-be converted to a datetime string."""
+be converted to a datetime string.
+
+Synopsis:
+    <time|date|datetime>
+    <epoch|unixtime> [timestamp]"""
 
 import datetime
 import time

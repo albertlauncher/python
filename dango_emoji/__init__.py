@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""Use machinelearning to find the relevant emoji. If your emojis are not rendering properly go to \
- and install the emoji fonts at the following link: https://github.com/eosrei/emojione-color-font"""
+"""Find emojis using getdango.com
+
+Dango uses a form of artificial intelligence called deep learning to understand the nuances of \
+human emotion, and predict emoji based on what you type. If your emojis are not rendering properly \
+install an emoji font like e.g.: https://github.com/eosrei/emojione-color-font
+
+Synopsis: <trigger><query>"""
+
 
 from albertv0 import *
 import json

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Provides a way to install, remove and search for packages in the npmjs.com database. To trigger \
-the extension you just need to type `npm ` in albert. If no search query is supplied you have the \
-option to update all globally installed packages."""
+"""Install, remove and search packages in the npmjs.com database.
+
+If no search query is supplied you have the option to update all globally installed packages.
+
+Synopsis: <trigger> [filter]"""
 
 from albertv0 import *
 from shutil import which

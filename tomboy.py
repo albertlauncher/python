@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-""""Search, open, create and delete Tomboy notes."""
+""""Search, open, create and delete Tomboy notes.
+
+Synopsis: <trigger> <filter>"""
 
 import re
 from datetime import datetime

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-"""
-X11 window switcher - list and activate windows.
-"""
+"""List and manage X11 windows.
+
+Synopsis: <filter>"""
 
 import subprocess
 from collections import namedtuple
 from shutil import which
 
-from albertv0 import *
+from albertv0 import Item, ProcAction, iconLookup
 
 Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
 

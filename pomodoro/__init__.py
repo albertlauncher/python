@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Pomodoro extension. See https://en.wikipedia.org/wiki/Pomodoro_Technique"""
+"""Set up your personal Pomodoro timer.
+
+See https://en.wikipedia.org/wiki/Pomodoro_Technique
+
+Synopsis: <trigger> [duration [break duration [long break duration [count]]]]"""
 
 from albertv0 import *
 from shutil import which

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """Translate text using Google Translate.
-Usage: tr <src lang> <dest lang> <text>
-Example: tr en fr hello
 
-Check available languages here: https://cloud.google.com/translate/docs/languages"""
+Check available languages here: https://cloud.google.com/translate/docs/languages
+
+Synopsis: <trigger> <src_lang> <dest_lang> <text>"""
 
 import json
 import urllib.parse

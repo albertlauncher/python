@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-"""Set up timers. Lists all timers when triggered. Additional arguments in the form of \
-[[hours:]minutes:]seconds let you set triggers. Empty field resolve to 0, e.g. "96::" starts a 96 \
-hours timer. Fields exceeding the maximum amount of the time interval are automatically \
-refactorized, e.g. "9:120:3600" resolves to 12 hours."""
+"""Set up timers.
+
+Lists all timers when triggered. Additional arguments in the form of [[hours:]minutes:]seconds let \
+you set triggers. Empty field resolve to 0, e.g. "96::" starts a 96 hours timer. Fields exceeding \
+the maximum amount of the time interval are automatically refactorized, e.g. "9:120:3600" resolves \
+to 12 hours.
+
+Synopsis: <trigger> [[[hours]:][minutes]:]seconds"""
 
 from albertv0 import *
 from threading import Timer

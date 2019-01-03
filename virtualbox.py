@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""VirtualBox extension.
+"""Manage your VirtualBox machines.
 
-Manage your virtual machines."""
+Synopsis:
+    <filter>
+    <trigger> [filter]"""
 
 from virtualbox import Session, VirtualBox
 from virtualbox.library import (LockType, MachineState, OleErrorInvalidarg,

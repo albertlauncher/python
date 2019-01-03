@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-'''Evaulate Mathematica expressions.'''
+"""Evaluate Mathematica expressions.
+
+Synopsis: <trigger> [expr]"""
 
 import subprocess
 from shutil import which
 from tempfile import NamedTemporaryFile
 
-from albertv0 import *
+from albertv0 import ClipAction, Item, iconLookup
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Mathematica eval'

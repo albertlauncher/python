@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""This extension adapts the AUR web interface. You can search for packages and open their URLs. \
-This extension is also intended to be used to quickly install the packages. Currently yaourt and \
-pacaur can be used. If you are missing your favorite AUR helper tool send a PR."""
+"""Query and install ArchLinux User Repository (AUR) packages.
+
+You can search for packages and open their URLs. This extension is also intended to be used to \
+quickly install the packages. If you are missing your favorite AUR helper tool send a PR.
+
+Synopsis: <trigger> <pkg_name>"""
 
 from albertv0 import *
 from shutil import which

@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
-"""'pass' wrapper extension."""
+"""Manage passwords.
+
+This is a 'pass' wrapper extension.
+
+Synopsis:
+    <trigger> generate <location>
+    <trigger> <filter>"""
 
 import fnmatch
 import os

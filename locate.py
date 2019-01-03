@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 
-"""Unix 'locate' wrapper extension. Note that it is up to you to ensure that the database is up to \
-date"""
+"""Find and open files.
+
+Unix 'locate' wrapper extension. Note that it is up to you to ensure that the locate database is \
+up to date.
+
+This extensions is intended as secondary way to find files. Use the files extension for often used \
+files and fast lookups and this extension for everything else.
+
+Synopsis: <trigger> [filter]"""
 
 import os
 import re
 import subprocess
 from shutil import which
 
-from albertv0 import *
+from albertv0 import Item, TermAction, UrlAction, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Locate"
