@@ -1,9 +1,14 @@
+
+"""This extension allows you to search for songs, albums and artists in your mpd (music player daemon, https://musicpd.org) \
+library and add them to the queue and/or play them directly. Currently it's not possible to send other commands to mpd or search via filenames."""
+
 import os
 from albertv0 import *
 from mpd import MPDClient
 
+
 __iid__ = "PythonInterface/v0.1"
-__prettyname__ = "mpd: control your MPD"
+__prettyname__ = "Music Player Daemon"
 __version__ = "1.0"
 __trigger__ = "mpd "
 __author__ = "Markus Richter"
@@ -24,6 +29,9 @@ PORT = 6600
 def handleQuery(query):
 
     if query.isTriggered:# and len(query.string)>1:
+        # set icons:
+        song_icon=iconLookup("audio-x-generic") or os.path.join(os.path.dirname(__file__),"Papirus-Team-Papirus-Mimetypes-Audio-x-flac.svg")
+        
         mpclient = MPDClient()
         mpclient.timeout = 10
         mpclient.connect(SERVER,PORT)
@@ -89,7 +97,7 @@ def handleQuery(query):
         if len(titlematches)>0:
             out.extend([Item(
             id=" 5%05d" % i,
-            icon=os.path.join(os.path.dirname(__file__),"Papirus-Team-Papirus-Mimetypes-Audio-x-flac.svg"),
+            icon=song_icon,
             text="%s - %s" % (song["artist"],song["title"]),
             subtext=song["file"],
             completion=__trigger__ + song["title"],
