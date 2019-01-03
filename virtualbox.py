@@ -16,7 +16,7 @@ from albertv0 import FuncAction, Item, critical, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Virtual Box"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "vbox "
 __author__ = "Manuel Schneider"
 __dependencies__ = ['pyvbox']
@@ -40,21 +40,21 @@ def startVm(vm):
         with Session() as session:
             vm.launch_vm_process(session, 'gui', '')
     except OleErrorUnexpected as e:
-        print("OleErrorUnexpected")
+        warning("OleErrorUnexpected")
     except OleErrorInvalidarg as e:
-        print("OleErrorInvalidarg")
+        warning("OleErrorInvalidarg")
     except VBoxErrorObjectNotFound as e:
-        print("VBoxErrorObjectNotFound")
+        warning("VBoxErrorObjectNotFound")
     except VBoxErrorInvalidObjectState as e:
-        print("VBoxErrorInvalidObjectState")
+        warning("VBoxErrorInvalidObjectState")
     except VBoxErrorInvalidVmState as e:
-        print("VBoxErrorInvalidVmState")
+        warning("VBoxErrorInvalidVmState")
     except VBoxErrorIprtError as e:
-        print("VBoxErrorIprtError")
+        warning("VBoxErrorIprtError")
     except VBoxErrorHostError as e:
-        print("VBoxErrorHostError")
+        warning("VBoxErrorHostError")
     except  VBoxErrorFileError as e:
-        print("VBoxErrorFileError")
+        warning("VBoxErrorFileError")
 
 def acpiPowerVm(vm):
     with vm.create_session(LockType.shared) as session:
@@ -110,7 +110,10 @@ def buildVmItem(vm):
 def handleQuery(query):
     pattern = query.string.strip().lower()
     results = []
-    for vm in vbox.machines:
-        if (pattern and pattern in vm.name.lower() or not pattern and query.isTriggered):
-            results.append(buildVmItem(vm))
+    try:
+        for vm in vbox.machines:
+            if (pattern and pattern in vm.name.lower() or not pattern and query.isTriggered):
+                results.append(buildVmItem(vm))
+    except Exception as e:
+        critical(str(e))
     return results
