@@ -31,6 +31,8 @@ def handleQuery(query):
     if query.isTriggered:# and len(query.string)>1:
         # set icons:
         song_icon=iconLookup("audio-x-generic") or os.path.join(os.path.dirname(__file__),"Papirus-Team-Papirus-Mimetypes-Audio-x-flac.svg")
+        album_icon=iconLookup("music-album-default") or os.path.join(os.path.dirname(__file__),"folder-green-music.svg")
+        artist_icon=iconLookup("music-artist-default") or os.path.join(os.path.dirname(__file__),"folder-green-image-people.svg")
         
         mpclient = MPDClient()
         mpclient.timeout = 10
@@ -39,7 +41,7 @@ def handleQuery(query):
         albummatches = mpclient.search("album",query.string)
         titlematches = mpclient.search("title",query.string)
 	
-	# out: the outputted list of suggestions
+        # out: the outputted list of suggestions
         out = []
         if len(artistmatches)>0:
             artistalb = dict()
@@ -51,7 +53,7 @@ def handleQuery(query):
             for i1,artist in enumerate(artistalb.keys()):
                 out.append(Item(
                     id=" 1%05d" % (i1),
-                    icon=os.path.join(os.path.dirname(__file__), "folder-green-image-people.svg"),
+                    icon=artist_icon,
                     text="%s" % artist,
                     subtext="Matching artist. Press [alt] for more options.",
                     completion=__trigger__ + artist,
@@ -65,7 +67,7 @@ def handleQuery(query):
                 albs = artistalb[artist]
                 out.extend([Item(
                     id=" 1%05d-%05d" % (i1,i2),
-                    icon=os.path.join(os.path.dirname(__file__), "folder-green-music.svg"),
+                    icon=album_icon,
                     text="·   %s" % a,
                     subtext="Album of matching artist. Press [alt] for more options.",
                     completion=__trigger__ + a,
@@ -83,7 +85,7 @@ def handleQuery(query):
                 alb.add((a['artist'],a['album']))
             out.extend([Item(
                 id=" 3%05d" % i,
-                icon=os.path.join(os.path.dirname(__file__),"folder-green-music.svg"),
+                icon=album_icon,
                 text="%s - %s" % a,
                 subtext="Matching album title. Press [alt] for more options.",
                 completion=__trigger__ + a[1],
