@@ -27,7 +27,7 @@ def notSticky(win):
 
 
 def matchesQuery(win, text):
-    keywords = text.lower().split()
+    keywords = filter(None, text.lower().split())
     return all(keyword in win.wm_class.lower() or keyword in win.wm_name.lower() for keyword in keywords)
 
 
