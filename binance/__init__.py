@@ -22,7 +22,7 @@ __trigger__ = "bnc "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 
-iconPath = os.path.dirname(__file__) + "/%s.svg" % __name__
+iconPath = os.path.dirname(__file__) + "/Binance.svg"
 exchangeInfoUrl = "https://api.binance.com/api/v1/exchangeInfo"
 tradeUrl = "https://www.binance.com/tradeDetail.html?symbol=%s_%s"
 markets = []

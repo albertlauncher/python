@@ -24,7 +24,8 @@ __trigger__ = ":"
 __author__ = "David Britt"
 __dependencies__ = []
 
-icon_path = "%s/%s.png" % (os.path.dirname(__file__), __name__)
+
+iconPath = os.path.dirname(__file__) + "/dangoemoji.png"
 dangoUrl = "https://emoji.getdango.com/api/emoji"
 emojipedia_url = "https://emojipedia.org/%s"
 

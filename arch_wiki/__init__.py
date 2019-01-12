@@ -16,7 +16,7 @@ __trigger__ = "awiki "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 
-iconPath = "%s/%s.svg" % (os.path.dirname(__file__), __name__)
+iconPath = os.path.dirname(__file__) + "/ArchWiki.svg"
 baseurl = 'https://wiki.archlinux.org/api.php'
 user_agent = "org.albert.extension.python.archwiki"
 

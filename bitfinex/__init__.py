@@ -22,7 +22,7 @@ __trigger__ = "bfx "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 
-iconPath = os.path.dirname(__file__) + "/%s.svg" % __name__
+iconPath = os.path.dirname(__file__) + "/Bitfinex.svg"
 symbolsEndpoint = "https://api.bitfinex.com/v1/symbols"
 tradeUrl = "https://www.bitfinex.com/t/%s:%s"
 markets = []
