@@ -12,10 +12,10 @@ import urllib.request
 import datetime
 
 __iid__ = "PythonInterface/v0.2"
-__prettyname__ = "Albert Emoji Picker"
-__version__ = "0.2.0"
+__prettyname__ = "Unicode Emojis"
+__version__ = "0.2"
 __trigger__ = ":"
-__author__ = "Tim 'S.D.Eagle' Zeitz"
+__author__ = "Tim Zeitz"
 __dependencies__ = []
 
 emoji_data_src_url = "https://unicode.org/Public/emoji/latest/emoji-test.txt"
