@@ -18,7 +18,7 @@ import re
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Archlinux User Repository"
-__version__ = "1.2"
+__version__ = "1.1"
 __trigger__ = "aur "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -31,7 +31,6 @@ if which("yaourt"):
     install_cmdline = "yaourt -S aur/%s"
 elif which("pacaur"):
     install_cmdline = "pacaur -S aur/%s"
-
 
 def handleQuery(query):
     if not query.isTriggered:
@@ -69,10 +68,10 @@ def handleQuery(query):
                 for entry in results_json:
                     name = entry['Name']
                     item = Item(
-                        id=__prettyname__,
-                        icon=iconPath,
-                        text="<b>%s</b> <i>%s</i> (%s)" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name), entry['Version'], entry['NumVotes']),
-                        completion=query.rawString
+                        id = __prettyname__,
+                        icon = iconPath,
+                        text = "<b>%s</b> <i>%s</i> (%s)" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name), entry['Version'], entry['NumVotes']),
+                        completion = "%s%s" % (__trigger__, name)
                     )
                     subtext = entry['Description'] if entry['Description'] else "[No description]"
                     if entry['OutOfDate']:
