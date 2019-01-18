@@ -15,7 +15,7 @@ Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Window Switcher"
 __version__ = "1.5"
-__author__ = "Ed Perez, Manuel Schneider"
+__author__ = "Ed Perez, Manuel Schneider, Hugo Valk"
 __dependencies__ = ["wmctrl"]
 
 if which("wmctrl") is None:
