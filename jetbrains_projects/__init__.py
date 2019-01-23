@@ -10,9 +10,9 @@ from xml.etree import ElementTree
 
 from albertv0 import *
 
-__iid__ = "PythonInterface/v0.1"
+__iid__ = "PythonInterface/v0.3"
 __prettyname__ = "Jetbrains IDE Projects"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "jb "
 __author__ = "Markus Richter, Thomas Queste"
 __dependencies__ = []
@@ -69,6 +69,8 @@ def get_proj(path):
 
 def handleQuery(query):
     if query.isTriggered:
+        query.disableSort()
+
         binaries = {}
         projects = []
 

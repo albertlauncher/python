@@ -16,9 +16,9 @@ import json
 import os
 import re
 
-__iid__ = "PythonInterface/v0.1"
+__iid__ = "PythonInterface/v0.3"
 __prettyname__ = "Archlinux User Repository"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "aur "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -35,6 +35,8 @@ elif which("pacaur"):
 def handleQuery(query):
     if not query.isTriggered:
         return
+
+    query.disableSort()
 
     stripped = query.string.strip()
 

@@ -11,9 +11,9 @@ import json
 import time
 import os
 
-__iid__ = "PythonInterface/v0.1"
+__iid__ = "PythonInterface/v0.3"
 __prettyname__ = "Wikipedia"
-__version__ = "1.3"
+__version__ = "1.4"
 __trigger__ = "wiki "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -48,6 +48,7 @@ def initialize():
 
 def handleQuery(query):
     if query.isTriggered:
+        query.disableSort()
 
         # avoid rate limiting
         time.sleep(0.1)

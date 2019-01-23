@@ -9,9 +9,9 @@ from urllib import request, parse
 import json
 import os
 
-__iid__ = "PythonInterface/v0.1"
+__iid__ = "PythonInterface/v0.3"
 __prettyname__ = "Arch Wiki"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "awiki "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
@@ -23,6 +23,7 @@ user_agent = "org.albert.extension.python.archwiki"
 
 def handleQuery(query):
     if query.isTriggered:
+        query.disableSort()
 
         stripped = query.string.strip()
 

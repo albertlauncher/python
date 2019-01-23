@@ -14,9 +14,9 @@ from shutil import which
 
 from albertv0 import *
 
-__iid__ = "PythonInterface/v0.1"
+__iid__ = "PythonInterface/v0.3"
 __prettyname__ = "Pass"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "pass "
 __author__ = "Benedict Dudel"
 __dependencies__ = ["pass"]
@@ -32,6 +32,7 @@ ICON_PATH = iconLookup("dialog-password")
 
 def handleQuery(query):
     if query.isTriggered:
+        query.disableSort()
         if query.string.strip().startswith("generate"):
             return generatePassword(query)
 
