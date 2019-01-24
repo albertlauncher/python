@@ -26,8 +26,10 @@ for dep in __dependencies__:
     if which(dep) is None:
         raise Exception("'%s' is not in $PATH." % dep)
 
-iconPath = iconLookup("system-software-install")
-
+for iconName in ["archlinux-logo", "system-software-install"]:
+    iconPath = iconLookup(iconName)
+    if iconPath:
+        break
 
 def handleQuery(query):
     if query.isTriggered:
