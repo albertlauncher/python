@@ -4,7 +4,9 @@
 
 Select if a simple snip ready to paste, a full screenshot showing (default) or not the pointer, or a screenshot of the window in use.
 
-Auto saved screenshots are located in XDG_PICTURES_DIR (Pictures folder)"""
+Auto saved screenshots are located in XDG_PICTURES_DIR (Pictures folder).
+
+Icon by icons8.com"""
 
 import os
 import subprocess
