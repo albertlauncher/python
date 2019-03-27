@@ -8,4 +8,4 @@ and the gnome-extension switcher: https://github.com/daniellandau/switcher
 replace the original python script in `/usr/share/albert/org.albert.extension.python/modules/window_switcher.py` with  the one from this repo
 
 # TODO 
-imporove fuzzy search by imcorporating `fuzzywuzzy.token_set_ratio()`
+improve fuzzy search by imcorporating `fuzzywuzzy.token_set_ratio()`
