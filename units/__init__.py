@@ -31,6 +31,11 @@ if not icon:
 
 regex = re.compile(r"(\S+)(?:\s+to)\s+(\S+)")
 
+def stripPrefix(text, prefix):
+    if text.startswith(prefix):
+        return text[len(prefix):]
+    return text
+
 def handleQuery(query):
 
     if query.isTriggered:
@@ -38,7 +43,8 @@ def handleQuery(query):
         item = Item(id='python.gnu_units', icon=icon, completion=query.rawString)
         if args:
             try:
-                item.text = sp.check_output(['units', '-t'] + query.string.split(), stderr=sp.STDOUT).decode().strip()
+                output = sp.check_output(['units', '--strict', '--one-line', '--quiet'] + query.string.split(), stderr=sp.STDOUT).decode()
+                item.text = stripPrefix(stripPrefix(output.strip(), "Definition: "), "* ")
                 item.addAction(ClipAction("Copy to clipboard", item.text))
             except sp.CalledProcessError as e:
                 item.text = e.stdout.decode().strip().partition('\n')[0]
