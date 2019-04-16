@@ -48,7 +48,7 @@ def handleQuery(query):
                 item.addAction(ClipAction("Copy to clipboard", item.text))
             except sp.CalledProcessError as e:
                 item.text = e.stdout.decode().strip().partition('\n')[0]
-            item.subtext = "Result of 'units -t %s'" % query.string
+            item.subtext = "Result of 'units %s'" % query.string
         else:
             item.text = "Empty input"
             item.subtext = "Enter something to convert"
