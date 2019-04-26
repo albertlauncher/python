@@ -5,6 +5,7 @@ from albertv0 import *
 from locale import getlocale
 from urllib import request, parse
 import xml.etree.ElementTree as etree
+from time import sleep
 import os
 
 __iid__ = "PythonInterface/v0.1"
@@ -28,6 +29,9 @@ def initialize():
 
 def handleQuery(query):
     if query.isTriggered:
+        sleep(0.2)
+        if not query.isValid:
+            return
 
         stripped = query.string.strip()
 
