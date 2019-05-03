@@ -71,7 +71,7 @@ def handleQuery(query):
                                             icon=iconPath,
                                             text=suggestion_data,
                                             subtext=suggestion_description,
-                                            completion=suggestion_data,
+                                            completion="%s%s" % (__trigger__, suggestion_data),
                                             actions=[UrlAction(suggestion_description, suggestion_url)]))
 
                 suggestion_url = "%s?%s" % (google_search_baseurl, parse.urlencode({'q': stripped}))
