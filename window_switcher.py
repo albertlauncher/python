@@ -38,8 +38,12 @@ def handleQuery(query):
             ]
 
             if any(stripped in match for match in matches):
+                iconPath = iconLookup(win_instance)
+                if iconPath == "":
+                    iconPath = iconLookup(win_class.lower())
+
                 results.append(Item(id="%s%s" % (__prettyname__, win.wm_class),
-                                    icon=iconLookup(win_instance),
+                                    icon=iconPath,
                                     text="%s  - <i>Desktop %s</i>" % (win.wm_class.split('.')[-1].replace('-',' '), win.desktop),
                                     subtext=win.wm_name,
                                     actions=[ProcAction("Switch Window",
