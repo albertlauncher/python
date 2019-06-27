@@ -26,11 +26,12 @@ def handleQuery(query):
     if stripped:
         results = []
         for line in subprocess.check_output(['wmctrl', '-l', '-x']).splitlines():
-            win = Window(*[token.decode() for token in line.split(None,4)])
+            win = Window(*parseWindow(line))
+
             if win.desktop == "-1":
                 continue
 
-            win_instance, win_class = win.wm_class.split('.')
+            win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
             matches = [
                 win_instance.lower(),
                 win_class.lower(),
@@ -44,7 +45,7 @@ def handleQuery(query):
 
                 results.append(Item(id="%s%s" % (__prettyname__, win.wm_class),
                                     icon=iconPath,
-                                    text="%s  - <i>Desktop %s</i>" % (win.wm_class.split('.')[-1].replace('-',' '), win.desktop),
+                                    text="%s  - <i>Desktop %s</i>" % (win_class.replace('-',' '), win.desktop),
                                     subtext=win.wm_name,
                                     actions=[ProcAction("Switch Window",
                                                         ["wmctrl", '-i', '-a', win.wid] ),
@@ -53,3 +54,10 @@ def handleQuery(query):
                                              ProcAction("Close the window gracefully.",
                                                         ["wmctrl", '-c', win.wid])]))
         return results
+
+def parseWindow(line):
+    win_id, desktop, rest = line.decode().split(None, 2)
+    win_class, rest = rest.split('  ', 1)
+    host, title = rest.strip().split(None, 1)
+
+    return [win_id, desktop, win_class, host, title]
