@@ -33,6 +33,8 @@ class AlbertTimer(Timer):
 
         def timeout():
             subprocess.Popen(["aplay", soundPath])
+            subprocess.Popen(["notify-send", "-i", iconPath,
+                              "\"Your %ss timer is up\"" % self.interval])
             global timers
             timers.remove(self)
 
