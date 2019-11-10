@@ -1,0 +1,3 @@
+[submodule "xkcd"]
+	path = xkcd
+	url = https://github.com/bergercookie/xkcd-albert-plugin
