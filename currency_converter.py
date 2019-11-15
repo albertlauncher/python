@@ -58,7 +58,7 @@ class Yahoo:
         self.name = "Yahoo"
 
     def convert(self, amount, src, dst):
-        url = 'https://search.yahoo.com/search?p=%s+%s+to+%s' % (amount, src, dst)
+        url = 'https://search.yahoo.com/search?p=%.2f+%s+to+%s' % (float(amount), src, dst)
         with urlopen(url) as response:
             html = response.read().decode()
             m = re.search('<span class=.*convert-to.*>(\d+(\.\d+)?)', html)
