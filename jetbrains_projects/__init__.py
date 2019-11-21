@@ -28,6 +28,7 @@ paths = [  # <Name for config directory>, <possible names for the binary/icon>
      "intellij-idea-ue-bundled-jre intellij-idea-ultimate-edition idea-ce-eap idea-ue-eap idea idea-ultimate"],
     ["PhpStorm", "phpstorm"],
     ["PyCharm", "pycharm pycharm-eap charm"],
+    ["RubyMine", "rubymine"],
     ["WebStorm", "webstorm"],
 ]
 
