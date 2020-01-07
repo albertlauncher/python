@@ -62,7 +62,7 @@ def get_proj(path):
     if add_info is not None:
         for i in add_info:
             for o in i[0][0]:
-                if o.tag == 'option' and o.attrib["name"] == 'projectOpenTimestamp':
+                if o.tag == 'option' and 'name' in o.attrib and o.attrib["name"] == 'projectOpenTimestamp':
                     items[i.attrib["key"]] = int(o.attrib["value"])
     return [(items[e], e.replace("$USER_HOME$", HOME_DIR)) for e in items]
 
