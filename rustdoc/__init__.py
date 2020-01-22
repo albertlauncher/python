@@ -8,15 +8,17 @@ Usage:
     rustdoc <crate>
     rustdoc <crate>|std <query>"""
 
-import os
-import time
 import json
+import os
 import re
+import threading
+import time
+
 import requests as req
 from py_mini_racer import py_mini_racer
 from pyquery import PyQuery as pq
 
-from albertv0 import *
+from albertv0 import ClipAction, Item, UrlAction, cacheLocation
 
 __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "RustDoc"
@@ -31,6 +33,7 @@ typeIcons = {
     'fn': path + "/fn.png"
 }
 
+
 def extractCrateInfo(crateEntry):
     description = crateEntry.find('.description').text().strip()
     releaseParts = crateEntry.find('.release').attr.href.split('/')
@@ -42,29 +45,40 @@ def extractCrateInfo(crateEntry):
         'description': description
     }
 
+
 def searchCrate(query):
     resultsPage = req.get(f'https://docs.rs/releases/search?query={query}')
     d = pq(resultsPage.text)
     crateList = d('.recent-releases-container > ul li').items()
     return map(extractCrateInfo, crateList)
 
+
 def buildCreateItem(crate):
     return Item(
-        id = 'python.rustdoc',
-        text = crate['name'],
-        subtext = f'{crate["name"]} - {crate["description"]}',
-        icon = rustIcon,
-        completion = f'rustdoc {crate["name"]}',
-        actions = [
-            UrlAction('Show on docs.rs', f'https://docs.rs/{crate["name"]}/{crate["version"]}/'),
-            ClipAction('Copy as dependency', f'{crate["name"]} = {crate["version"]}'),
-            UrlAction('Show on crates.io', f'https://crates.io/crates/{crate["name"]}/'),
+        id='python.rustdoc',
+        text=crate['name'],
+        subtext=f'{crate["name"]} - {crate["description"]}',
+        icon=rustIcon,
+        completion=f'rustdoc {crate["name"]}',
+        actions=[
+            UrlAction('Show on docs.rs',
+                      f'https://docs.rs/{crate["name"]}/{crate["version"]}/'),
+            ClipAction('Copy as dependency',
+                       f'{crate["name"]} = {crate["version"]}'),
+            UrlAction('Show on crates.io',
+                      f'https://crates.io/crates/{crate["name"]}/'),
         ]
     )
+
+
+downloadLock = threading.Condition()
+
 
 def fetchSearchIndex(crateName):
     cacheDir = f'{cacheLocation()}/rustdoc'
     cachePath = f'{cacheDir}/search-index-{crateName}.json'
+
+    downloadLock.acquire()
 
     if os.path.exists(cachePath) and time.time() - os.path.getmtime(cachePath) < 86400:
         with open(cachePath, 'r') as indexCache:
@@ -93,7 +107,10 @@ def fetchSearchIndex(crateName):
     with open(cachePath, 'w') as indexCache:
         indexCache.write(json.dumps(result))
 
+    downloadLock.release()
+
     return result
+
 
 def createResultItem(crateName, index, result):
     module = re.sub(
@@ -108,15 +125,16 @@ def createResultItem(crateName, index, result):
         description += f' - {result["desc"]}'
 
     return Item(
-        id = 'python.rustdoc',
-        text = result['name'],
-        subtext = description,
-        completion = f'rustdoc {crateName} {result["name"]}',
-        icon = icon,
-        actions = [
+        id='python.rustdoc',
+        text=result['name'],
+        subtext=description,
+        completion=f'rustdoc {crateName} {result["name"]}',
+        icon=icon,
+        actions=[
             UrlAction('Show on docs.rs', f'{index["path"]}../{result["href"]}')
         ]
     )
+
 
 def handleQuery(query):
     if query.isTriggered:
@@ -124,11 +142,11 @@ def handleQuery(query):
 
         if not args or len(args) == 0:
             return Item(
-                id = 'python.rustdoc',
-                text = 'RustDoc',
-                subtext = 'Type a crate name or `std` to start search',
-                icon = rustIcon,
-                completion = query.rawString
+                id='python.rustdoc',
+                text='RustDoc',
+                subtext='Type a crate name or `std` to start search',
+                icon=rustIcon,
+                completion=query.rawString
             )
 
         if len(args) == 1:
