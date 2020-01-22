@@ -24,7 +24,6 @@ __iid__ = "PythonInterface/v0.2"
 __prettyname__ = "RustDoc"
 __version__ = "0.1.0"
 __author__ = "succcubbus"
-__trigger__ = "rustdoc "
 __dependencies__ = ["requests", "py_mini_racer"]
 
 path = os.path.dirname(__file__)
@@ -114,7 +113,7 @@ def fetchSearchIndex(crateName):
 
 def createResultItem(crateName, index, result):
     module = re.sub(
-        '</?span>g',
+        '</?span>',
         '',
         result['displayPath']
     )
@@ -137,10 +136,16 @@ def createResultItem(crateName, index, result):
 
 
 def handleQuery(query):
-    if query.isTriggered:
+    if query.string.startswith("rust"):
         args = query.string.split()
 
-        if not args or len(args) == 0:
+        if args[0] != "rustdoc" and args[0] != "ruststd":
+            return
+
+        if args.pop(0) == "ruststd":
+            args.insert(0, "std")
+
+        if len(args) == 0:
             return Item(
                 id='python.rustdoc',
                 text='RustDoc',
@@ -169,8 +174,9 @@ def handleQuery(query):
             )
 
         vm = py_mini_racer.MiniRacer()
+        vm.eval('window = { currentCrate: "' + args[0] + '" }')
         with open(f'{path}/search.js', 'r') as searchJs:
             vm.eval(searchJs.read())
         results = vm.eval(f'initSearch({index["index"]})("{query}").others')
 
-        return [createResultItem(crateName, index, result) for result in results]
+        return [createResultItem(crateName, index, result) for result in list(results)[:10]]
