@@ -157,6 +157,17 @@ def handleQuery(query):
 
         index = fetchSearchIndex(crateName)
 
+        if not index:
+            # invalid crate, try to correct it
+            didYouMean = list(searchCrate(args[0]))
+            name = f'Did you mean {didYouMean[0]["name"]}?' if didYouMean else f"Could not find a crate named {args[0]}"
+            return Item(
+                id='python.rustdoc',
+                text='Unknown crate',
+                subtext=name,
+                icon=rustIcon
+            )
+
         vm = py_mini_racer.MiniRacer()
         with open(f'{path}/search.js', 'r') as searchJs:
             vm.eval(searchJs.read())
