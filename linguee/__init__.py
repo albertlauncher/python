@@ -10,6 +10,7 @@ Synopsis: <trigger> <word>"""
 from albertv0 import *
 import requests
 import bs4
+import os
 
 
 lang = "deutsch-englisch"
@@ -21,8 +22,7 @@ __trigger__ = "lin "
 __author__ = "Lucky Lukert, David Koch"
 __dependencies__ = ["beautifulsoup4"]
 
-iconPath = iconLookup("albert")
-
+iconPath = os.path.join(os.path.dirname(__file__), "linguee.png")
 
 def getItem(message):
     return Item(
@@ -55,7 +55,8 @@ def str_from_html(html):
 def get_suggestions(query):
     response = requests.get(
         "https://www.linguee.de/" + lang + "/search?",
-        params={"qe": query, "source": "auto", "cw": "820", "ch": "544"},
+        # change the ch-parameter to get more/less results
+        params={"qe": query, "source": "auto", "cw": "820", "ch": "1000"},
     )
     parsed = bs4.BeautifulSoup(response.text, "html.parser")
     # get all suggestions
@@ -73,6 +74,7 @@ def get_suggestions(query):
             result["translations"].append(transl_str)
         results.append(result)
 
+    print(results)
     return results
 
 
