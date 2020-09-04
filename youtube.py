@@ -51,6 +51,7 @@ def handleQuery(query):
                         try:
                             if type == 'videoRenderer':
                                 id = data['videoId']
+                                text = data['title']['runs'][0]['text']
                                 subtext = 'Video'
                                 if 'lengthText' in data:
                                     subtext = subtext + " | %s" % data['lengthText']['simpleText'].strip()
@@ -61,6 +62,7 @@ def handleQuery(query):
                                 actions=[ UrlAction('Watch on Youtube', 'https://youtube.com/watch?v=%s' % id) ]
                             elif type == 'channelRenderer':
                                 id = data['channelId']
+                                text = data['title']['simpleText']
                                 subtext = 'Channel'
                                 if 'videoCountText' in data:
                                     subtext = subtext + " | %s" % data['videoCountText']['simpleText'].strip()
@@ -75,7 +77,7 @@ def handleQuery(query):
 
                         item = Item(id=__prettyname__,
                                     icon=data['thumbnail']['thumbnails'][0]['url'].split('?', 1)[0] if data['thumbnail']['thumbnails'] else __icon__,
-                                    text=data['title']['simpleText'],
+                                    text=text,
                                     subtext=subtext,
                                     completion=query.rawString,
                                     actions=actions
