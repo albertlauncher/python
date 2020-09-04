@@ -65,7 +65,7 @@ def handleQuery(query):
                                 text = data['title']['simpleText']
                                 subtext = 'Channel'
                                 if 'videoCountText' in data:
-                                    subtext = subtext + " | %s" % data['videoCountText']['simpleText'].strip()
+                                    subtext = subtext + " | %s videos" % data['videoCountText']['runs'][0]['text'].strip()
                                 if 'subscriberCountText' in data:
                                     subtext = subtext + " | %s" % data['subscriberCountText']['simpleText'].strip()
                                 actions=[ UrlAction('Show on Youtube', 'https://www.youtube.com/channel/%s' % id) ]
