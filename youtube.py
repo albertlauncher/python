@@ -15,7 +15,7 @@ from albertv0 import Item, UrlAction, iconLookup, critical
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Youtube'
-__version__ = '1.0'
+__version__ = '1.1'
 __trigger__ = 'yt '
 __author__ = 'Manuel Schneider'
 __icon__ = iconLookup('youtube')  # path.dirname(__file__) + '/icons/YouTube.png'
@@ -37,9 +37,9 @@ def handleQuery(query):
         if not query.isValid:
             return
 
-        url_values = urlencode({'search_query': query.string.strip()})
-        url = 'https://www.youtube.com/results?%s' % url_values
-        req = Request(url=url, headers=HEADERS)
+        req = Request(headers=HEADERS, url='https://www.youtube.com/results?{}'.format(
+            urlencode({ 'search_query': query.string.strip() })))
+
         with urlopen(req) as response:
             match = re.search(re_videos, response.read().decode())
             if match:
@@ -50,23 +50,26 @@ def handleQuery(query):
                     for type, data in result.items():
                         try:
                             if type == 'videoRenderer':
-                                id = data['videoId']
-                                subtext = 'Video'
+                                subtext = ['Video']
+                                action = 'Watch on Youtube'
+                                link = 'watch?v={}'.format(data['videoId'])
+
                                 if 'lengthText' in data:
-                                    subtext = subtext + " | %s" % data['lengthText']['simpleText'].strip()
+                                    subtext.append(textFrom(data['lengthText']))
                                 if 'shortViewCountText' in data:
-                                    subtext = subtext + " | %s" % data['shortViewCountText']['simpleText'].strip()
+                                    subtext.append(textFrom(data['shortViewCountText']))
                                 if 'publishedTimeText' in data:
-                                    subtext = subtext + " | %s" % data['publishedTimeText']['simpleText'].strip()
-                                actions=[ UrlAction('Watch on Youtube', 'https://youtube.com/watch?v=%s' % id) ]
+                                    subtext.append(textFrom(data['publishedTimeText']))
+
                             elif type == 'channelRenderer':
-                                id = data['channelId']
-                                subtext = 'Channel'
+                                subtext = ['Channel']
+                                action = 'Show on Youtube'
+                                link = 'channel/{}'.format(data['channelId'])
+
                                 if 'videoCountText' in data:
-                                    subtext = subtext + " | %s" % textFrom(data['videoCountText'])
+                                    subtext.append(textFrom(data['videoCountText']))
                                 if 'subscriberCountText' in data:
-                                    subtext = subtext + " | %s" % data['subscriberCountText']['simpleText'].strip()
-                                actions=[ UrlAction('Show on Youtube', 'https://www.youtube.com/channel/%s' % id) ]
+                                    subtext.append(textFrom(data['subscriberCountText']))
                             else:
                                 continue
                         except Exception as e:
@@ -76,9 +79,9 @@ def handleQuery(query):
                         item = Item(id=__prettyname__,
                                     icon=data['thumbnail']['thumbnails'][0]['url'].split('?', 1)[0] if data['thumbnail']['thumbnails'] else __icon__,
                                     text=textFrom(data['title']),
-                                    subtext=subtext,
+                                    subtext=' | '.join(subtext),
                                     completion=query.rawString,
-                                    actions=actions
+                                    actions=[ UrlAction(action, 'https://www.youtube.com/' + link) ]
                                 )
                         items.append(item)
                 return items
