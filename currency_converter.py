@@ -58,6 +58,8 @@ class Yahoo:
         self.name = "Yahoo"
 
     def convert(self, amount, src, dst):
+        if amount.is_integer:
+            amount = int(amount)
         url = 'https://search.yahoo.com/search?p=%s+%s+to+%s' % (amount, src, dst)
         with urlopen(url) as response:
             html = response.read().decode()
