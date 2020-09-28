@@ -77,7 +77,7 @@ def handleQuery(query):
                 return Item(
                     id=__prettyname__,
                     text="Invalid input",
-                    subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:] [name]'",
+                    subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:]seconds [name]'",
                     icon=iconPath,
                     completion=query.rawString
                 )
@@ -119,7 +119,7 @@ def handleQuery(query):
             return Item(
                 id=__prettyname__,
                 text="Add timer",
-                subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:] [name]'",
+                subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:]seconds [name]'",
                 icon=iconPath,
                 completion=query.rawString
             )
