@@ -108,5 +108,14 @@ def handleQuery(query):
                     completion=query.rawString,
                     actions=[FuncAction("Delete timer", lambda timer=timer: deleteTimer(timer))]
                 ))
+            if items:
+                return items
+            # Display hint item
+            return Item(
+                id=__prettyname__,
+                text="Add timer",
+                subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:] [name]'",
+                icon=iconPath,
+                completion=query.rawString
+            )
 
-            return items
