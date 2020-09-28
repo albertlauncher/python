@@ -35,6 +35,11 @@ class AlbertTimer(Timer):
             subprocess.Popen(["aplay", soundPath])
             global timers
             timers.remove(self)
+            subtext="Timed out at %s" % strftime("%X", localtime(self.end))
+            if self.name:
+                subprocess.Popen(['notify-send', f'Timer "{self.name}"', '-u', 'critical', subtext])
+            else:
+                subprocess.Popen(['notify-send', 'Timer', '-u', 'critical', subtext])
 
         super().__init__(interval=interval, function=timeout)
         self.interval = interval
