@@ -37,9 +37,9 @@ class AlbertTimer(Timer):
             timers.remove(self)
             subtext="Timed out at %s" % strftime("%X", localtime(self.end))
             if self.name:
-                subprocess.Popen(['notify-send', f'Timer "{self.name}"', '-u', 'critical', subtext])
+                subprocess.Popen(['notify-send', f'Timer "{self.name}"', '-t', '0', subtext])
             else:
-                subprocess.Popen(['notify-send', 'Timer', '-u', 'critical', subtext])
+                subprocess.Popen(['notify-send', 'Timer', '-t', '0', subtext])
 
         super().__init__(interval=interval, function=timeout)
         self.interval = interval
