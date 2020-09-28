@@ -2,12 +2,12 @@
 
 """Set up timers.
 
-Lists all timers when triggered. Additional arguments in the form of [[hours:]minutes:]seconds let \
-you set triggers. Empty field resolve to 0, e.g. "96::" starts a 96 hours timer. Fields exceeding \
-the maximum amount of the time interval are automatically refactorized, e.g. "9:120:3600" resolves \
-to 12 hours.
+Lists all timers when triggered. Additional arguments in the form of "[[hours:]minutes:]seconds
+[name]" let you set triggers. Empty field resolve to 0, e.g. "96::" starts a 96 hours timer.
+Fields exceeding the maximum amount of the time interval are automatically refactorized, e.g.
+"9:120:3600" resolves to 12 hours.
 
-Synopsis: <trigger> [[[hours]:][minutes]:]seconds"""
+Synopsis: <trigger> [[[hours]:][minutes]:]seconds [name]"""
 
 from albertv0 import *
 from threading import Timer
@@ -17,9 +17,9 @@ import subprocess
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Timer"
-__version__ = "1.0"
+__version__ = "1.1"
 __trigger__ = "timer "
-__author__ = "Manuel Schneider"
+__author__ = "Manuel Schneider, Andreas Preikschat"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__)+"/time.svg"
@@ -29,7 +29,7 @@ timers = []
 
 class AlbertTimer(Timer):
 
-    def __init__(self, interval):
+    def __init__(self, interval, name):
 
         def timeout():
             subprocess.Popen(["aplay", soundPath])
@@ -38,14 +38,15 @@ class AlbertTimer(Timer):
 
         super().__init__(interval=interval, function=timeout)
         self.interval = interval
+        self.name = name
         self.begin = int(time())
         self.end = self.begin + interval
         self.start()
 
 
-def startTimer(interval):
+def startTimer(interval, name):
     global timers
-    timers.append(AlbertTimer(interval))
+    timers.append(AlbertTimer(interval, name))
 
 
 def deleteTimer(timer):
@@ -64,12 +65,14 @@ def handleQuery(query):
     if query.isTriggered:
 
         if query.string.strip():
-            fields = query.string.strip().split(":")
+            args = query.string.strip().split(maxsplit=1)
+            fields = args[0].split(":")
+            name = args[1] if 1 < len(args) else ''
             if not all(field.isdigit() or field == '' for field in fields):
                 return Item(
                     id=__prettyname__,
                     text="Invalid input",
-                    subtext="Enter a query in the form of '%s[[hours:]minutes:]'" % __trigger__,
+                    subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:] [name]'",
                     icon=iconPath,
                     completion=query.rawString
                 )
@@ -82,10 +85,10 @@ def handleQuery(query):
             return Item(
                 id=__prettyname__,
                 text=formatSeconds(seconds),
-                subtext="Set a timer",
+                subtext=f'Set a timer with name "{name}"' if name else 'Set a timer',
                 icon=iconPath,
                 completion=query.rawString,
-                actions=[FuncAction("Set timer", lambda sec=seconds: startTimer(sec))]
+                actions=[FuncAction("Set timer", lambda sec=seconds: startTimer(sec, name))]
             )
 
         else:
@@ -99,7 +102,7 @@ def handleQuery(query):
 
                 items.append(Item(
                     id=__prettyname__,
-                    text="Delete timer <i>[%s]</i>" % identifier,
+                    text=f'Delete timer <i>"{timer.name}" [{identifier}]</i>',
                     subtext="Times out %s" % strftime("%X", localtime(timer.end)),
                     icon=iconPath,
                     completion=query.rawString,
