@@ -84,4 +84,17 @@ def handleQuery(query):
                     ])
         results.append(item)
 
+      # refresh
+    if 'refresh'.startswith(queryList[0]):
+        item = Item(id=__prettyname__,
+                    icon=os.path.dirname(__file__)+"/monitor.svg",
+                    text="Refresh",
+                    subtext="Refresh xrandr configuration",
+                    completion=__trigger__ + 'refresh ',
+                    urgency=ItemBase.Alert,
+                    actions=[
+                         FuncAction(initialize)
+                    ])
+        results.append(item)
+
     return results
