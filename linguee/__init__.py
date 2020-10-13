@@ -74,29 +74,28 @@ def get_suggestions(query):
             result["translations"].append(transl_str)
         results.append(result)
 
-    print(results)
+    # print(results)
     return results
 
 
 def handleQuery(query):
     results = []
     if query.isTriggered:
-        for res in get_suggestions(query.string):
+        for result in get_suggestions(query.string):
+            url = "http://www.linguee.de/{}/search?source=auto&query={}".format(
+                lang,
+                result["word"]
+            )
             results.append(
                 Item(
-                    id=res["word"],
+                    id=result["word"],
                     icon=iconPath,
-                    text=res["word"],
-                    subtext=", ".join(res["translations"]),
-                    completion=__trigger__ + res["word"],
+                    text=result["word"],
+                    subtext=", ".join(result["translations"]),
+                    completion=__trigger__ + result["word"],
                     actions=[
-                        UrlAction(
-                            "Open",
-                            "http://www.linguee.de/"
-                            + lang
-                            + "/search?source=auto&query="
-                            + res["word"],
-                        )
+                        UrlAction("Open", url),
+                        ClipAction("Copy url to clipboard", url)
                     ],
                 )
             )
