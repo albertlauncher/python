@@ -22,7 +22,7 @@ __trigger__ = "lin "
 __author__ = "Lucky Lukert, David Koch"
 __dependencies__ = ["beautifulsoup4"]
 
-iconPath = os.path.join(os.path.dirname(__file__), "linguee.png")
+iconPath = os.path.join(os.path.dirname(__file__), "linguee.svg")
 
 def getItem(message):
     return Item(
