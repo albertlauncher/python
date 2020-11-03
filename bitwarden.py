@@ -29,7 +29,7 @@ def handleQuery(query):
 
     passwords = get_passwords()
     filtered_passwords = []
-    search_fields = ["name", "user", "folder"]
+    search_fields = ["path", "user"]
     words = query.string.strip().lower().split()
     for p in passwords:
         all_matches = True
@@ -50,9 +50,9 @@ def handleQuery(query):
             Item(
                 id=p["id"],
                 icon=ICON_PATH,
-                text=p["name"],
+                text=p["path"],
                 subtext=p["user"],
-                completion=f"rbw {p['name']}",
+                completion=f"rbw {p['path']}",
                 actions=[
                     ProcAction(
                         "Copy",
@@ -81,7 +81,11 @@ def get_passwords():
     passwords = []
     for l in p.stdout.splitlines():
         fields = l.split("\t")
-        d = {}
-        passwords.append(dict(zip(field_names, fields)))
+        d = dict(zip(field_names, fields))
+        if d["folder"]:
+            d["path"] = d["folder"] + "/" + d["name"]
+        else:
+            d["path"] = d["name"]
+        passwords.append(d)
 
     return passwords
