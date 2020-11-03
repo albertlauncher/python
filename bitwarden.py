@@ -62,6 +62,14 @@ def handleQuery(query):
                             f"rbw get {p['id']} | tr -d '\\n' | xclip -selection clipboard -in",
                         ],
                     ),
+                    ProcAction(
+                        "Copy auth code",
+                        [
+                            "sh",
+                            "-c",
+                            f"rbw code {p['id']} | tr -d '\\n' | xclip -selection clipboard -in",
+                        ],
+                    ),
                     TermAction("Edit", ["rbw", "edit", p["id"]]),
                 ],
             ),
