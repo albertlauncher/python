@@ -37,7 +37,7 @@ class AlbertTimer(Timer):
             timers.remove(self)
             subtext="Timed out at %s" % strftime("%X", localtime(self.end))
             if self.name:
-                subprocess.Popen(['notify-send', f'Timer "{self.name}"', '-t', '0', subtext])
+                subprocess.Popen(['notify-send', 'Timer "%s"' % self.name, '-t', '0', subtext])
             else:
                 subprocess.Popen(['notify-send', 'Timer', '-t', '0', subtext])
 
@@ -77,7 +77,7 @@ def handleQuery(query):
                 return Item(
                     id=__prettyname__,
                     text="Invalid input",
-                    subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:]seconds [name]'",
+                    subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __trigger__,
                     icon=iconPath,
                     completion=query.rawString
                 )
@@ -90,7 +90,7 @@ def handleQuery(query):
             return Item(
                 id=__prettyname__,
                 text=formatSeconds(seconds),
-                subtext=f'Set a timer with name "{name}"' if name else 'Set a timer',
+                subtext='Set a timer with name "%s"' % name if name else 'Set a timer',
                 icon=iconPath,
                 completion=query.rawString,
                 actions=[FuncAction("Set timer", lambda sec=seconds: startTimer(sec, name))]
@@ -105,10 +105,10 @@ def handleQuery(query):
                 h, m = divmod(m, 60)
                 identifier = "%d:%02d:%02d" % (h, m, s)
 
-                timer_name_with_quotes = f'"{timer.name}"' if timer.name else ''
+                timer_name_with_quotes = '"%s"' % timer.name if timer.name else ''
                 items.append(Item(
                     id=__prettyname__,
-                    text=f'Delete timer <i>{timer_name_with_quotes} [{identifier}]</i>',
+                    text='Delete timer <i>%s [%s]</i>' % (timer_name_with_quotes, identifier),
                     subtext="Times out %s" % strftime("%X", localtime(timer.end)),
                     icon=iconPath,
                     completion=query.rawString,
@@ -120,7 +120,7 @@ def handleQuery(query):
             return Item(
                 id=__prettyname__,
                 text="Add timer",
-                subtext=f"Enter a query in the form of '{__trigger__}[[hours:]minutes:]seconds [name]'",
+                subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __trigger__,
                 icon=iconPath,
                 completion=query.rawString
             )
