@@ -105,9 +105,10 @@ def handleQuery(query):
                 h, m = divmod(m, 60)
                 identifier = "%d:%02d:%02d" % (h, m, s)
 
+                timer_name_with_quotes = f'"{timer.name}"' if timer.name else ''
                 items.append(Item(
                     id=__prettyname__,
-                    text=f'Delete timer <i>"{timer.name}" [{identifier}]</i>',
+                    text=f'Delete timer <i>{timer_name_with_quotes} [{identifier}]</i>',
                     subtext="Times out %s" % strftime("%X", localtime(timer.end)),
                     icon=iconPath,
                     completion=query.rawString,
