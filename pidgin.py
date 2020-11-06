@@ -18,6 +18,7 @@ __dependencies__ = ["dbus"]
 iconPath = iconLookup("pidgin")
 bus = dbus.SessionBus()
 
+handler = None
 
 class ContactHandler:
     """Handle pidgin contact list"""
@@ -43,7 +44,7 @@ class ContactHandler:
                     name = self._purple.PurpleBuddyGetAlias(buddy)
                     self._contacts.append((name, account))
         except dbus.DBusException:
-            critical("Could not connect to pidgin service")
+            warning("Could not connect to pidgin service")
 
     def isReady(self):
         """Check that this handler is ready to communicate"""
@@ -63,6 +64,9 @@ handler = ContactHandler()
 
 
 def handleQuery(query):
+    if not handler:
+        return []
+
     if not handler.isReady():
         handler.refresh()
 
@@ -88,3 +92,6 @@ def handleQuery(query):
                     )
                 )
             return items
+
+def initialize():
+    handler = ContactHandler()
