@@ -11,7 +11,7 @@ from os import path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albertv0 import Item, UrlAction, iconLookup, critical, info
+from albertv0 import Item, UrlAction, iconLookup, critical, debug, info
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Youtube'
@@ -27,7 +27,8 @@ HEADERS = {
     )
 }
 
-re_videos = re.compile(r"^\s*window\[\"ytInitialData\"\] = (.*);$", re.MULTILINE)
+DATA_REGEX_VAR = re.compile(r'^\s*var\sytInitialData\s*=\s*(.*)\s*;\s*$', re.MULTILINE)
+DATA_REGEX_WINDOW = re.compile(r"^\s*window\[\"ytInitialData\"\] = (.*);$", re.MULTILINE)
 
 def handleQuery(query):
     if query.isTriggered and query.string.strip():
@@ -43,12 +44,17 @@ def handleQuery(query):
 
         with urlopen(req) as response:
             responseBytes = response.read()
-            match = re.search(re_videos, responseBytes.decode())
+            match = re.search(DATA_REGEX_VAR, responseBytes.decode())
             if match is None:
-                critical("Failed to receive expected data from YouTube. This likely means API changes, but could just be a failed request.")
-                logHtml(responseBytes)
-                return
+                debug("Could not find data object using 'var' regex, falling back to 'window'")
+                match = re.search(DATA_REGEX_WINDOW, responseBytes.decode())
 
+                if match is None:
+                    critical("Failed to receive expected data from YouTube. This likely means API changes, but could just be a failed request.")
+                    logHtml(responseBytes)
+                    return
+
+            info("Found data object in window")
             results = json.loads(match.group(1))
             results = results['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']
             items = []
