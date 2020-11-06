@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Evaluate simple JavaScript expressions. Use it with care every keystroke triggers an evaluation."""
+"""Evaluate simple PHP expressions. Use it with care every keystroke triggers an evaluation."""
 
 import os
 import subprocess
