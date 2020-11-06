@@ -20,15 +20,14 @@ __trigger__ = 'yt '
 __author__ = 'Manuel Schneider'
 __icon__ = iconLookup('youtube')  # path.dirname(__file__) + '/icons/YouTube.png'
 
+DATA_REGEX = re.compile(r'^\s*(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;\s*$', re.MULTILINE)
+
 HEADERS = {
     'User-Agent': (
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)'
         ' Chrome/62.0.3202.62 Safari/537.36'
     )
 }
-
-DATA_REGEX_VAR = re.compile(r'^\s*var\sytInitialData\s*=\s*(.*)\s*;\s*$', re.MULTILINE)
-DATA_REGEX_WINDOW = re.compile(r"^\s*window\[\"ytInitialData\"\] = (.*);$", re.MULTILINE)
 
 def handleQuery(query):
     if query.isTriggered and query.string.strip():
@@ -44,18 +43,13 @@ def handleQuery(query):
 
         with urlopen(req) as response:
             responseBytes = response.read()
-            match = re.search(DATA_REGEX_VAR, responseBytes.decode())
+            match = re.search(DATA_REGEX, responseBytes.decode())
             if match is None:
-                debug("Could not find data object using 'var' regex, falling back to 'window'")
-                match = re.search(DATA_REGEX_WINDOW, responseBytes.decode())
+                critical("Failed to receive expected data from YouTube. This likely means API changes, but could just be a failed request.")
+                logHtml(responseBytes)
+                return
 
-                if match is None:
-                    critical("Failed to receive expected data from YouTube. This likely means API changes, but could just be a failed request.")
-                    logHtml(responseBytes)
-                    return
-
-            info("Found data object in window")
-            results = json.loads(match.group(1))
+            results = json.loads(match.group(3))
             results = results['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']
             items = []
             for result in results:
