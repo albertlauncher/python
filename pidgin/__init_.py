@@ -15,6 +15,9 @@ __author__ = "Greizgh"
 __trigger__ = "pidgin "
 __dependencies__ = ["dbus"]
 
+if which("pidgin") is None:
+    raise Exception("'pidgin' is not in $PATH.")
+
 iconPath = iconLookup("pidgin")
 bus = dbus.SessionBus()
 
