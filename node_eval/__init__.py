@@ -21,20 +21,24 @@ iconPath = os.path.dirname(__file__) + '/nodejs.svg'
 
 
 def run(exp):
-    exp = exp.replace('"', '\\"')
-    return subprocess.getoutput(f'node --print "{exp}"')
+    return subprocess.getoutput('node --print "%s"' % exp.replace('"', '\\"'))
 
 
 def handleQuery(query):
     if query.isTriggered:
-        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
+        item = Item(
+            id=__prettyname__,
+            icon=iconPath,
+            completion=query.rawString,
+        )
         stripped = query.string.strip()
 
         if stripped == '':
             item.text = 'Enter a JavaScript expression...'
         else:
             item.text = run(stripped)
-            item.subtext = run(f'Object.prototype.toString.call({stripped}).slice(8, -1).toLowerCase()')
+            item.subtext = run(
+                'Object.prototype.toString.call(%s).slice(8, -1).toLowerCase()' % stripped)
             item.addAction(ClipAction('Copy result to clipboard', item.text))
 
         return item
