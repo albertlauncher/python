@@ -21,8 +21,7 @@ if which('php') is None:
 
 
 def run(exp):
-    exp = exp.replace('"', '\\"')
-    return subprocess.getoutput(f'php -r "{exp}"')
+    return subprocess.getoutput('php -r "%s"' % exp.replace('"', '\\"'))
 
 
 def handleQuery(query):
@@ -37,8 +36,8 @@ def handleQuery(query):
         if stripped == '':
             item.text = 'Enter a PHP expression...'
         else:
-            item.text = run(f'echo {stripped};')
-            item.subtext = run(f'echo gettype({stripped});')
+            item.text = run('echo %s;' % stripped)
+            item.subtext = run('echo gettype(%s);' % stripped)
             item.addAction(ClipAction('Copy result to clipboard', item.text))
 
         return item
