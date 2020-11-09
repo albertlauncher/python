@@ -5,6 +5,7 @@
 import os
 import subprocess
 from albertv0 import *
+from shutil import which
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Node Eval'
@@ -13,6 +14,8 @@ __trigger__ = 'node '
 __author__ = 'Hammed Oyedele'
 __dependencies__ = ['node']
 
+if which('node') is None:
+    raise Exception('"node" is not in $PATH.')
 
 iconPath = os.path.dirname(__file__) + '/nodejs.svg'
 
