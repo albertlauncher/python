@@ -5,6 +5,7 @@
 import os
 import subprocess
 from albertv0 import *
+from shutil import which
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'PHP Eval'
@@ -15,6 +16,9 @@ __dependencies__ = ['php']
 
 iconPath = os.path.dirname(__file__) + '/php.svg'
 
+if which('php') is None:
+    raise Exception('"php" is not in $PATH.')
+
 
 def run(exp):
     exp = exp.replace('"', '\\"')
@@ -23,8 +27,11 @@ def run(exp):
 
 def handleQuery(query):
     if query.isTriggered:
-        item = Item(id=__prettyname__, icon=iconPath,
-                    completion=query.rawString)
+        item = Item(
+            id=__prettyname__,
+            icon=iconPath,
+            completion=query.rawString,
+        )
         stripped = query.string.strip()
 
         if stripped == '':
