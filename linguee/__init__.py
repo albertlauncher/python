@@ -9,7 +9,7 @@ Synopsis: <trigger> <word>"""
 
 from albertv0 import *
 import requests
-import bs4
+from xml.etree import ElementTree
 import os
 
 
@@ -17,10 +17,10 @@ lang = "deutsch-englisch"
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Linguee-deutsch-englisch"
-__version__ = "0.1"
+__version__ = "0.2"
 __trigger__ = "lin "
 __author__ = "Lucky Lukert, David Koch"
-__dependencies__ = ["beautifulsoup4"]
+__dependencies__ = []
 
 iconPath = os.path.join(os.path.dirname(__file__), "linguee.svg")
 
@@ -34,22 +34,40 @@ def getItem(message):
         actions=[],
     )
 
+def clean_translation_item(item):
+    # the translation_item contains information like word type etc but we're
+    # only interested in placeholders (like "sth.") so we remove everything else
+    if len(item) == 0:
+        return
 
-def str_from_html(html):
-    # extract a meaningful string from a translation_item
-    # the item might be a nested structure, so this function is recursive
-    if type(html) is bs4.element.NavigableString:
-        return html.strip()
-    elif type(html) is bs4.element.Tag:
-        # we are only interested in placeholders (eg. "etw.")
-        # and translation_items
-        if not any(
-            cls in html.attrs["class"]
-            for cls in ["main_item", "translation_item", "placeholder"]
-        ):
-            return ""
+    remove = []
+    for i in item:
+        if i.attrib["class"] != "placeholder":
+            remove.append(i)
+        else:
+            clean_translation_item(i)  # the structure may be nested
+    for r in remove:
+        item.remove(r)
 
-        return " ".join([str_from_html(tr) for tr in html.children]).strip()
+
+
+def get_results(linguee_response):
+    linguee_response = linguee_response.replace("<span class='sep'>&middot;</span>","")
+    linguee_response = linguee_response.replace("&","#-#")
+    root = ElementTree.fromstring(linguee_response)
+    results = []
+    for item in root:
+        word = item[0][0].text.strip().encode().decode("utf-8")
+        translations = []
+        for translation_row in item[1:]:
+            for translation_item in translation_row[0]:
+                clean_translation_item(translation_item)
+                translation = " ".join(tr.strip() for tr in translation_item.itertext()).strip()
+                translations.append(translation)
+
+        results.append({"word": word, "translations": translations})
+
+    return results
 
 
 def get_suggestions(query):
@@ -58,24 +76,7 @@ def get_suggestions(query):
         # change the ch-parameter to get more/less results
         params={"qe": query, "source": "auto", "cw": "820", "ch": "1000"},
     )
-    parsed = bs4.BeautifulSoup(response.text, "html.parser")
-    # get all suggestions
-    items = parsed.find_all("div", attrs={"class": "autocompletion_item"})
-    results = []
-    for item in items:
-        # main_item is the suggested word
-        result = {
-            "word": str_from_html(item.find("div", attrs={"class": "main_item"})),
-            "translations": [],
-        }
-        # find all translation_items for this item
-        for transl in item.find_all("div", attrs={"class": "translation_item"}):
-            transl_str = str_from_html(transl)
-            result["translations"].append(transl_str)
-        results.append(result)
-
-    # print(results)
-    return results
+    return get_results(response.text)
 
 
 def handleQuery(query):
