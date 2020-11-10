@@ -2,9 +2,12 @@
 
 """linguee extension
 
-translate ger-eng with linguee
+translate english-<lang> with linguee
 
-Synopsis: <trigger> <word>"""
+Synopsis: <trigger> <lang> <word>
+
+supported languages: de (German), es (Spanish), fr (French), it (Italian), ja (Japanese), nl (Dutch), pl (Polish), pt (Portuguese),ru (Russian), zh (Chinese)
+"""
 
 
 from albertv0 import *
@@ -12,17 +15,27 @@ import requests
 from xml.etree import ElementTree
 import os
 
-
-lang = "deutsch-englisch"
-
 __iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Linguee-deutsch-englisch"
-__version__ = "0.2"
+__prettyname__ = "Linguee"
+__version__ = "1.0"
 __trigger__ = "lin "
 __author__ = "Lucky Lukert, David Koch"
 __dependencies__ = []
 
 iconPath = os.path.join(os.path.dirname(__file__), "linguee.svg")
+
+languages = {
+    "de": "german",
+    "es": "spanish",
+    "fr": "french",
+    "it": "italian",
+    "ja": "japanese",
+    "nl": "dutch",
+    "pl": "polish",
+    "pt": "portuguese",
+    "ru": "russian",
+    "zh": "chinese",
+}
 
 def getItem(message):
     return Item(
@@ -57,7 +70,7 @@ def get_results(linguee_response):
     root = ElementTree.fromstring(linguee_response)
     results = []
     for item in root:
-        word = item[0][0].text.strip().encode().decode("utf-8")
+        word = item[0][0].text.strip()
         translations = []
         for translation_row in item[1:]:
             for translation_item in translation_row[0]:
@@ -70,9 +83,9 @@ def get_results(linguee_response):
     return results
 
 
-def get_suggestions(query):
+def get_suggestions(lang, query):
     response = requests.get(
-        "https://www.linguee.de/" + lang + "/search?",
+        "https://www.linguee.com/english-" + lang + "/search?",
         # change the ch-parameter to get more/less results
         params={"qe": query, "source": "auto", "cw": "820", "ch": "1000"},
     )
@@ -82,9 +95,26 @@ def get_suggestions(query):
 def handleQuery(query):
     results = []
     if query.isTriggered:
-        for result in get_suggestions(query.string):
-            url = "http://www.linguee.de/{}/search?source=auto&query={}".format(
-                lang,
+        try:
+            lang, query = query.string.split(maxsplit=1)
+        except ValueError:
+            # suggest supported languages
+            suggestions = [
+                Item(
+                    icon=iconPath,
+                    text=short,
+                    subtext=long,
+                    completion=__trigger__ + short,
+                ) for short,long in languages.items()
+            ]
+            return [getItem("Please specify a language below")] + suggestions
+
+        if lang not in languages:
+            return [getItem("Language '{}' not supported".format(lang))]
+
+        for result in get_suggestions(languages[lang], query):
+            url = "http://www.linguee.com/english-{}/search?source=auto&query={}".format(
+                languages[lang],
                 result["word"]
             )
             results.append(
