@@ -31,7 +31,6 @@ usage_string = "Usage: [min] max [numbers]"
 def createBlankItem(text):
     return Item(
                 id=__prettyname__,
-                icon=iconPath,
                 text=str(text),
                 subtext="",
                 actions=[])
