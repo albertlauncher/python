@@ -26,7 +26,6 @@ __dependencies__ = []
 
 
 usage_string = "Usage: [min] max [numbers]"
-iconPath = iconLookup("rand")
 
 
 def createBlankItem(text):
