@@ -1,6 +1,12 @@
 [submodule "xkcd"]
 	path = xkcd
 	url = https://github.com/bergercookie/xkcd-albert-plugin
+
 [submodule "stadia"]
 	path = stadia
 	url = https://github.com/sebastiansam55/stadia-albert-plugin.git
+
+[submodule "jetbrains_projects"]
+	path = jetbrains_projects
+	url = https://github.com/mqus/jetbrains-albert-plugin.git
+
