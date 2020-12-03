@@ -17,14 +17,14 @@ from threading import Thread, Event
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Binance"
-__version__ = "1.2"
+__version__ = "1.3"
 __trigger__ = "bnc "
 __author__ = "Manuel Schneider"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__) + "/Binance.svg"
 exchangeInfoUrl = "https://api.binance.com/api/v1/exchangeInfo"
-tradeUrl = "https://www.binance.com/tradeDetail.html?symbol=%s_%s"
+tradeUrl = "https://www.binance.com/en/trade/%s_%s?layout=pro"
 markets = []
 thread = None
 
