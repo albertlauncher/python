@@ -14,6 +14,7 @@ from threading import Timer
 from time import strftime, time, localtime
 import dbus
 import os
+import random
 import subprocess
 
 __iid__ = "PythonInterface/v0.1"
@@ -46,7 +47,7 @@ class AlbertTimer(Timer):
 
             bus = dbus.SessionBus()
             notify = dbus.Interface(bus.get_object(dbusItem, dbusPath), dbusInterface)
-            notify.Notify(__prettyname__, 0, iconPath, title, text, '', '', 0)
+            notify.Notify(__prettyname__, random.randint(0, 100000), iconPath, title, text, '', '', 0)
 
         super().__init__(interval=interval, function=timeout)
         self.interval = interval
