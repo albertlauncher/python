@@ -19,7 +19,7 @@ import subprocess
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Timer"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "timer "
 __author__ = "Manuel Schneider, Andreas Preikschat"
 __dependencies__ = ["dbus"]
