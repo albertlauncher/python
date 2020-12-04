@@ -43,7 +43,7 @@ class AlbertTimer(Timer):
             timers.remove(self)
 
             title = 'Timer "%s"' % self.name if self.name else 'Timer'
-            text="Timed out at %s" % strftime("%X", localtime(self.end))
+            text = "Timed out at %s" % strftime("%X", localtime(self.end))
 
             bus = dbus.SessionBus()
             notify = dbus.Interface(bus.get_object(dbusItem, dbusPath), dbusInterface)
