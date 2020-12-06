@@ -17,9 +17,9 @@ from albertv0 import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "GNU Units"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "units "
-__author__ = "Manuel Schneider"
+__author__ = "Manuel Schneider, iyzana"
 __dependencies__ = ["units"]
 
 if which("units") is None:
