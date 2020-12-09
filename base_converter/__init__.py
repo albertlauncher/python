@@ -3,12 +3,16 @@
 """Convert representations of numbers.
 
 Synopsis:
-    <trigger> <src base> <dest base> <src>
-    <bin|oct|dec|hex> <number> [padding]"""
+    <trigger> <dest base> <src>
+    <number> [padding]
+
+    where <src> is a literal of the form '0bXXX' (binary), '0XXX' (octal), 
+    or '0xXXX' (hexadecimal)."""
 
 import numpy as np
+from collections import defaultdict
 
-from albert import *
+from albert import Item, ClipAction
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Base Converter"
@@ -17,12 +21,21 @@ __trigger__ = "base "
 __author__ = "Manuel Schneider"
 __dependencies__ = ["numpy"]
 
-base_keywords = {"bin": 2, "oct": 8, "dec": 10, "hex": 16}
 
-def buildItem(completion, src, dst, number, padding=0):
+class keyed_defaultdict(defaultdict):
+    def __missing__(self, key):
+        return self.default_factory(key)
+
+
+base_prefixes = keyed_defaultdict(lambda k: 8 if k[0] == "0" and len(k) > 1 else 10)
+base_prefixes["0b"] = 2
+base_prefixes["0x"] = 16
+
+
+def buildItem(completion, dst, number, padding=0):
     item = Item(id=__prettyname__, completion=completion)
     try:
-        src = int(src)
+        src = base_prefixes[number[:2]]
         dst = int(dst)
         padding = int(padding)
         integer = int(number, src)
@@ -36,26 +49,27 @@ def buildItem(completion, src, dst, number, padding=0):
         item.subtext = str(e)
     return item
 
+
 def handleQuery(query):
     if query.isTriggered:
         fields = query.string.split()
-        if len(fields) == 3:
-            return buildItem(query.rawString, fields[0], fields[1], fields[2])
+        if len(fields) == 2:
+            return buildItem(query.rawString, fields[0], fields[1])
         else:
             item = Item(id=__prettyname__, completion=query.rawString)
             item.text = __prettyname__
-            item.subtext = "Enter a query in the form of \"&lt;srcbase&gt; &lt;dstbase&gt; &lt;number&gt;\""
+            item.subtext = "Enter a query in the form of \"&lt;dstbase&gt; &lt;number&gt;\""
             return item
     else:
         fields = query.string.split()
-        if len(fields) < 2 or fields[0] not in base_keywords:
+        if len(fields) < 2:
             return
-        src = base_keywords[fields[0]]
+        src = base_prefixes[fields[:3]]
         number = fields[1]
         padding = 0 if len(fields) < 3 else fields[2]
         results = []
-        for dst in sorted(base_keywords.values()):
+        for dst in sorted(base_prefixes.values().append(8)):
             if dst == src:
                 continue
-            results.append(buildItem(query.rawString, src, dst, number, padding))
+            results.append(buildItem(query.rawString, dst, number, padding))
         return results
