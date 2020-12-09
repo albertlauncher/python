@@ -17,7 +17,7 @@ __iid__          = 'PythonInterface/v0.3'
 __prettyname__   = 'TeXdoc'
 __version__      = '1.0'
 __trigger__      = 'td'
-__author__       = 'Florian Adamsky'
+__author__       = 'Florian Adamsky (@cit)'
 __dependencies__ = ['texdoc']
 
 iconPath   = Path(__file__).parent / 'texdoc-logo.svg'
