@@ -17,7 +17,7 @@ __author__ = "janeklb"
 __dependencies__ = ['nmcli']
 
 
-iconPath = iconLookup('network-wireless')
+iconPath = iconLookup('network-vpn')
 if not iconPath:
     iconPath = ":python_module"
 
