@@ -20,7 +20,7 @@ __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Timer"
 __version__ = "1.2"
 __trigger__ = "timer "
-__author__ = "Manuel Schneider, Andreas Preikschat"
+__author__ = "manuelschneid3r, googol42"
 __dependencies__ = ["dbus"]
 
 iconPath = os.path.dirname(__file__)+"/time.svg"
