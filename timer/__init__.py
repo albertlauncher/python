@@ -12,19 +12,24 @@ Synopsis: <trigger> [[[hours]:][minutes]:]seconds [name]"""
 from albertv0 import *
 from threading import Timer
 from time import strftime, time, localtime
+import dbus
 import os
 import subprocess
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Timer"
-__version__ = "1.1"
+__version__ = "1.2"
 __trigger__ = "timer "
-__author__ = "Manuel Schneider, Andreas Preikschat"
-__dependencies__ = []
+__author__ = "manuelschneid3r, googol42"
+__dependencies__ = ["dbus"]
 
 iconPath = os.path.dirname(__file__)+"/time.svg"
 soundPath = os.path.dirname(__file__)+"/bing.wav"
 timers = []
+
+dbusItem = "org.freedesktop.Notifications"
+dbusPath = "/org/freedesktop/Notifications"
+dbusInterface = "org.freedesktop.Notifications"
 
 
 class AlbertTimer(Timer):
@@ -35,11 +40,13 @@ class AlbertTimer(Timer):
             subprocess.Popen(["aplay", soundPath])
             global timers
             timers.remove(self)
-            subtext="Timed out at %s" % strftime("%X", localtime(self.end))
-            if self.name:
-                subprocess.Popen(['notify-send', 'Timer "%s"' % self.name, '-t', '0', subtext])
-            else:
-                subprocess.Popen(['notify-send', 'Timer', '-t', '0', subtext])
+
+            title = 'Timer "%s"' % self.name if self.name else 'Timer'
+            text = "Timed out at %s" % strftime("%X", localtime(self.end))
+
+            bus = dbus.SessionBus()
+            notify = dbus.Interface(bus.get_object(dbusItem, dbusPath), dbusInterface)
+            notify.Notify(__prettyname__, 0, iconPath, title, text, '', '', 0)
 
         super().__init__(interval=interval, function=timeout)
         self.interval = interval
