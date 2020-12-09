@@ -6,7 +6,8 @@ Synopsis:
     <trigger> <dest base> <src>
     <number> [padding]
 
-    where <src> is a literal of the form '0bXXX', '0XXX', or 0xXXX'."""
+    where <src> is a literal of the form '0bXXX' (binary), '0XXX' (octal), 
+    or '0xXXX' (hexadecimal)."""
 
 import numpy as np
 from collections import defaultdict
