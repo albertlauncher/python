@@ -18,9 +18,9 @@ import re
 
 __iid__ = "PythonInterface/v0.3"
 __prettyname__ = "Archlinux User Repository"
-__version__ = "1.2"
+__version__ = "1.3"
 __trigger__ = "aur "
-__author__ = "Manuel Schneider"
+__author__ = "manuelschneid3r"
 __dependencies__ = []
 
 iconPath = os.path.dirname(__file__)+"/arch.svg"
@@ -31,6 +31,8 @@ if which("yaourt"):
     install_cmdline = "yaourt -S aur/%s"
 elif which("pacaur"):
     install_cmdline = "pacaur -S aur/%s"
+elif which("yay"):
+    install_cmdline = "yay -S aur/%s"
 
 def handleQuery(query):
     if not query.isTriggered:
