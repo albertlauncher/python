@@ -16,7 +16,7 @@ from albertv0 import Item, ClipAction
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Base Converter"
-__version__ = "2.0"
+__version__ = "1.1"
 __trigger__ = "base "
 __author__ = "Manuel Schneider"
 __dependencies__ = ["numpy"]
