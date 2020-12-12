@@ -29,7 +29,6 @@ connections = []
 
 class RemminaConnection:
     def __init__(self, path):
-        global protocol_icons
         self.path = path
         self.name = str(self.path)
         self.icon = remmina_icon_path
@@ -49,7 +48,6 @@ class RemminaConnection:
         return f"{self.name} ({self.path})"
 
 
-# Can be omitted
 def initialize():
     conf_dir = Path(expanduser("~/.remmina"))
     debug(f"CONF DIR: {conf_dir}")
@@ -57,11 +55,6 @@ def initialize():
     connections = [RemminaConnection(p) for p in conf_dir.glob("*.remmina")]
     for c in connections:
         info(c)
-
-
-# Can be omitted
-def finalize():
-    pass
 
 
 def handleQuery(query):
