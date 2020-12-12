@@ -20,8 +20,14 @@ __dependencies__ = ["remmina"]
 remmina_icon_path = iconLookup("org.remmina.Remmina")
 
 protocol_icons = {
+    "EXEC": iconLookup("remmina-tool-symbolic"),
+    "NX": iconLookup("remmina-nx-symbolic"),
     "RDP": iconLookup("remmina-rdp-symbolic"),
-    "VNC": iconLookup("remmina-vnc-symbolic")
+    "SFTP": iconLookup("remmina-sftp-symbolic"),
+    "SPICE": iconLookup("remmina-spice-symbolic"),
+    "SSH": iconLookup("remmina-ssh-symbolic"),
+    "VNC": iconLookup("remmina-vnc-symbolic"),
+    "XDMCP": iconLookup("remmina-xdmcp-symbolic")
 }
 
 connections = []
