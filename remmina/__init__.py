@@ -6,6 +6,7 @@ Synopsis: <trigger> <query>"""
 
 from albertv0 import *
 import os
+import configparser
 from os.path import expanduser
 from pathlib import Path
 
@@ -17,9 +18,8 @@ __trigger__ = "re "
 __author__ = "gentoo90"
 __dependencies__ = ["remmina"]
 
-remmina_icon_path = iconLookup("org.remmina.Remmina")
-
-protocol_icons = {
+REMMINA_ICON_PATH = iconLookup("org.remmina.Remmina")
+PROTOCOL_ICONS = {
     "EXEC": iconLookup("remmina-tool-symbolic"),
     "NX": iconLookup("remmina-nx-symbolic"),
     "RDP": iconLookup("remmina-rdp-symbolic"),
@@ -29,38 +29,42 @@ protocol_icons = {
     "VNC": iconLookup("remmina-vnc-symbolic"),
     "XDMCP": iconLookup("remmina-xdmcp-symbolic")
 }
+CONNECTIONS_PATH = Path("~/.local/share/remmina").expanduser()
 
 connections = []
 
 
-class RemminaConnection:
+class RemminaConnectionItem(Item):
     def __init__(self, path):
         self.path = path
-        self.name = str(self.path)
-        self.icon = remmina_icon_path
 
-        with open(self.path) as f:
-            for l in f.readlines():
-                if l.startswith("name"):
-                    self.name = l.split("=")[1].strip()
-                if l.startswith("protocol"):
-                    protocol = l.split("=")[1].strip()
-                    try:
-                        self.icon = protocol_icons[protocol]
-                    except KeyError:
-                        pass
+        conf = configparser.ConfigParser()
+        conf.read(path)
+
+        self.name = conf["remmina"]["name"]
+        self.group = conf["remmina"]["group"]
+        self.server = conf["remmina"]["server"]
+        self.proto = conf["remmina"]["protocol"]
+
+        super(RemminaConnectionItem, self).__init__(id=__prettyname__,
+                    icon=PROTOCOL_ICONS.get(self.proto) or REMMINA_ICON_PATH,
+                    text=f"{self.group}/ {self.name}" if len(self.group) > 0 else self.name,
+                    subtext=f"{self.proto} {self.server}",
+                    actions=[
+                        ProcAction(text="Open",
+                                   commandline=["remmina", "-c", str(self.path)],
+                                   cwd="~")
+                    ])
 
     def __repr__(self):
-        return f"{self.name} ({self.path})"
+        return f"{self.text} ({self.path})"
 
 
 def initialize():
-    conf_dir = Path(expanduser("~/.remmina"))
-    debug(f"CONF DIR: {conf_dir}")
     global connections
-    connections = [RemminaConnection(p) for p in conf_dir.glob("*.remmina")]
+    connections = [RemminaConnectionItem(p) for p in CONNECTIONS_PATH.glob("*.remmina")]
     for c in connections:
-        info(c)
+        debug(f"Indexing Remmina connection: {c}")
 
 
 def handleQuery(query):
@@ -68,16 +72,8 @@ def handleQuery(query):
     results = []
     try:
         for con in connections:
-            if (pattern and pattern in con.name.lower() or not pattern and query.isTriggered):
-                item = Item(id=__prettyname__,
-                    icon=con.icon,
-                    text=con.name,
-                    actions=[
-                        ProcAction(text="Open",
-                                   commandline=["/usr/bin/remmina", "-c", str(con.path)],
-                                   cwd="~")
-                    ])
-                results.append(item)
+            if (pattern and pattern in con.text.lower() or not pattern and query.isTriggered):
+                results.append(con)
     except Exception as e:
         critical(str(e))
     return results
