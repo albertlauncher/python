@@ -21,7 +21,7 @@ __prettyname__ = "Virtual Box"
 __version__ = "1.2"
 __trigger__ = "vbox "
 __author__ = "Manuel Schneider"
-__dependencies__ = ['pyvbox']
+__dependencies__ = ['virtualbox']
 
 vbox = None
 
