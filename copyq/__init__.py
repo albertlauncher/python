@@ -67,6 +67,7 @@ def copyq_get_all():
 
 def handleQuery(query):
     if query.isTriggered:
+        query.disableSort()
 
         items = []
         pattern = re.compile(query.string, re.IGNORECASE)
