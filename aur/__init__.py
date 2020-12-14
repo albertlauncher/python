@@ -7,7 +7,7 @@ quickly install the packages. If you are missing your favorite AUR helper tool s
 
 Synopsis: <trigger> <pkg_name>"""
 
-from albertv0 import *
+from albert import *
 from shutil import which
 from datetime import datetime
 from shlex import split

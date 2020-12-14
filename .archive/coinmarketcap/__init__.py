@@ -7,7 +7,7 @@ the market capitalisation in USD. Volume is the volume of the last 24 hours in U
 
 Synopsis: <trigger> [filter]"""
 
-from albertv0 import *
+from albert import *
 from threading import Thread, Event
 from locale import format as lformat
 from urllib import request

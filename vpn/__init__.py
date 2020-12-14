@@ -5,7 +5,7 @@ Connect or disconnect from a network manager VPN profile"""
 
 import subprocess
 from collections import namedtuple
-from albertv0 import *
+from albert import *
 from shutil import which
 
 

@@ -11,7 +11,7 @@ import subprocess
 
 from shutil   import which
 from pathlib  import Path
-from albertv0 import *
+from albert import *
 
 __iid__          = 'PythonInterface/v0.3'
 __prettyname__   = 'TeXdoc'

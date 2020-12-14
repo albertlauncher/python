@@ -9,7 +9,7 @@ Synopsis: <trigger>"""
 import subprocess as sp
 from shutil import which
 
-from albertv0 import *
+from albert import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Fortune"

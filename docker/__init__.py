@@ -2,7 +2,7 @@
 Docker wrapper (prototype)
 """
 
-from albertv0 import *
+from albert import *
 import os
 import docker
 import pathlib

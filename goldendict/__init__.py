@@ -7,7 +7,7 @@ Synopsis: <trigger> <query>"""
 from shutil import which
 from subprocess import run
 
-from albertv0 import Item, ProcAction, iconLookup
+from albert import Item, ProcAction, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "GoldenDict"

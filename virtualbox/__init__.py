@@ -14,7 +14,7 @@ from virtualbox.library import (LockType, MachineState, OleErrorInvalidarg,
                                 VBoxErrorInvalidVmState, VBoxErrorIprtError,
                                 VBoxErrorObjectNotFound)
 
-from albertv0 import FuncAction, Item, critical, iconLookup
+from albert import FuncAction, Item, critical, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Virtual Box"

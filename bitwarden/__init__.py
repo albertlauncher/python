@@ -7,7 +7,7 @@ import os
 from shutil import which
 from subprocess import run
 
-from albertv0 import *
+from albert import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Bitwarden"

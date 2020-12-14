@@ -7,7 +7,7 @@ Synopsis: <trigger>"""
 import socket
 from urllib import request
 
-from albertv0 import *
+from albert import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "IP Addresses"

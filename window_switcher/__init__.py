@@ -8,7 +8,7 @@ import subprocess
 from collections import namedtuple
 from shutil import which
 
-from albertv0 import Item, ProcAction, iconLookup
+from albert import Item, ProcAction, iconLookup
 
 Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
 

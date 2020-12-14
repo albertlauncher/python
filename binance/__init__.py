@@ -6,7 +6,7 @@ Synopsis:
     filter
     <trigger> [filter]"""
 
-from albertv0 import *
+from albert import *
 import time
 import os
 import urllib.request

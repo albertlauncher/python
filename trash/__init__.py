@@ -9,7 +9,7 @@ Synopsis: <trigger>"""
 
 import re
 
-from albertv0 import Item, UrlAction, iconLookup
+from albert import Item, UrlAction, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Trash"

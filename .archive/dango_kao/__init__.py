@@ -7,7 +7,7 @@ human emotion, and predict emoji based on what you type.
 
 Synopsis: <trigger> <query>"""
 
-from albertv0 import *
+from albert import *
 import os
 import json
 import urllib.error

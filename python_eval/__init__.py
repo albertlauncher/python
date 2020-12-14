@@ -4,7 +4,7 @@
 
 Synopsis: <trigger> <python expression>"""
 
-from albertv0 import *
+from albert import *
 from math import *
 from builtins import pow
 try:

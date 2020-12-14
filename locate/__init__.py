@@ -15,7 +15,7 @@ import re
 import subprocess
 from shutil import which
 
-from albertv0 import Item, TermAction, UrlAction, iconLookup
+from albert import Item, TermAction, UrlAction, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Locate"

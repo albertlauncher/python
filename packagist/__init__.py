@@ -7,7 +7,7 @@ package name. But searching for packages by type or tag is supported as well.
 
 Synopsis: <trigger> [tag|type] <filter>"""
 
-from albertv0 import *
+from albert import *
 import os
 import json
 import urllib.request

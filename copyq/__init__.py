@@ -10,7 +10,7 @@ import re
 import subprocess
 from shutil import which
 
-from albertv0 import *
+from albert import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "CopyQ"

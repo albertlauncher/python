@@ -16,7 +16,7 @@ import urllib.parse
 import urllib.request
 from time import sleep
 
-from albertv0 import (ClipAction, Item, ProcAction, UrlAction, configLocation,
+from albert import (ClipAction, Item, ProcAction, UrlAction, configLocation,
                       iconLookup)
 
 __iid__ = "PythonInterface/v0.2"

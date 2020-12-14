@@ -4,7 +4,7 @@
 
 Synopsis: <trigger> [filter]"""
 
-from albertv0 import *
+from albert import *
 from collections import namedtuple
 from threading import Thread
 import datetime

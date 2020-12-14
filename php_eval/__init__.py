@@ -4,7 +4,7 @@
 
 import os
 import subprocess
-from albertv0 import *
+from albert import *
 from shutil import which
 
 __iid__ = 'PythonInterface/v0.1'

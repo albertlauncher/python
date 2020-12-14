@@ -9,7 +9,7 @@ install an emoji font like e.g.: https://github.com/eosrei/emojione-color-font
 Synopsis: <trigger><query>"""
 
 
-from albertv0 import *
+from albert import *
 import json
 import os
 import urllib.error

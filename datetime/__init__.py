@@ -13,7 +13,7 @@ Synopsis:
 from datetime import datetime, date
 import time
 
-from albertv0 import *
+from albert import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "DateTime"

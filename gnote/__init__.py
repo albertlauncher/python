@@ -10,7 +10,7 @@ from shutil import which
 
 from dbus import DBusException, Interface, SessionBus
 
-from albertv0 import *
+from albert import *
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "Gnote"

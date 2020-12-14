@@ -9,7 +9,7 @@ import unicodedata
 
 from pylatexenc.latex2text import LatexNodes2Text
 
-from albertv0 import *
+from albert import *
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'TeX to unicode'

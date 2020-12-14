@@ -9,7 +9,7 @@ extension.
 
 Synopsis: <trigger> [delay|throw] <query>"""
 
-from albertv0 import *
+from albert import *
 import os
 from time import sleep
 

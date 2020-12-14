@@ -4,7 +4,7 @@
 
 Synopsis: <trigger> <filter>"""
 
-from albertv0 import *
+from albert import *
 from urllib import request, parse
 import json
 import os

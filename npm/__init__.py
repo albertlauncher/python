@@ -6,7 +6,7 @@ If no search query is supplied you have the option to update all globally instal
 
 Synopsis: <trigger> [filter]"""
 
-from albertv0 import *
+from albert import *
 from shutil import which
 import os
 import json

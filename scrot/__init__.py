@@ -13,7 +13,7 @@ import subprocess
 import tempfile
 from shutil import which
 
-from albertv0 import FuncAction, Item, iconLookup
+from albert import FuncAction, Item, iconLookup
 
 __iid__ = "PythonInterface/v0.1"
 __prettyname__ = "SCReenshOT utility"

@@ -11,7 +11,7 @@ from os import path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albertv0 import Item, UrlAction, iconLookup, critical, debug, info
+from albert import Item, UrlAction, iconLookup, critical, debug, info
 
 __iid__ = 'PythonInterface/v0.1'
 __prettyname__ = 'Youtube'

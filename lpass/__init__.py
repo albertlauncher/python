@@ -5,7 +5,7 @@
 Synopsis: <trigger> <filter>"""
 
 from shutil import which
-from albertv0 import *
+from albert import *
 import subprocess
 import re
 import os

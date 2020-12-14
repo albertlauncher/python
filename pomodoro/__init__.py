@@ -6,7 +6,7 @@ See https://en.wikipedia.org/wiki/Pomodoro_Technique
 
 Synopsis: <trigger> [duration [break duration [long break duration [count]]]]"""
 
-from albertv0 import *
+from albert import *
 from shutil import which
 import subprocess
 import threading

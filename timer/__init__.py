@@ -9,7 +9,7 @@ Fields exceeding the maximum amount of the time interval are automatically refac
 
 Synopsis: <trigger> [[[hours]:][minutes]:]seconds [name]"""
 
-from albertv0 import *
+from albert import *
 from threading import Timer
 from time import strftime, time, localtime
 import dbus
