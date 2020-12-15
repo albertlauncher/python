@@ -16,12 +16,11 @@ from virtualbox.library import (LockType, MachineState, OleErrorInvalidarg,
 
 from albert import FuncAction, Item, critical, iconLookup
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Virtual Box"
-__version__ = "1.2"
-__trigger__ = "vbox "
-__author__ = "Manuel Schneider"
-__dependencies__ = ['virtualbox']
+__title__ = "Virtual Box"
+__version__ = "0.4.2"
+__triggers__ = "vbox "
+__authors__ = "manuelschneid3r"
+__py_deps__ = ['virtualbox']
 
 vbox = None
 

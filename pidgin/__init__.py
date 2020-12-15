@@ -8,15 +8,12 @@ import dbus
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Pidgin"
-__version__ = "1.0"
-__author__ = "Greizgh"
-__trigger__ = "pidgin "
-__dependencies__ = ["dbus"]
-
-if which("pidgin") is None:
-    raise Exception("'pidgin' is not in $PATH.")
+__title__ = "Pidgin"
+__version__ = "0.4.0"
+__authors__ = "Greizgh"
+__triggers__ = "pidgin "
+__exec_deps__ = ["python"]
+__py_deps__ = ["dbus"]
 
 iconPath = iconLookup("pidgin")
 bus = dbus.SessionBus()
@@ -77,7 +74,7 @@ def handleQuery(query):
             for match in handler.getMatch(target):
                 items.append(
                     Item(
-                        id=__prettyname__,
+                        id=__title__,
                         icon=iconPath,
                         text="Chat with {}".format(match[0]),
                         subtext="Open a pidgin chat window",

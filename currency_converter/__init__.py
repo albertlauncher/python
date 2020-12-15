@@ -13,11 +13,9 @@ from xml.etree import ElementTree
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Currency converter"
-__version__ = "1.0"
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "Currency converter"
+__version__ = "0.4.0"
+__authors__ = "manuelschneid3r"
 
 iconPath = iconLookup('accessories-calculator')
 if not iconPath:
@@ -43,7 +41,7 @@ class EuropeanCentralBank:
                     rate = float(child.attrib['rate'])
                     self.exchange_rates[curr] = rate
                 self.exchange_rates["EUR"] = 1.0  # For simpler algorithmic
-                info("%s: Updated foreign exchange rates." % __prettyname__)
+                info("%s: Updated foreign exchange rates." % __title__)
                 debug(str(self.exchange_rates))
             self.lastUpdate = time.time()
 
@@ -75,7 +73,7 @@ def handleQuery(query):
     match = regex.fullmatch(query.string.strip())
     if match:
         prep = (float(match.group(1)), match.group(2).upper(), match.group(3).upper())
-        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
+        item = Item(id=__title__, icon=iconPath)
         for provider in providers:
             result = provider.convert(*prep)
             if result:

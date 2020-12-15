@@ -17,12 +17,10 @@ from urllib.request import urlopen, Request
 from urllib.parse import urlencode
 
 
-__iid__ = "PythonInterface/v0.2"
-__prettyname__ = "Dango Emoji"
-__version__ = "1.1"
-__trigger__ = ":"
-__author__ = "David Britt"
-__dependencies__ = []
+__title__ = "Dango Emoji"
+__version__ = "0.4.1"
+__triggers__ = ":"
+__authors__ = "David Britt"
 
 
 iconPath = os.path.dirname(__file__) + "/dangoemoji.png"
@@ -35,11 +33,9 @@ def handleQuery(query):
     if query.isTriggered:
 
         item = Item(
-            id=__prettyname__,
+            id=__title__,
             icon=icon_path,
-            completion=query.rawString,
-            text=__prettyname__,
-            actions=[]
+            text=__title__
         )
 
         if len(query.string) >= 2:
@@ -58,7 +54,7 @@ def handleQuery(query):
                         string_emojis = ''.join(all_emojis)
 
                         results.append(Item(
-                            id=__prettyname__,
+                            id=__title__,
                             icon=icon_path,
                             text=string_emojis,
                             subtext="Score > 0.025",
@@ -70,7 +66,7 @@ def handleQuery(query):
 
                     for emoj in json_data["results"]:
                         results.append(Item(
-                            id=__prettyname__,
+                            id=__title__,
                             icon=icon_path,
                             text=str(emoj["text"]),
                             subtext=str(emoj["score"]),

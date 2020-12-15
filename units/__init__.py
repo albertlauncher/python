@@ -11,19 +11,13 @@ Synopsis:
 
 import re
 import subprocess as sp
-from shutil import which
-
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "GNU Units"
-__version__ = "1.2"
-__trigger__ = "units "
-__author__ = "Manuel Schneider, iyzana"
-__dependencies__ = ["units"]
-
-if which("units") is None:
-    raise Exception("'units' is not in $PATH.")
+__title__ = "GNU Units"
+__version__ = "0.4.2"
+__triggers__ = "units "
+__authors__ = "manuelschneid3r, iyzana"
+__exec_deps__ = ["units"]
 
 icon = iconLookup('calc')
 if not icon:
@@ -57,8 +51,7 @@ def getUnitsResult(args):
 def handleQuery(query):
     if query.isTriggered:
         args = query.string.split()
-        item = Item(id='python.gnu_units', icon=icon,
-                    completion=query.rawString)
+        item = Item(id='python.gnu_units', icon=icon)
         if args:
             result, command, success = getUnitsResult(args)
             item.text = result
@@ -75,8 +68,7 @@ def handleQuery(query):
             result, command, success = getUnitsResult(args)
             if not success:
                 return
-            item = Item(id='python.gnu_units', icon=icon,
-                        completion=query.rawString)
+            item = Item(id='python.gnu_units', icon=icon)
             item.text = result
             item.subtext = "Result of '%s'" % command
             item.addAction(ClipAction("Copy to clipboard", item.text))

@@ -9,12 +9,10 @@ from urllib import request, parse
 import json
 import os
 
-__iid__ = "PythonInterface/v0.3"
-__prettyname__ = "Arch Wiki"
-__version__ = "1.1"
-__trigger__ = "awiki "
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "Arch Wiki"
+__version__ = "0.4.1"
+__triggers__ = "awiki "
+__authors__ = "manuelschneid3r"
 
 iconPath = os.path.dirname(__file__) + "/ArchWiki.svg"
 baseurl = 'https://wiki.archlinux.org/api.php'
@@ -48,7 +46,7 @@ def handleQuery(query):
                     summary = data[2][i]
                     url = data[3][i]
 
-                    results.append(Item(id=__prettyname__,
+                    results.append(Item(id=__title__,
                                         icon=iconPath,
                                         text=title,
                                         subtext=summary if summary else url,
@@ -60,16 +58,14 @@ def handleQuery(query):
             if results:
                 return results
 
-            return Item(id=__prettyname__,
+            return Item(id=__title__,
                         icon=iconPath,
                         text="Search '%s'" % query.string,
                         subtext="No results. Start a online search on Arch Wiki",
-                        completion=query.rawString,
                         actions=[UrlAction("Open search", "https://wiki.archlinux.org/index.php?search=%s" % query.string)])
 
         else:
-            return Item(id=__prettyname__,
+            return Item(id=__title__,
                         icon=iconPath,
-                        text=__prettyname__,
-                        subtext="Enter a query to search on the Arch Wiki",
-                        completion=query.rawString)
+                        text=__title__,
+                        subtext="Enter a query to search on the Arch Wiki")

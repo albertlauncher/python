@@ -7,20 +7,13 @@ Fortune wrapper extension.
 Synopsis: <trigger>"""
 
 import subprocess as sp
-from shutil import which
-
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Fortune"
-__version__ = "1.0"
-__trigger__ = "fortune"
-__author__ = "Kelvin Wong"
-__dependencies__ = ["fortune"]
-
-cmd = __dependencies__[0]
-if which(cmd) is None:
-    raise Exception("'%s' is not in $PATH." % cmd)
+__title__ = "Fortune"
+__version__ = "0.4.0"
+__triggers__ = "fortune"
+__authors__ = "Kelvin Wong"
+__exec_deps__ = ["fortune"]
 
 iconPath = iconLookup("font")
 
@@ -41,10 +34,9 @@ def generateFortune():
 
 def getFortuneItem(query, fortune):
     return Item(
-        id=__prettyname__,
+        id=__title__,
         icon=iconPath,
         text=fortune,
         subtext="Copy this random, hopefully interesting, adage",
-        completion=query.rawString,
         actions=[ClipAction("Copy to clipboard", fortune)]
     )

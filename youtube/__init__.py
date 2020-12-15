@@ -13,11 +13,10 @@ from urllib.request import Request, urlopen
 
 from albert import Item, UrlAction, iconLookup, critical, debug, info
 
-__iid__ = 'PythonInterface/v0.1'
-__prettyname__ = 'Youtube'
-__version__ = '1.1'
-__trigger__ = 'yt '
-__author__ = 'Manuel Schneider'
+__title__ = 'Youtube'
+__version__ = '0.4.1'
+__triggers__ = 'yt '
+__authors__ = 'manuelschneid3r'
 __icon__ = iconLookup('youtube')  # path.dirname(__file__) + '/icons/YouTube.png'
 
 DATA_REGEX = re.compile(r'^\s*(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;\s*$', re.MULTILINE)
@@ -82,11 +81,10 @@ def handleQuery(query):
                         critical(e)
                         critical(json.dumps(result, indent=4))
 
-                    item = Item(id=__prettyname__,
+                    item = Item(id=__title__,
                                 icon=data['thumbnail']['thumbnails'][0]['url'].split('?', 1)[0] if data['thumbnail']['thumbnails'] else __icon__,
                                 text=textFrom(data['title']),
                                 subtext=' | '.join(subtext),
-                                completion=query.rawString,
                                 actions=[ UrlAction(action, 'https://www.youtube.com/' + link) ]
                             )
                     items.append(item)

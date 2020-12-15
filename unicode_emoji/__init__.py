@@ -9,23 +9,17 @@ from collections import namedtuple
 from threading import Thread
 import datetime
 import os
-import shutil
 import subprocess
 import urllib.request
+import shutil
 
-__iid__ = "PythonInterface/v0.2"
-__prettyname__ = "Unicode Emojis"
-__version__ = "1.3"
-__trigger__ = ":"
-__author__ = "Tim Zeitz, Manuel Schneider"
-__dependencies__ = ["convert"]
-
-for dep in __dependencies__:
-    if shutil.which(dep) is None:
-        raise Exception("'%s' is not in $PATH." % dep)
+__title__ = "Unicode Emojis"
+__version__ = "0.4.3"
+__triggers__ = ":"
+__authors__ = "Tim Zeitz, manuelschneid3r"
+__exec_deps__ = ["convert"]
 
 EmojiSpec = namedtuple('EmojiSpec', ['string', 'name', 'modifiers'])
-
 emoji_data_src_url = "https://unicode.org/Public/emoji/latest/emoji-test.txt"
 emoji_data_path = os.path.join(dataLocation(), "emoji.txt")
 icon_path_template = os.path.join(cacheLocation(), __name__, "%s.png")

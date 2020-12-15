@@ -15,12 +15,9 @@ import time
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "DateTime"
-__version__ = "1.1"
-__trigger__ = None
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "DateTime"
+__version__ = "0.4.1"
+__authors__ = "manuelschneid3r"
 
 iconPath = iconLookup('x-office-calendar')
 
@@ -30,11 +27,10 @@ def handleQuery(query):
     if fields:
         def makeItem(text: str, subtext: str):
             return Item(
-                id=__prettyname__,
+                id=__title__,
                 icon=iconPath,
                 text=text,
                 subtext=subtext,
-                completion=query.rawString,
                 actions=[ClipAction("Copy to clipboard", text)]
             )
 
@@ -69,11 +65,10 @@ def handleQuery(query):
                     # TODO: how to utilize dateparser even when available on system default python install?
                     # dt = dateparser.parse(query.string)
                     return Item(
-                        id=__prettyname__,
+                        id=__title__,
                         icon=iconPath,
                         text="Invalid input",
-                        subtext="Argument must be empty or numeric.",
-                        completion=query.rawString
+                        subtext="Argument must be empty or numeric."
                     )
             else:
                 return [

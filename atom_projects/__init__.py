@@ -8,24 +8,19 @@ import os
 import re
 import time
 from pathlib import Path
-from shutil import which
 
 import cson
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Atom Projects"
-__version__ = "1.0"
-__trigger__ = "atom "
-__author__ = "Manuel Schneider"
-__dependencies__ = ["python-cson"]
+__title__ = "Atom Projects"
+__version__ = "0.4.0"
+__triggers__ = "atom "
+__authors__ = "manuelschneid3r"
+__exec_deps__ = ["atom"]
+__py_deps__ = ["cson"]
 
 projects_file = str(Path.home()) + "/.atom/projects.cson"
-
-if which("atom") is None:
-    raise Exception("'atom' is not in $PATH.")
-
 iconPath = iconLookup('atom')
 mtime = 0
 projects = []
@@ -55,11 +50,10 @@ def handleQuery(query):
     items = []
     for project in projects:
         if re.search(stripped, project['title'], re.IGNORECASE):
-            items.append(Item(id=__prettyname__ + project['title'],
+            items.append(Item(id=__title__ + project['title'],
                               icon=iconPath,
                               text=project['title'],
                               subtext="Group: %s" % (project['group'] if 'group' in project else "None"),
-                              completion=query.rawString,
                               actions=[
                                   ProcAction(text="Open project in Atom",
                                              commandline=["atom"] + project['paths'])

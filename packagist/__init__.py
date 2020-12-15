@@ -11,18 +11,12 @@ from albert import *
 import os
 import json
 import urllib.request
-from shutil import which
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Packagist"
-__version__ = "1.0"
-__trigger__ = "packagist "
-__author__ = "Benedict Dudel"
-__dependencies__ = ["composer"]
-
-
-if which("composer") is None:
-    raise Exception("'composer' is not in $PATH.")
+__title__ = "Packagist"
+__version__ = "0.4.0"
+__triggers__ = "packagist "
+__authors__ = "Benedict Dudel"
+__exec_deps__ = ["composer"]
 
 iconPath = os.path.dirname(__file__)+"/logo.png"
 
@@ -36,7 +30,7 @@ def handleQuery(query):
                     icon = iconPath,
                     text = "by tag",
                     subtext = "Searching for packages by tag",
-                    completion = "%stag " % __trigger__,
+                    completion = "%stag " % __triggers__,
                     actions=[]
                 ),
                 Item(
@@ -44,7 +38,7 @@ def handleQuery(query):
                     icon = iconPath,
                     text = "by type",
                     subtext = "Searching for packages by type",
-                    completion = "%stype " % __trigger__,
+                    completion = "%stype " % __triggers__,
                     actions=[]
                 )
             ]
@@ -70,7 +64,7 @@ def getItems(url):
                     icon = iconPath,
                     text = package["name"],
                     subtext = package["description"],
-                    completion = "%sname %s" % (__trigger__, package["name"]),
+                    completion = "%sname %s" % (__triggers__, package["name"]),
                     actions = [
                         UrlAction(
                             text = "Open on packagist.org",

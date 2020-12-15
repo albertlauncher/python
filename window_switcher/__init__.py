@@ -6,20 +6,14 @@ Synopsis: <filter>"""
 
 import subprocess
 from collections import namedtuple
-from shutil import which
-
 from albert import Item, ProcAction, iconLookup
 
+__title__ = "Window Switcher"
+__version__ = "0.4.5"
+__authors__ = "Ed Perez, manuelschneid3r, dshoreman"
+__exec_deps__ = ["wmctrl"]
+
 Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
-
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Window Switcher"
-__version__ = "1.5"
-__author__ = "Ed Perez, manuelschneid3r, dshoreman"
-__dependencies__ = ["wmctrl"]
-
-if which("wmctrl") is None:
-    raise Exception("'wmctrl' is not in $PATH.")
 
 def handleQuery(query):
     stripped = query.string.strip().lower()
@@ -43,7 +37,7 @@ def handleQuery(query):
                 if iconPath == "":
                     iconPath = iconLookup(win_class.lower())
 
-                results.append(Item(id="%s%s" % (__prettyname__, win.wm_class),
+                results.append(Item(id="%s%s" % (__title__, win.wm_class),
                                     icon=iconPath,
                                     text="%s  - <i>Desktop %s</i>" % (win_class.replace('-',' '), win.desktop),
                                     subtext=win.wm_name,

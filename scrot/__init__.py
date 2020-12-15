@@ -15,16 +15,11 @@ from shutil import which
 
 from albert import FuncAction, Item, iconLookup
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "SCReenshOT utility"
-__version__ = "1.0"
-__trigger__ = "scrot "
-__author__ = "Benedict Dudel"
-__dependencies__ = ["scrot", "xclip"]
-
-for dep in __dependencies__:
-    if not which(dep):
-        raise Exception("'%s' is not in $PATH." % dep)
+__title__ = "SCReenshOT utility"
+__version__ = "0.4.0"
+__triggers__ = "scrot "
+__authors__ = "Benedict Dudel"
+__exec_deps__ = ["scrot", "xclip"]
 
 iconPath = iconLookup("camera-photo")
 
@@ -33,7 +28,7 @@ def handleQuery(query):
     if query.isTriggered:
         return [
             Item(
-                id = "%s-whole-screen" % __prettyname__,
+                id = "%s-whole-screen" % __title__,
                 icon = iconPath,
                 text = "Screen",
                 subtext = "Take a screenshot of the whole screen",
@@ -49,7 +44,7 @@ def handleQuery(query):
                 ]
             ),
             Item(
-                id = "%s-area-of-screen" % __prettyname__,
+                id = "%s-area-of-screen" % __title__,
                 icon = iconPath,
                 text = "Area",
                 subtext = "Draw a rectangle with your mouse to capture an area",
@@ -61,7 +56,7 @@ def handleQuery(query):
                 ]
             ),
             Item(
-                id = "%s-current-window" % __prettyname__,
+                id = "%s-current-window" % __title__,
                 icon = iconPath,
                 text = "Window",
                 subtext = "Take a screenshot of the current active window",

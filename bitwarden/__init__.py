@@ -4,21 +4,15 @@
 
 import fnmatch
 import os
-from shutil import which
 from subprocess import run
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Bitwarden"
-__version__ = "1.0"
-__trigger__ = "bw "
-__author__ = "Asger Hautop Drewsen"
-__dependencies__ = ["rbw"]
-
-
-if which("rbw") is None:
-    raise Exception("'rbw' is not in $PATH.")
+__title__ = "Bitwarden"
+__version__ = "0.4.0"
+__triggers__ = "bw "
+__authors__ = "Asger Hautop Drewsen"
+__exec_deps__ = ["rbw"]
 
 ICON_PATH = iconLookup("dialog-password")
 

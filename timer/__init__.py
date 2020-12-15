@@ -16,12 +16,11 @@ import dbus
 import os
 import subprocess
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Timer"
-__version__ = "1.2"
-__trigger__ = "timer "
-__author__ = "manuelschneid3r, googol42"
-__dependencies__ = ["dbus"]
+__title__ = "Timer"
+__version__ = "0.4.2"
+__triggers__ = "timer "
+__authors__ = "manuelschneid3r, googol42"
+__py_deps__ = ["dbus-python"]
 
 iconPath = os.path.dirname(__file__)+"/time.svg"
 soundPath = os.path.dirname(__file__)+"/bing.wav"
@@ -46,7 +45,7 @@ class AlbertTimer(Timer):
 
             bus = dbus.SessionBus()
             notify = dbus.Interface(bus.get_object(dbusItem, dbusPath), dbusInterface)
-            notify.Notify(__prettyname__, 0, iconPath, title, text, '', '', 0)
+            notify.Notify(__title__, 0, iconPath, title, text, '', '', 0)
 
         super().__init__(interval=interval, function=timeout)
         self.interval = interval
@@ -82,11 +81,10 @@ def handleQuery(query):
             name = args[1] if 1 < len(args) else ''
             if not all(field.isdigit() or field == '' for field in fields):
                 return Item(
-                    id=__prettyname__,
+                    id=__title__,
                     text="Invalid input",
-                    subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __trigger__,
-                    icon=iconPath,
-                    completion=query.rawString
+                    subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __triggers__,
+                    icon=iconPath
                 )
 
             seconds = 0
@@ -95,11 +93,10 @@ def handleQuery(query):
                 seconds += int(fields[i] if fields[i] else 0)*(60**i)
 
             return Item(
-                id=__prettyname__,
+                id=__title__,
                 text=formatSeconds(seconds),
                 subtext='Set a timer with name "%s"' % name if name else 'Set a timer',
                 icon=iconPath,
-                completion=query.rawString,
                 actions=[FuncAction("Set timer", lambda sec=seconds: startTimer(sec, name))]
             )
 
@@ -114,21 +111,18 @@ def handleQuery(query):
 
                 timer_name_with_quotes = '"%s"' % timer.name if timer.name else ''
                 items.append(Item(
-                    id=__prettyname__,
+                    id=__title__,
                     text='Delete timer <i>%s [%s]</i>' % (timer_name_with_quotes, identifier),
                     subtext="Times out %s" % strftime("%X", localtime(timer.end)),
                     icon=iconPath,
-                    completion=query.rawString,
                     actions=[FuncAction("Delete timer", lambda timer=timer: deleteTimer(timer))]
                 ))
             if items:
                 return items
             # Display hint item
             return Item(
-                id=__prettyname__,
+                id=__title__,
                 text="Add timer",
-                subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __trigger__,
-                icon=iconPath,
-                completion=query.rawString
+                subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __triggers__,
+                icon=iconPath
             )
-

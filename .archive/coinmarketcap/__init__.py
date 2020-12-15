@@ -16,12 +16,10 @@ import re
 import os
 import json
 
-__iid__ = "PythonInterface/v0.2"
-__prettyname__ = "CoinMarketCap"
-__version__ = "1.4"
-__trigger__ = "cmc "
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "CoinMarketCap"
+__version__ = "0.4.4"
+__triggers__ = "cmc "
+__authors__ = "manuelschneid3r"
 
 iconPath = os.path.dirname(__file__)+"/emblem-money.svg"
 thread = None
@@ -124,7 +122,7 @@ def handleQuery(query):
             if coin.name.lower().startswith(stripped) or coin.symbol.lower().startswith(stripped):
                 url = "https://coinmarketcap.com/currencies/%s/" % coin.identifier
                 items.append(Item(
-                    id=__prettyname__,
+                    id=__title__,
                     icon=iconPath,
                     text="#%s %s <i>(%s) <b>%s$</b></i>" % (coin.rank, pattern.sub(lambda m: "<u>%s</u>" % m.group(0), coin.name),
                                                             pattern.sub(lambda m: "<u>%s</u>" % m.group(0), coin.symbol), coin.price),
@@ -139,7 +137,7 @@ def handleQuery(query):
         for coin in coins:
             url = "https://coinmarketcap.com/currencies/%s/" % coin.identifier
             items.append(Item(
-                id=__prettyname__,
+                id=__title__,
                 icon=iconPath,
                 text="#%s %s <i>(%s) <b>%s$</b></i>" % (coin.rank, coin.name, coin.symbol, coin.price),
                 subtext="Change: <i>%s/%s/%s</i>, Cap: <i>%s</i>, Volume: <i>%s</i>" % (coin.change_hour, coin.change_day, coin.change_week, coin.cap, coin.vol),

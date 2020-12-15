@@ -7,18 +7,15 @@ See https://en.wikipedia.org/wiki/Pomodoro_Technique
 Synopsis: <trigger> [duration [break duration [long break duration [count]]]]"""
 
 from albert import *
-from shutil import which
 import subprocess
 import threading
 import re
 import time
 import os
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Pomodoro"
-__version__ = "1.0"
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "Pomodoro"
+__version__ = "0.4.0"
+__authors__ = "manuelschneid3r"
 
 
 class PomodoroTimer:
@@ -88,10 +85,9 @@ def handleQuery(query):
         global pomodoro
         pattern = re.compile(query.string, re.IGNORECASE)
         item = Item(
-            id=__prettyname__,
+            id=__title__,
             icon=iconPath,
-            text=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), "Pomodoro Timer"),
-            completion=query.rawString
+            text=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), "Pomodoro Timer")
         )
 
         if len(tokens) == 1 and pomodoro.isActive():

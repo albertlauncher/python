@@ -10,18 +10,15 @@ Synopsis: <trigger> <pkg_name>"""
 from albert import *
 from shutil import which
 from datetime import datetime
-from shlex import split
 from urllib import request, parse
 import json
 import os
 import re
 
-__iid__ = "PythonInterface/v0.3"
-__prettyname__ = "Archlinux User Repository"
-__version__ = "1.3"
-__trigger__ = "aur "
-__author__ = "manuelschneid3r"
-__dependencies__ = []
+__title__ = "Archlinux User Repository"
+__version__ = "0.4.3"
+__triggers__ = "aur "
+__authors__ = "manuelschneid3r"
 
 iconPath = os.path.dirname(__file__)+"/arch.svg"
 baseurl = 'https://aur.archlinux.org/rpc/'
@@ -56,11 +53,10 @@ def handleQuery(query):
             data = json.loads(response.read().decode())
             if data['type'] == "error":
                 return Item(
-                    id=__prettyname__,
+                    id=__title__,
                     icon=iconPath,
                     text="Error",
-                    subtext=data['error'],
-                    completion=query.rawString
+                    subtext=data['error']
                 )
             else:
                 results = []
@@ -72,10 +68,10 @@ def handleQuery(query):
                 for entry in results_json:
                     name = entry['Name']
                     item = Item(
-                        id = __prettyname__,
+                        id = __title__,
                         icon = iconPath,
                         text = "<b>%s</b> <i>%s</i> (%s)" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), name), entry['Version'], entry['NumVotes']),
-                        completion = "%s%s" % (__trigger__, name)
+                        completion = "%s%s" % (__triggers__, name)
                     )
                     subtext = entry['Description'] if entry['Description'] else "[No description]"
                     if entry['OutOfDate']:
@@ -85,9 +81,11 @@ def handleQuery(query):
                     item.subtext = subtext
 
                     if install_cmdline:
-                        tokens = split(install_cmdline % name)
-                        item.addAction(TermAction("Install with %s" % tokens[0], tokens))
-                        item.addAction(TermAction("Install with %s (noconfirm)" % tokens[0], tokens + ["--noconfirm"]))
+                        pkgmgr = install_cmdline.split(" ", 1)
+                        item.actions = [
+                            TermAction("Install using %s" % pkgmgr[0], install_cmdline % name),
+                            TermAction("Install using %s (noconfirm)" % pkgmgr[0], install_cmdline % name + " --noconfirm")                        
+                        ]
 
                     item.addAction(UrlAction("Open AUR website", "https://aur.archlinux.org/packages/%s/" % name))
 
@@ -97,9 +95,8 @@ def handleQuery(query):
                     results.append(item)
                 return results
     else:
-        return Item(id=__prettyname__,
+        return Item(id=__title__,
                     icon=iconPath,
-                    text=__prettyname__,
+                    text=__title__,
                     subtext="Enter a query to search the AUR",
-                    completion=query.rawString,
                     actions=[UrlAction("Open AUR packages website", "https://aur.archlinux.org/packages/")])

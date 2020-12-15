@@ -14,12 +14,10 @@ import urllib.error
 from urllib.request import urlopen, Request
 from urllib.parse import urlencode
 
-__iid__ = "PythonInterface/v0.2"
-__prettyname__ = "Dango Kaomoji"
-__version__ = "1.0"
-__trigger__ = "kao "
-__author__ = "David Britt"
-__dependencies__ = []
+__title__ = "Dango Kaomoji"
+__version__ = "0.4.0"
+__triggers__ = "kao "
+__authors__ = "David Britt"
 
 icon_path = os.path.dirname(__file__) + "/kaoicon.svg"
 dangoUrl = "https://customer.getdango.com/dango/api/query/kaomoji"
@@ -31,11 +29,9 @@ def handleQuery(query):
     if query.isTriggered:
 
         item = Item(
-            id=__prettyname__,
+            id=__title__,
             icon=icon_path,
-            completion=query.rawString,
-            text=__prettyname__,
-            actions=[]
+            text=__title__,
         )
 
         if len(query.string) >= 2:
@@ -45,7 +41,7 @@ def handleQuery(query):
                     json_data = json.loads(response.read().decode())
                     for emoj in json_data["items"]:
                         results.append(Item(
-                            id=__prettyname__,
+                            id=__title__,
                             icon=icon_path,
                             text=emoj["text"],
                             actions=[

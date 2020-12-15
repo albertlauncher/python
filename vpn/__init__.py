@@ -6,16 +6,12 @@ Connect or disconnect from a network manager VPN profile"""
 import subprocess
 from collections import namedtuple
 from albert import *
-from shutil import which
 
-
-__iid__ = "PythonInterface/v0.2"
-__prettyname__ = "VPN"
-__version__ = "1.0"
-__trigger__ = "vpn "
-__author__ = "janeklb"
-__dependencies__ = ['nmcli']
-
+__title__ = "VPN"
+__version__ = "0.4.0"
+__triggers__ = "vpn "
+__authors__ = "janeklb"
+__exec_deps__ = ['nmcli']
 
 iconPath = iconLookup('network-wireless')
 if not iconPath:
@@ -51,11 +47,6 @@ def buildItem(con):
     )
 
 
-def initialize():
-    if which('nmcli') is None:
-        raise Exception("'nmcli' is not in $PATH")
-
-
 def handleQuery(query):
     if query.isValid and query.isTriggered:
         connections = getVPNConnections()
@@ -63,4 +54,3 @@ def handleQuery(query):
             connections = [ con for con in connections if query.string.lower() in con.name.lower() ]
         return [ buildItem(con) for con in connections ]
     return []
-

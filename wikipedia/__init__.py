@@ -11,12 +11,10 @@ import json
 import time
 import os
 
-__iid__ = "PythonInterface/v0.3"
-__prettyname__ = "Wikipedia"
-__version__ = "1.4"
-__trigger__ = "wiki "
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "Wikipedia"
+__version__ = "0.4.4"
+__triggers__ = "wiki "
+__authors__ = "manuelschneid3r"
 
 iconPath = iconLookup('wikipedia')
 if not iconPath:
@@ -78,7 +76,7 @@ def handleQuery(query):
                     summary = data[2][i]
                     url = data[3][i]
 
-                    results.append(Item(id=__prettyname__,
+                    results.append(Item(id=__title__,
                                         icon=iconPath,
                                         text=title,
                                         subtext=summary if summary else url,
@@ -90,8 +88,7 @@ def handleQuery(query):
 
             return results
         else:
-            return Item(id=__prettyname__,
+            return Item(id=__title__,
                         icon=iconPath,
-                        text=__prettyname__,
-                        subtext="Enter a query to search on Wikipedia",
-                        completion=query.rawString)
+                        text=__title__,
+                        subtext="Enter a query to search on Wikipedia")

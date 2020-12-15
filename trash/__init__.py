@@ -11,10 +11,9 @@ import re
 
 from albert import Item, UrlAction, iconLookup
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Trash"
-__version__ = "1.0"
-__author__ = "Manuel Schneider"
+__title__ = "Trash"
+__version__ = "0.4.0"
+__authors__ = "manuelschneid3r"
 iconPath = iconLookup("user-trash-full")
 
 def handleQuery(query):

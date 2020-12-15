@@ -4,32 +4,24 @@
 
  Synopsis: <trigger> <query>"""
 
-from shutil import which
 from subprocess import run
-
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Zeal"
-__version__ = "1.0"
-__trigger__ = "zl "
-__author__ = "Manuel Schneider"
-__dependencies__ = ["zeal"]
-
-if which("zeal") is None:
-    raise Exception("'zeal' is not in $PATH.")
+__title__ = "Zeal"
+__version__ = "0.4.0"
+__triggers__ = "zl "
+__authors__ = "manuelschneid3r"
+__exec_deps__ = ["zeal"]
 
 iconPath = iconLookup('zeal')
-
 
 def handleQuery(query):
     if query.isTriggered:
         return Item(
-            id=__prettyname__,
+            id=__title__,
             icon=iconPath,
-            text=__prettyname__,
-            subtext="Look up %s" % __prettyname__,
-            completion=query.rawString,
-            actions=[ProcAction("Start query in %s" % __prettyname__,
+            text=__title__,
+            subtext="Look up %s" % __title__,
+            actions=[ProcAction("Start query in %s" % __title__,
                                 ["zeal", query.string])]
         )

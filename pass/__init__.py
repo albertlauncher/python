@@ -10,20 +10,13 @@ Synopsis:
 
 import fnmatch
 import os
-from shutil import which
-
 from albert import *
 
-__iid__ = "PythonInterface/v0.3"
-__prettyname__ = "Pass"
-__version__ = "1.1"
-__trigger__ = "pass "
-__author__ = "Benedict Dudel"
-__dependencies__ = ["pass"]
-
-
-if which("pass") is None:
-    raise Exception("'pass' is not in $PATH.")
+__title__ = "Pass"
+__version__ = "0.4.1"
+__triggers__ = "pass "
+__authors__ = "Benedict Dudel"
+__exec_deps__ = ["pass"]
 
 HOME_DIR = os.environ["HOME"]
 PASS_DIR = os.environ.get("PASSWORD_STORE_DIR", os.path.join(HOME_DIR, ".password-store/"))
@@ -42,7 +35,7 @@ def generatePassword(query):
     location = query.string.strip()[9:]
 
     return [Item(
-        id=__prettyname__,
+        id=__title__,
         icon=ICON_PATH,
         text="Generate a new password",
         subtext="The new password will be located at %s" % location,

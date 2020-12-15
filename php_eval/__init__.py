@@ -5,20 +5,14 @@
 import os
 import subprocess
 from albert import *
-from shutil import which
 
-__iid__ = 'PythonInterface/v0.1'
-__prettyname__ = 'PHP Eval'
-__version__ = '1.0'
-__trigger__ = 'php '
-__author__ = 'Hammed Oyedele'
-__dependencies__ = ['php']
+__title__ = 'PHP Eval'
+__version__ = '0.4.0'
+__triggers__ = 'php '
+__authors__ = 'Hammed Oyedele'
+__exec_deps__ = ['php']
 
 iconPath = os.path.dirname(__file__) + '/php.svg'
-
-if which('php') is None:
-    raise Exception('"php" is not in $PATH.')
-
 
 def run(exp):
     return subprocess.getoutput('php -r "%s"' % exp.replace('"', '\\"'))
@@ -27,9 +21,8 @@ def run(exp):
 def handleQuery(query):
     if query.isTriggered:
         item = Item(
-            id=__prettyname__,
-            icon=iconPath,
-            completion=query.rawString,
+            id=__title__,
+            icon=iconPath
         )
         stripped = query.string.strip()
 

@@ -8,20 +8,15 @@ import html
 import json
 import re
 import subprocess
-from shutil import which
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "CopyQ"
-__version__ = "1.1"
-__trigger__ = "cq "
-__author__ = "Manuel Schneider"
-__dependencies__ = ["copyq"]
+__title__ = "CopyQ"
+__version__ = "0.4.1"
+__triggers__ = "cq "
+__authors__ = "manuelschneid3r"
+__exec_deps__ = ["copyq"]
 
-
-if which("copyq") is None:
-    raise Exception("'copyq' is not in $PATH.")
 
 iconPath = iconLookup('copyq')
 
@@ -83,7 +78,7 @@ def handleQuery(query):
                     text = pattern.sub(lambda m: "<u>%s</u>" % m.group(0), text)
             items.append(
                 Item(
-                    id=__prettyname__,
+                    id=__title__,
                     icon=iconPath,
                     text=text,
                     subtext="%s: %s" % (row, ", ".join(json_obj['mimetypes'])),

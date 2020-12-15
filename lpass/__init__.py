@@ -10,12 +10,11 @@ import subprocess
 import re
 import os
 
-__iid__ = 'PythonInterface/v0.1'
-__prettyname__ = 'LastPass'
-__version__ = '0.1.0'
-__trigger__ = 'lp '
-__author__ = 'David Piçarra'
-__dependencies__ = ['lpass']
+__title__ = 'LastPass'
+__version__ = '0.4.1'
+__triggers__ = 'lp '
+__authors__ = 'David Piçarra'
+__exec_deps__ = ['lpass']
 
 if not which('lpass'):
     raise Exception("`lpass` is not in $PATH.")
@@ -38,11 +37,10 @@ def handleQuery(query):
           lpass = subprocess.check_output(['lpass', 'status'])
       except Exception as e:
           return Item(
-              id=__prettyname__,
+              id=__title__,
               icon=ICON_PATH,
               text=f'Not logged in.',
               subtext=f'Please enter your lastpass email address',
-              completion=query.rawString,
               actions=[
                   ProcAction("lpass login with given email", ["lpass", "login", stripped]),
               ]
@@ -56,21 +54,19 @@ def handleQuery(query):
                   output = subprocess.check_output(['grep', '-i', stripped], stdin=lpass.stdout)
               except subprocess.CalledProcessError as e:
                   return Item(
-                      id=__prettyname__,
+                      id=__title__,
                       icon=ICON_PATH,
-                      text=__prettyname__,
-                      subtext=f'No results found for {stripped}',
-                      completion=query.rawString
+                      text=__title__,
+                      subtext=f'No results found for {stripped}'
                   )
               items = []
               for line in output.splitlines():
                   match = re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2} (.*) \[id: (\d*)\] \[username: (.*)\]', line.decode("utf-8"))
                   items.append(Item(
-                      id=__prettyname__,
+                      id=__title__,
                       icon=ICON_PATH,
                       text=match.group(1),
                       subtext=match.group(3),
-                      completion=query.rawString,
                       actions=[
                           ProcAction("Copy password to clipboard", ["lpass", "show", "-cp", match.group(2)]),
                           ProcAction("Copy username to clipboard", ["lpass", "show", "-cu", match.group(2)]),
@@ -82,28 +78,25 @@ def handleQuery(query):
 
           except subprocess.CalledProcessError as e:
               return Item(
-                  id=__prettyname__,
+                  id=__title__,
                   icon=ICON_PATH,
                   text=f'Error: {str(e.output)}',
                   subtext=str(e),
-                  completion=query.rawString,
                   actions=[ClipAction('Copy CalledProcessError to clipboard', str(e))]
               )
           except Exception as e:
               return Item(
-                  id=__prettyname__,
+                  id=__title__,
                   icon=ICON_PATH,
                   text=f'Generic Exception: {str(e)}',
                   subtext=str(e),
-                  completion=query.rawString,
                   actions=[ClipAction('Copy Exception to clipboard', str(e))]
               )
-      
+
       else:
           return Item(
-              id=__prettyname__,
+              id=__title__,
               icon=ICON_PATH,
-              text=__prettyname__,
-              subtext='Search the LastPass vault',
-              completion=query.rawString,
+              text=__title__,
+              subtext='Search the LastPass vault'
           )

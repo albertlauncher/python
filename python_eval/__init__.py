@@ -13,12 +13,10 @@ except ImportError:
     pass
 import os
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Python Eval"
-__version__ = "1.0"
-__trigger__ = "py "
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "Python Eval"
+__version__ = "0.4.0"
+__triggers__ = "py "
+__authors__ = "manuelschneid3r"
 
 
 iconPath = os.path.dirname(__file__)+"/python.svg"
@@ -26,7 +24,7 @@ iconPath = os.path.dirname(__file__)+"/python.svg"
 
 def handleQuery(query):
     if query.isTriggered:
-        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
+        item = Item(id=__title__, icon=iconPath)
         stripped = query.string.strip()
 
         if stripped == '':

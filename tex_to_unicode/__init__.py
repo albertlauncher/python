@@ -11,12 +11,11 @@ from pylatexenc.latex2text import LatexNodes2Text
 
 from albert import *
 
-__iid__ = 'PythonInterface/v0.1'
-__prettyname__ = 'TeX to unicode'
-__version__ = '1.0'
-__trigger__ = 'tex '
-__author__ = 'Asger Hautop Drewsen'
-__dependencies__ = ['python-pylatexenc']
+__title__ = 'TeX to unicode'
+__version__ = '0.4.0'
+__triggers__ = 'tex '
+__authors__ = 'Asger Hautop Drewsen'
+__py_deps__ = ['python-pylatexenc']
 
 COMBINING_LONG_SOLIDUS_OVERLAY = '\u0338'
 
@@ -25,7 +24,7 @@ def handleQuery(query):
     if not query.isTriggered:
         return
 
-    item = Item(completion=query.rawString)
+    item = Item()
     stripped = query.string.strip()
 
     success = False

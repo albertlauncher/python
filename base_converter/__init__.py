@@ -6,7 +6,7 @@ Synopsis:
     <trigger> <dest base> <src>
     <number> [padding]
 
-    where <src> is a literal of the form '0bXXX' (binary), '0XXX' (octal), 
+    where <src> is a literal of the form '0bXXX' (binary), '0XXX' (octal),
     or '0xXXX' (hexadecimal)."""
 
 import numpy as np
@@ -14,12 +14,11 @@ from collections import defaultdict
 
 from albert import Item, ClipAction
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Base Converter"
-__version__ = "1.1"
-__trigger__ = "base "
-__author__ = "Manuel Schneider"
-__dependencies__ = ["numpy"]
+__title__ = "Base Converter"
+__version__ = "0.4.1"
+__triggers__ = "base "
+__authors__ = ["manuelschneid3r", "Keating950"]
+__py_deps__ = ["numpy"]
 
 
 class keyed_defaultdict(defaultdict):
@@ -33,7 +32,7 @@ base_prefixes["0x"] = 16
 
 
 def buildItem(completion, dst, number, padding=0):
-    item = Item(id=__prettyname__, completion=completion)
+    item = Item(id=__title__, completion=completion)
     try:
         src = base_prefixes[number[:2]]
         dst = int(dst)
@@ -56,8 +55,8 @@ def handleQuery(query):
         if len(fields) == 2:
             return buildItem(query.rawString, fields[0], fields[1])
         else:
-            item = Item(id=__prettyname__, completion=query.rawString)
-            item.text = __prettyname__
+            item = Item(id=__title__)
+            item.text = __title__
             item.subtext = "Enter a query in the form of \"&lt;dstbase&gt; &lt;number&gt;\""
             return item
     else:

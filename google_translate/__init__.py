@@ -12,12 +12,10 @@ import urllib.request
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Google Translate"
-__version__ = "1.0"
-__trigger__ = "tr "
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "Google Translate"
+__version__ = "0.4.0"
+__triggers__ = "tr "
+__authors__ = "manuelschneid3r"
 
 ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36"
 urltmpl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%s&tl=%s&dt=t&q=%s"
@@ -30,7 +28,7 @@ if not iconPath:
 def handleQuery(query):
     if query.isTriggered:
         fields = query.string.split()
-        item = Item(id=__prettyname__, icon=iconPath, completion=query.rawString)
+        item = Item(id=__title__, icon=iconPath)
         if len(fields) >= 3:
             src = fields[0]
             dst = fields[1]
@@ -45,6 +43,6 @@ def handleQuery(query):
                 item.addAction(ClipAction("Copy translation to clipboard", result))
                 return item
         else:
-            item.text = __prettyname__
+            item.text = __title__
             item.subtext = "Enter a query in the form of \"&lt;srclang&gt; &lt;dstlang&gt; &lt;text&gt;\""
             return item

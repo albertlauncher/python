@@ -6,30 +6,24 @@ Needs 'gnome-dictionary' to be already installed.
 
 Sysnopsis: <trigger> <query>"""
 
-from shutil import which
 from subprocess import run
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Gnome Dictionary"
-__version__ = "1.0"
-__trigger__ = "def "
-__author__ = "Nikhil Wanpal"
-__dependencies__ = ["gnome-dictionary"]
-
-if which("gnome-dictionary") is None:
-    raise Exception("'gnome-dictionary' is not in $PATH.")
+__title__ = "Gnome Dictionary"
+__version__ = "0.4.0"
+__triggers__ = "def "
+__authors__ = "Nikhil Wanpal"
+__exec_deps__ = ["gnome-dictionary"]
 
 iconPath = iconLookup('accessories-dictionary')
 
 
 def handleQuery(query):
     if query.isTriggered:
-        return Item(id=__prettyname__,
+        return Item(id=__title__,
                     icon=iconPath,
-                    text=__prettyname__,
-                    subtext="Search for '%s' using %s" % (query.string, __prettyname__),
-                    completion=query.rawString,
-                    actions=[ProcAction("Opens %s and searches for '%s'" % (__prettyname__, query.string),
+                    text=__title__,
+                    subtext="Search for '%s' using %s" % (query.string, __title__),
+                    actions=[ProcAction("Opens %s and searches for '%s'" % (__title__, query.string),
                                         ["gnome-dictionary", "--look-up=%s" % query.string])])

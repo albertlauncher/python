@@ -8,23 +8,17 @@ Synopsis: <trigger> <query>"""
 
 import re
 import subprocess
-
-from shutil   import which
 from pathlib  import Path
 from albert import *
 
-__iid__          = 'PythonInterface/v0.3'
-__prettyname__   = 'TeXdoc'
-__version__      = '1.0'
-__trigger__      = 'td'
-__author__       = 'Florian Adamsky (@cit)'
-__dependencies__ = ['texdoc']
+__title__ = 'TeXdoc'
+__version__ = '0.4.0'
+__triggers__ = 'td'
+__authors__ = 'Florian Adamsky (@cit)'
+__exec_deps__ = ['texdoc']
 
 iconPath   = Path(__file__).parent / 'texdoc-logo.svg'
 texdoc_cmd = ['texdoc', '-I', '-q', '-s', '-M']
-
-if which("texdoc") is None:
-    raise Exception("'texdoc' is not in $PATH.")
 
 def handleQuery(query):
     if not query.isTriggered:
@@ -48,7 +42,7 @@ def handleQuery(query):
                 filename  = match.group(2).strip()
                 full_path = directory.join(['/', filename])
 
-                results.append(Item(id         = __prettyname__,
+                results.append(Item(id         = __title__,
                                     icon       = str(iconPath),
                                     text       = filename,
                                     subtext    = directory,
@@ -60,8 +54,8 @@ def handleQuery(query):
 
         return results
     else:
-        return Item(id         = __prettyname__,
+        return Item(id         = __title__,
                     icon       = str(iconPath),
-                    text       = __prettyname__,
+                    text       = __title__,
                     subtext    = 'Enter a query to search with texdoc',
                     completion = query.rawString)

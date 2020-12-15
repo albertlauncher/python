@@ -7,12 +7,11 @@ import os
 import docker
 import pathlib
 
-__iid__ = "PythonInterface/v0.3"
-__prettyname__ = "Docker"
-__version__ = "0.1"
-__trigger__ = "d "
-__author__ = "manuelschneid3r"
-__dependencies__ = ["docker"]
+__title__ = "Docker"
+__version__ = "0.4.1"
+__triggers__ = "d "
+__authors__ = "manuelschneid3r"
+__py_deps__ = ["docker"]
 
 
 icon_running = str(pathlib.Path(__file__).parent / "running.png")
@@ -51,7 +50,7 @@ def handleQuery(query):
             else:
                 actions = [FuncAction("Start", lambda c=c: c.start())]
             actions.extend([
-                TermAction("Logs", ["docker", "logs", "-f", c.id],
+                TermAction("Logs", "docker logs -f %s" % c.id,
                            behavior=TermAction.CloseBehavior.DoNotClose),
                 FuncAction("Remove (forced, with volumes)", lambda c=c: c.remove(v=True, force=True)),
                 ClipAction("Copy id to clipboard", c.id)
@@ -62,7 +61,6 @@ def handleQuery(query):
                 text="%s <i>%s</i>" % (c.name, ", ".join(c.image.tags)),
                 subtext=c.id,
                 icon=icon_running if c.status == 'running' else icon_stopped,
-                completion=query.rawString,
                 actions=actions
             )
 
@@ -74,7 +72,6 @@ def handleQuery(query):
                 text=str(i.tags),
                 subtext=i.id,
                 icon=icon_stopped,
-                completion=query.rawString,
                 actions=[
                     FuncAction("Run with commmand: %s" % query.string, lambda i=i: client.containers.run(i, query.string)),
                     FuncAction("Remove", lambda i=i: i.remove())

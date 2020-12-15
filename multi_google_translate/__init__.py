@@ -19,12 +19,10 @@ from time import sleep
 from albert import (ClipAction, Item, ProcAction, UrlAction, configLocation,
                       iconLookup)
 
-__iid__ = "PythonInterface/v0.2"
-__prettyname__ = "MultiTranslate"
-__version__ = "1.2"
-__trigger__ = "mtr "
-__author__ = "David Britt"
-__dependencies__ = []
+__title__ = "MultiTranslate"
+__version__ = "0.4.2"
+__triggers__ = "mtr "
+__authors__ = "David Britt"
 
 iconPath = iconLookup('config-language')
 if not iconPath:
@@ -34,7 +32,7 @@ ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko
 urltmpl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=%s&dt=t&q=%s"
 urlbrowser = "https://translate.google.com/#auto/%s/%s"
 configurationFileName = "language_config.json"
-configuration_directory = os.path.join(configLocation(), __prettyname__)
+configuration_directory = os.path.join(configLocation(), __title__)
 language_configuration_file = os.path.join(configuration_directory, configurationFileName)
 languages = []
 
@@ -65,10 +63,9 @@ def handleQuery(query):
             return
 
         item = Item(
-            id=__prettyname__,
+            id=__title__,
             icon=iconPath,
-            completion=query.rawString,
-            text=__prettyname__,
+            text=__title__,
             actions=[ProcAction("Open the language configuration file.",
                                 commandline=["xdg-open", language_configuration_file])]
         )
@@ -90,7 +87,7 @@ def handleQuery(query):
                         else:
                             results.append(
                                 Item(
-                                    id=__prettyname__,
+                                    id=__title__,
                                     icon=iconPath,
                                     text="%s" % (translText),
                                     subtext="%s" % lang.upper(),

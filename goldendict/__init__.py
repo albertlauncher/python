@@ -4,30 +4,23 @@
 
 Synopsis: <trigger> <query>"""
 
-from shutil import which
 from subprocess import run
-
 from albert import Item, ProcAction, iconLookup
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "GoldenDict"
-__version__ = "1.0"
-__trigger__ = "gd "
-__author__ = "Manuel Schneider"
-__dependencies__ = ["goldendict"]
-
-if which("goldendict") is None:
-    raise Exception("'goldendict' is not in $PATH.")
+__title__ = "GoldenDict"
+__version__ = "0.4.0"
+__triggers__ = "gd "
+__authors__ = "manuelschneid3r"
+__exec_deps__ = ["goldendict"]
 
 iconPath = iconLookup('goldendict')
 
 
 def handleQuery(query):
     if query.isTriggered:
-        return Item(id=__prettyname__,
+        return Item(id=__title__,
                     icon=iconPath,
-                    text=__prettyname__,
-                    subtext="Look up '%s' using %s" % (query.string, __prettyname__),
-                    completion=query.rawString,
-                    actions=[ProcAction("Start query in %s" % __prettyname__,
+                    text=__title__,
+                    subtext="Look up '%s' using %s" % (query.string, __title__),
+                    actions=[ProcAction("Start query in %s" % __title__,
                                         ["goldendict", query.string])])

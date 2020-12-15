@@ -11,25 +11,15 @@ Synopsis: <trigger> [filter]"""
 
 import re
 import subprocess
-from shutil import which
-
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "PacMan"
-__version__ = "1.3"
-__trigger__ = "pacman "
-__author__ = "Manuel Schneider, Benedict Dudel"
-__dependencies__ = ["pacman", "expac"]
+__title__ = "PacMan"
+__version__ = "0.4.3"
+__triggers__ = "pacman "
+__authors__ = "manuelschneid3r, Benedict Dudel"
+__exec_deps__ = ["pacman", "expac"]
 
-for dep in __dependencies__:
-    if which(dep) is None:
-        raise Exception("'%s' is not in $PATH." % dep)
-
-for iconName in ["archlinux-logo", "system-software-install"]:
-    iconPath = iconLookup(iconName)
-    if iconPath:
-        break
+iconPath = iconLookup(["archlinux-logo", "system-software-install"])
 
 def handleQuery(query):
     if query.isTriggered:
@@ -38,11 +28,11 @@ def handleQuery(query):
                 id="%s-update" % __name__,
                 icon=iconPath,
                 text="Pacman package manager",
-                subtext="Enter the name of the package you are looking for",
-                completion=__trigger__,
+                subtext="Enter the package you are looking for or hit enter to update.",
+                completion=__triggers__,
                 actions=[
-                    TermAction("Update the system (no confirm)", ["sudo", "pacman", "-Syu", "--noconfirm"]),
-                    TermAction("Update the system", ["sudo", "pacman", "-Syu"])
+                    TermAction("Update the system (no confirm)", "sudo pacman -Syu --noconfirm"),
+                    TermAction("Update the system", "sudo pacman -Syu")
                 ]
             )
 
@@ -82,10 +72,10 @@ def handleQuery(query):
 
             actions = []
             if pkg_installed:
-                item.addAction(TermAction("Remove", ["sudo", "pacman", "-Rs", pkg_name]))
-                item.addAction(TermAction("Reinstall", ["sudo", "pacman", "-S", pkg_name]))
+                item.addAction(TermAction("Remove", "sudo pacman -Rs %s" % pkg_name))
+                item.addAction(TermAction("Reinstall", "sudo pacman -S %s" % pkg_name))
             else:
-                item.addAction(TermAction("Install", ["sudo", "pacman", "-S", pkg_name]))
+                item.addAction(TermAction("Install", "sudo pacman -S %s" % pkg_name))
             item.addAction(UrlAction("Show on packages.archlinux.org", "https://www.archlinux.org/packages/%s/x86_64/%s/" % (pkg_repo, pkg_name)))
             if pkg_purl:
                 item.addAction(UrlAction("Show project website", pkg_purl))
@@ -98,7 +88,6 @@ def handleQuery(query):
                 icon=iconPath,
                 text="Search on archlinux.org",
                 subtext="No results found in the local database",
-                completion=__trigger__,
                 actions=[
                     UrlAction("Search on archlinux.org",
                               "https://www.archlinux.org/packages/?q=%s" % query.string.strip())
@@ -111,9 +100,8 @@ def handleQuery(query):
             icon=iconPath,
             text="Update all packages on the system",
             subtext="Synchronizes the repository databases and updates the system's packages",
-            completion=__trigger__,
             actions=[
-                TermAction("Update the system (no confirm)", ["sudo", "pacman", "-Syu", "--noconfirm"]),
-                TermAction("Update the system", ["sudo", "pacman", "-Syu"])
+                TermAction("Update the system (no confirm)", "sudo pacman -Syu --noconfirm"),
+                TermAction("Update the system", "sudo pacman -Syu")
             ]
         )

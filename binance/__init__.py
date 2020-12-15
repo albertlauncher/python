@@ -15,12 +15,10 @@ from collections import namedtuple
 import json
 from threading import Thread, Event
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Binance"
-__version__ = "1.3"
-__trigger__ = "bnc "
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "Binance"
+__version__ = "0.4.3"
+__triggers__ = "bnc "
+__authors__ = "manuelschneid3r"
 
 iconPath = os.path.dirname(__file__) + "/Binance.svg"
 exchangeInfoUrl = "https://api.binance.com/api/v1/exchangeInfo"
@@ -77,11 +75,11 @@ def finalize():
 def makeItem(market):
     url = tradeUrl % (market.base, market.quote)
     return Item(
-        id="%s_%s%s" % (__prettyname__, market.base, market.quote),
+        id="%s_%s%s" % (__title__, market.base, market.quote),
         icon=iconPath,
         text="%s/%s" % (market.base, market.quote),
         subtext="Open the %s/%s market on binance.com" % (market.base, market.quote),
-        completion="%s%s%s" % (__trigger__, market.base, market.quote),
+        completion="%s%s%s" % (__triggers__, market.base, market.quote),
         actions=[
             UrlAction("Show market in browser", url),
             ClipAction('Copy URL to clipboard', url)

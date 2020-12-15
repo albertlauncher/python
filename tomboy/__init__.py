@@ -6,36 +6,27 @@ Synopsis: <trigger> <filter>"""
 
 import re
 from datetime import datetime
-from shutil import which
-
 from dbus import DBusException, Interface, SessionBus
-
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Tomboy"
-__version__ = "1.1"
-__trigger__ = "tb "
-__author__ = "Manuel Schneider"
-__dependencies__ = ["tomboy", "python-dbus"]
+__title__ = "Tomboy"
+__version__ = "0.4.1"
+__triggers__ = "tb "
+__authors__ = "manuelschneid3r"
+__exec_deps__ = ["tomboy"]
+__py_deps__ = ["dbus"]
 
-BUS = "org.gnome.%s" % __prettyname__
-OBJ = "/org/gnome/%s/RemoteControl" % __prettyname__
-IFACE = 'org.gnome.%s.RemoteControl' % __prettyname__
-
-cmd = __dependencies__[0]
-if which(cmd) is None:
-    raise Exception("'%s' is not in $PATH." % cmd)
-
-iconPath = iconLookup(cmd)
-
+BUS = "org.gnome.%s" % __title__
+OBJ = "/org/gnome/%s/RemoteControl" % __title__
+IFACE = 'org.gnome.%s.RemoteControl' % __title__
+iconPath = iconLookup("tomboy")
 
 def handleQuery(query):
     results = []
     if query.isTriggered:
         try:
             if not SessionBus().name_has_owner(BUS):
-                warning("Seems like %s is not running" % cmd)
+                warning("Seems like %s is not running" % __title__)
                 return
 
             obj = SessionBus().get_object(bus_name=BUS, object_path=OBJ)
@@ -44,12 +35,11 @@ def handleQuery(query):
             if query.string.strip():
                 for note in iface.SearchNotes(query.string.lower(), False):
                     results.append(
-                        Item(id="%s%s" % (cmd, note),
+                        Item(id="%s%s" % (__title__, note),
                              icon=iconPath,
                              text=iface.GetNoteTitle(note),
                              subtext="%s%s" % ("".join(["#%s " % re.search('.+:.+:(.+)', s).group(1) for s in iface.GetTagsForNote(note)]),
                                                datetime.fromtimestamp(iface.GetNoteChangeDate(note)).strftime("Note from %c")),
-                             completion=query.rawString,
                              actions=[
                                  FuncAction("Open note",
                                             lambda note=note: iface.DisplayNote(note)),
@@ -61,13 +51,12 @@ def handleQuery(query):
                     note = iface.CreateNote()
                     iface.DisplayNote(note)
 
-                results.append(Item(id="%s-create" % cmd,
+                results.append(Item(id="%s-create" % __title__,
                                     icon=iconPath,
-                                    text=__prettyname__,
-                                    subtext="%s notes" % __prettyname__,
-                                    completion=query.rawString,
+                                    text=__title__,
+                                    subtext="%s notes" % __title__,
                                     actions=[
-                                        FuncAction("Open %s" % __prettyname__,
+                                        FuncAction("Open %s" % __title__,
                                                    lambda: iface.DisplaySearch()),
                                         FuncAction("Create a new note", createAndShowNote)
                                     ]))

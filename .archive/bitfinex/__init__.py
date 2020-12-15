@@ -15,12 +15,10 @@ import json
 from collections import namedtuple
 from threading import Thread, Event
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "BitFinex"
-__version__ = "1.0"
-__trigger__ = "bfx "
-__author__ = "Manuel Schneider"
-__dependencies__ = []
+__title__ = "BitFinex"
+__version__ = "0.4.0"
+__triggers__ = "bfx "
+__authors__ = "manuelschneid3r"
 
 iconPath = os.path.dirname(__file__) + "/Bitfinex.svg"
 symbolsEndpoint = "https://api.bitfinex.com/v1/symbols"
@@ -74,11 +72,11 @@ def finalize():
 def makeItem(market):
     url = tradeUrl % (market.base, market.quote)
     return Item(
-        id="%s_%s%s" % (__prettyname__, market.base, market.quote),
+        id="%s_%s%s" % (__title__, market.base, market.quote),
         icon=iconPath,
         text="%s/%s" % (market.base, market.quote),
         subtext="Open the %s/%s market on bitfinex.com" % (market.base, market.quote),
-        completion="%s%s%s" % (__trigger__, market.base, market.quote),
+        completion="%s%s%s" % (__trigger_s_, market.base, market.quote),
         actions=[
             UrlAction("Show market in browser", url),
             ClipAction('Copy URL to clipboard', url)

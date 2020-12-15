@@ -11,12 +11,10 @@ from signal import SIGKILL, SIGTERM
 
 from albert import FuncAction, Item, iconLookup
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Kill Process"
-__version__ = "1.4"
-__trigger__ = "kill "
-__author__ = "Benedict Dudel, Manuel Schneider"
-__dependencies__ = []
+__title__ = "Kill Process"
+__version__ = "0.4.4"
+__triggers__ = "kill "
+__authors__ = "Benedict Dudel, manuelschneid3r"
 
 iconPath = iconLookup('process-stop')
 
@@ -37,7 +35,6 @@ def handleQuery(query):
                                 icon=iconPath,
                                 text=proc_command.replace(query.string, "<u>%s</u>" % query.string),
                                 subtext=proc_cmdline,
-                                completion=query.rawString,
                                 actions=[
                                     FuncAction("Terminate", lambda pid=int(dir_entry.name): os.kill(pid, SIGTERM)),
                                     FuncAction("Kill", lambda pid=int(dir_entry.name): os.kill(pid, SIGKILL))

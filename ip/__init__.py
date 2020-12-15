@@ -9,11 +9,10 @@ from urllib import request
 
 from albert import *
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "IP Addresses"
-__version__ = "1.0"
-__trigger__ = "ip "
-__author__ = "Manuel Schneider, Benedict Dudel"
+__title__ = "IP Addresses"
+__version__ = "0.4.0"
+__triggers__ = "ip "
+__authors__ = "manuelschneid3r, Benedict Dudel"
 
 iconPath = iconLookup("preferences-system-network")
 
@@ -33,7 +32,7 @@ def handleQuery(query):
     items = []
     if externalIP:
         items.append(Item(
-            id = __prettyname__,
+            id = __title__,
             icon = iconPath,
             text = externalIP,
             subtext = "Your external ip address from ipecho.net",
@@ -42,7 +41,7 @@ def handleQuery(query):
 
     if internalIP:
         items.append(Item(
-            id = __prettyname__,
+            id = __title__,
             icon = iconPath,
             text = internalIP,
             subtext = "Your internal ip address",
