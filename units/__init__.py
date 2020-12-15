@@ -16,7 +16,7 @@ from albert import *
 __title__ = "GNU Units"
 __version__ = "0.4.2"
 __triggers__ = "units "
-__authors__ = "manuelschneid3r, iyzana"
+__authors__ = ["manuelschneid3r", "iyzana"]
 __exec_deps__ = ["units"]
 
 icon = iconLookup('calc')

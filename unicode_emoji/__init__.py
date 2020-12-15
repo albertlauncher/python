@@ -16,7 +16,7 @@ import shutil
 __title__ = "Unicode Emojis"
 __version__ = "0.4.3"
 __triggers__ = ":"
-__authors__ = "Tim Zeitz, manuelschneid3r"
+__authors__ = ["Tim Zeitz", "manuelschneid3r"]
 __exec_deps__ = ["convert"]
 
 EmojiSpec = namedtuple('EmojiSpec', ['string', 'name', 'modifiers'])
@@ -80,7 +80,7 @@ def initialize():
         os.remove(new_path)
 
     except Exception as e:
-        warn(e)
+        warning(e)
 
     # Build the index and icon cache
     global thread

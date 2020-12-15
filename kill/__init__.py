@@ -14,7 +14,7 @@ from albert import FuncAction, Item, iconLookup
 __title__ = "Kill Process"
 __version__ = "0.4.4"
 __triggers__ = "kill "
-__authors__ = "Benedict Dudel, manuelschneid3r"
+__authors__ = ["Benedict Dudel", "manuelschneid3r"]
 
 iconPath = iconLookup('process-stop')
 

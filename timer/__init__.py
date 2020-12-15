@@ -19,7 +19,7 @@ import subprocess
 __title__ = "Timer"
 __version__ = "0.4.2"
 __triggers__ = "timer "
-__authors__ = "manuelschneid3r, googol42"
+__authors__ = ["manuelschneid3r", "googol42"]
 __py_deps__ = ["dbus-python"]
 
 iconPath = os.path.dirname(__file__)+"/time.svg"

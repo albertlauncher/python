@@ -12,7 +12,7 @@ from albert import *
 __title__ = "IP Addresses"
 __version__ = "0.4.0"
 __triggers__ = "ip "
-__authors__ = "manuelschneid3r, Benedict Dudel"
+__authors__ = ["manuelschneid3r", "Benedict Dudel"]
 
 iconPath = iconLookup("preferences-system-network")
 

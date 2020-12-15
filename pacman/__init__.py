@@ -16,7 +16,7 @@ from albert import *
 __title__ = "PacMan"
 __version__ = "0.4.3"
 __triggers__ = "pacman "
-__authors__ = "manuelschneid3r, Benedict Dudel"
+__authors__ = ["manuelschneid3r", "Benedict Dudel"]
 __exec_deps__ = ["pacman", "expac"]
 
 iconPath = iconLookup(["archlinux-logo", "system-software-install"])

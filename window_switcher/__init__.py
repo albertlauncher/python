@@ -10,7 +10,7 @@ from albert import Item, ProcAction, iconLookup
 
 __title__ = "Window Switcher"
 __version__ = "0.4.5"
-__authors__ = "Ed Perez, manuelschneid3r, dshoreman"
+__authors__ = ["Ed Perez", "manuelschneid3r", "dshoreman"]
 __exec_deps__ = ["wmctrl"]
 
 Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
