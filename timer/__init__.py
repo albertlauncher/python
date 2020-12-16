@@ -9,15 +9,16 @@ Fields exceeding the maximum amount of the time interval are automatically refac
 
 Synopsis: <trigger> [[[hours]:][minutes]:]seconds [name]"""
 
-from albert import *
+from albert import warning, Item, FuncAction
 from threading import Timer
 from time import strftime, time, localtime
 import dbus
 import os
+from datetime import timedelta
 import subprocess
 
 __title__ = "Timer"
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 __triggers__ = "timer "
 __authors__ = ["manuelschneid3r", "googol42"]
 __py_deps__ = ["dbus-python"]
@@ -26,10 +27,9 @@ iconPath = os.path.dirname(__file__)+"/time.svg"
 soundPath = os.path.dirname(__file__)+"/bing.wav"
 timers = []
 
-dbusItem = "org.freedesktop.Notifications"
-dbusPath = "/org/freedesktop/Notifications"
-dbusInterface = "org.freedesktop.Notifications"
-
+bus_name = "org.freedesktop.Notifications"
+object_path = "/org/freedesktop/Notifications"
+interface = bus_name
 
 class AlbertTimer(Timer):
 
@@ -39,13 +39,10 @@ class AlbertTimer(Timer):
             subprocess.Popen(["aplay", soundPath])
             global timers
             timers.remove(self)
-
             title = 'Timer "%s"' % self.name if self.name else 'Timer'
             text = "Timed out at %s" % strftime("%X", localtime(self.end))
-
-            bus = dbus.SessionBus()
-            notify = dbus.Interface(bus.get_object(dbusItem, dbusPath), dbusInterface)
-            notify.Notify(__title__, 0, iconPath, title, text, '', '', 0)
+            notify = dbus.Interface(dbus.SessionBus().get_object(bus_name, object_path), interface)
+            notify.Notify(__title__, 0, iconPath, title, text, [], {"urgency":2}, 0)
 
         super().__init__(interval=interval, function=timeout)
         self.interval = interval
@@ -64,13 +61,6 @@ def deleteTimer(timer):
     global timers
     timers.remove(timer)
     timer.cancel()
-
-
-def formatSeconds(seconds):
-    m, s = divmod(seconds, 60)
-    h, m = divmod(m, 60)
-    return "%02d:%02d:%02d" % (h, m, s)
-
 
 def handleQuery(query):
     if query.isTriggered:
@@ -94,7 +84,7 @@ def handleQuery(query):
 
             return Item(
                 id=__title__,
-                text=formatSeconds(seconds),
+                text=str(timedelta(seconds=seconds)),
                 subtext='Set a timer with name "%s"' % name if name else 'Set a timer',
                 icon=iconPath,
                 actions=[FuncAction("Set timer", lambda sec=seconds: startTimer(sec, name))]
