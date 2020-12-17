@@ -8,17 +8,19 @@ up to date.
 This extensions is intended as secondary way to find files. Use the files extension for often used \
 files and fast lookups and this extension for everything else.
 
-Synopsis: <trigger> [filter]"""
+Synopsis: <trigger> [filter]
+
+where ' searches basenames and '' searches the full path  """
 
 import os
 import re
 import subprocess
 
-from albert import Item, TermAction, UrlAction, iconLookup, warning
+from albert import Item, TermAction, UrlAction, iconLookup
 
 __title__ = "Locate"
-__version__ = "0.4.0"
-__triggers__ = "'"
+__version__ = "0.4.1"
+__triggers__ = ["''", "'"]  # Order matters since 2 is prefix of 1
 __authors__ = "manuelschneid3r"
 __exec_deps__ = ['locate']
 
@@ -29,7 +31,7 @@ def handleQuery(query):
     if query.isTriggered:
         if len(query.string) > 2:
             pattern = re.compile(query.string, re.IGNORECASE)
-            proc = subprocess.Popen(['locate', '-i', query.string], stdout=subprocess.PIPE)
+            proc = subprocess.Popen(['locate', '-i' if query.trigger == "''" else "-bi", query.string], stdout=subprocess.PIPE)
             for line in proc.stdout:
                 path = line.decode().strip()
                 basename = os.path.basename(path)
