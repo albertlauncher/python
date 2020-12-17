@@ -16,7 +16,7 @@ __version__ = "0.4.1"
 __triggers__ = "gn "
 __authors__ = "manuelschneid3r"
 __exec_deps__ = ["gnote"]
-__py_deps__ = ["python-dbus"]
+__py_deps__ = ["dbus"]
 
 BUS = "org.gnome.%s" % __title__
 OBJ = "/org/gnome/%s/RemoteControl" % __title__

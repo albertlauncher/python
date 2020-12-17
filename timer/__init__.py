@@ -21,7 +21,7 @@ __title__ = "Timer"
 __version__ = "0.4.3"
 __triggers__ = "timer "
 __authors__ = ["manuelschneid3r", "googol42"]
-__py_deps__ = ["dbus-python"]
+__py_deps__ = ["dbus"]
 
 iconPath = os.path.dirname(__file__)+"/time.svg"
 soundPath = os.path.dirname(__file__)+"/bing.wav"
