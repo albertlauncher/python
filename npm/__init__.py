@@ -17,10 +17,7 @@ __triggers__ = "npm "
 __authors__ = "Benedict Dudel"
 __exec_deps__ = ["npm"]
 
-iconPath = iconLookup("npm")
-if not iconPath:
-    iconPath = os.path.dirname(__file__)+"/logo.svg"
-
+iconPath = iconLookup("npm") or os.path.dirname(__file__)+"/logo.svg"
 
 def handleQuery(query):
     if query.isTriggered:

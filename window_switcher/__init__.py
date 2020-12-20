@@ -33,10 +33,7 @@ def handleQuery(query):
             ]
 
             if any(stripped in match for match in matches):
-                iconPath = iconLookup(win_instance)
-                if iconPath == "":
-                    iconPath = iconLookup(win_class.lower())
-
+                iconPath = iconLookup(win_instance) or iconLookup(win_class.lower())
                 results.append(Item(id="%s%s" % (__title__, win.wm_class),
                                     icon=iconPath,
                                     text="%s  - <i>Desktop %s</i>" % (win_class.replace('-',' '), win.desktop),

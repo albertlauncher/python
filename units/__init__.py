@@ -19,9 +19,7 @@ __triggers__ = "units "
 __authors__ = ["manuelschneid3r", "iyzana"]
 __exec_deps__ = ["units"]
 
-icon = iconLookup('calc')
-if not icon:
-    icon = ":python_module"
+icon = iconLookup('calc') or ":python_module"
 
 regex = re.compile(r"(\S+)(?:\s+to)\s+(\S+)")
 unitListOutput = re.compile(r"(\d+(e[+-]\d{2,})?;)+[\d.]+(e[+-]\d{2,})?")

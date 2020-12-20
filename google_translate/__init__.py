@@ -20,10 +20,7 @@ __authors__ = "manuelschneid3r"
 ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36"
 urltmpl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%s&tl=%s&dt=t&q=%s"
 
-iconPath = iconLookup('config-language')
-if not iconPath:
-    iconPath = ":python_module"
-
+iconPath = iconLookup('config-language') or ":python_module"
 
 def handleQuery(query):
     if query.isTriggered:

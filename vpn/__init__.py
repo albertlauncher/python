@@ -13,9 +13,7 @@ __triggers__ = "vpn "
 __authors__ = "janeklb"
 __exec_deps__ = ['nmcli']
 
-iconPath = iconLookup('network-wireless')
-if not iconPath:
-    iconPath = ":python_module"
+iconPath = iconLookup('network-wireless') or ":python_module"
 
 VPNConnection = namedtuple('VPNConnection', ['name', 'connected'])
 

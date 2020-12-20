@@ -17,9 +17,7 @@ __title__ = "Currency converter"
 __version__ = "0.4.0"
 __authors__ = "manuelschneid3r"
 
-iconPath = iconLookup('accessories-calculator')
-if not iconPath:
-    iconPath = ":python_module"
+iconPath = iconLookup('accessories-calculator') or ":python_module"
 
 
 class EuropeanCentralBank:
