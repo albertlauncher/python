@@ -24,10 +24,7 @@ __py_deps__ = ['virtualbox']
 
 vbox = None
 
-for iconName in ["virtualbox", "unknown"]:
-    iconPath = iconLookup(iconName)
-    if iconPath:
-        break
+iconPath = iconLookup(["virtualbox", "unknown"])
 
 def initialize():
     global vbox
@@ -113,6 +110,7 @@ def handleQuery(query):
     results = []
     try:
         for vm in vbox.machines:
+            albert.critical(vm.name)
             if (pattern and pattern in vm.name.lower() or not pattern and query.isTriggered):
                 results.append(buildVmItem(vm))
     except Exception as e:
