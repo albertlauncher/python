@@ -4,3 +4,6 @@
 [submodule "jetbrains_projects"]
 	path = jetbrains_projects
 	url = https://github.com/mqus/jetbrains-albert-plugin.git
+[submodule "qr"]
+	path = qr
+	url = https://github.com/butforme/qr-albert-plugin
