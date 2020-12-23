@@ -12,6 +12,7 @@ import os
 import subprocess
 import urllib.request
 import shutil
+import json
 
 __title__ = "Unicode Emojis"
 __version__ = "0.4.4"
