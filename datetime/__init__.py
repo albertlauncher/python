@@ -17,7 +17,10 @@ from albert import *
 
 __title__ = "DateTime"
 __version__ = "0.4.1"
-__authors__ = "manuelschneid3r"
+__author__ = "manuelschneid3r"  #was changed from __authors__ to __author__
+__prettyname__ = "DateTime"     #i think thats necessary too
+__iid__ = "PythonInterface/v0.1" #necessary for the plugin to load
+
 
 iconPath = iconLookup('x-office-calendar')
 
