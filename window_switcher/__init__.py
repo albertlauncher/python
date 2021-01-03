@@ -6,6 +6,7 @@ Synopsis: <filter>"""
 
 import subprocess
 from collections import namedtuple
+
 from albert import Item, ProcAction, iconLookup
 
 __title__ = "Window Switcher"
@@ -20,30 +21,34 @@ def handleQuery(query):
     if stripped:
         results = []
         for line in subprocess.check_output(['wmctrl', '-l', '-x']).splitlines():
-            win = Window(*parseWindow(line))
+            try:
+                win = Window(*parseWindow(line))
 
-            if win.desktop == "-1":
+                if win.desktop == "-1":
+                    continue
+
+                win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
+                matches = [
+                    win_instance.lower(),
+                    win_class.lower(),
+                    win.wm_name.lower()
+                ]
+
+                if any(stripped in match for match in matches):
+                    iconPath = iconLookup(win_instance) or iconLookup(win_class.lower())
+                    results.append(Item(id="%s%s" % (__title__, win.wm_class),
+                                        icon=iconPath,
+                                        text="%s  - <i>Desktop %s</i>" % (win_class.replace('-',' '), win.desktop),
+                                        subtext=win.wm_name,
+                                        actions=[ProcAction("Switch Window",
+                                                            ["wmctrl", '-i', '-a', win.wid] ),
+                                                ProcAction("Move window to this desktop",
+                                                            ["wmctrl", '-i', '-R', win.wid] ),
+                                                ProcAction("Close the window gracefully.",
+                                                            ["wmctrl", '-c', win.wid])]))
+            except:
                 continue
 
-            win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
-            matches = [
-                win_instance.lower(),
-                win_class.lower(),
-                win.wm_name.lower()
-            ]
-
-            if any(stripped in match for match in matches):
-                iconPath = iconLookup(win_instance) or iconLookup(win_class.lower())
-                results.append(Item(id="%s%s" % (__title__, win.wm_class),
-                                    icon=iconPath,
-                                    text="%s  - <i>Desktop %s</i>" % (win_class.replace('-',' '), win.desktop),
-                                    subtext=win.wm_name,
-                                    actions=[ProcAction("Switch Window",
-                                                        ["wmctrl", '-i', '-a', win.wid] ),
-                                             ProcAction("Move window to this desktop",
-                                                        ["wmctrl", '-i', '-R', win.wid] ),
-                                             ProcAction("Close the window gracefully.",
-                                                        ["wmctrl", '-c', win.wid])]))
         return results
 
 def parseWindow(line):
