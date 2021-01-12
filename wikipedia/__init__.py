@@ -10,15 +10,16 @@ from urllib import request, parse
 import json
 import time
 import os
+from socket import timeout
 
 __title__ = "Wikipedia"
-__version__ = "0.4.4"
+__version__ = "0.4.5"
 __triggers__ = "wiki "
 __authors__ = "manuelschneid3r"
 
 iconPath = iconLookup('wikipedia') or os.path.dirname(__file__)+"/wikipedia.svg"
 baseurl = 'https://en.wikipedia.org/w/api.php'
-user_agent = "org.albert.extension.python.wikipedia"
+user_agent = "org.albert.wikipedia"
 limit = 20
 
 
@@ -34,12 +35,17 @@ def initialize():
 
     get_url = "%s?%s" % (baseurl, parse.urlencode(params))
     req = request.Request(get_url, headers={'User-Agent': user_agent})
-    with request.urlopen(req) as response:
-        data = json.loads(response.read().decode('utf-8'))
-        languages = [lang['code'] for lang in data['query']['languages']]
-        local_lang_code = getdefaultlocale()[0][0:2]
-        if local_lang_code in languages:
-            baseurl = baseurl.replace("en", local_lang_code)
+    try:
+        with request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            languages = [lang['code'] for lang in data['query']['languages']]
+            local_lang_code = getdefaultlocale()[0][0:2]
+            if local_lang_code in languages:
+                baseurl = baseurl.replace("en", local_lang_code)
+    except timeout:
+        critical('Error getting languages - socket timed out. Defaulting to EN.')
+    except Exception as error:
+        critical('Error getting languages (%s). Defaulting to EN.' % error)
 
 
 def handleQuery(query):
