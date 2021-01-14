@@ -4,3 +4,6 @@
 [submodule "jetbrains_projects"]
 	path = jetbrains_projects
 	url = https://github.com/mqus/jetbrains-albert-plugin.git
+[submodule "caldav_todos"]
+	path = caldav_todos
+	url = https://github.com/subutux/albert_todo
