@@ -123,7 +123,6 @@ def get_emoji_data_version(path):
                 return datetime.datetime.strptime(line.strip(), "# Date: %Y-%m-%d, %H:%M:%S GMT")
 
 def handleQuery(query):
-    print(len(emojiSpecs), file=__import__("sys").stderr)
     if query.isValid and query.isTriggered:
         items = []
         query_tokens = query.string.lower().split()
