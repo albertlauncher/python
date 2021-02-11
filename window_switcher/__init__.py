@@ -11,16 +11,16 @@ from albert import Item, ProcAction, iconLookup
 
 __title__ = "Window Switcher"
 __version__ = "0.4.5"
-__authors__ = ["Ed Perez", "manuelschneid3r", "dshoreman"]
+__authors__ = ["Ed Perez", "manuelschneid3r", "dshoreman", "hackartists"]
 __exec_deps__ = ["wmctrl"]
 
-Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
+Window = namedtuple("Window", ["wid", "display", "desktop", "wm_class", "host", "wm_name"])
 
 def handleQuery(query):
     stripped = query.string.strip().lower()
     if stripped:
         results = []
-        for line in subprocess.check_output(['wmctrl', '-l', '-x']).splitlines():
+        for line in subprocess.check_output(['wmctrl', '-lG', '-x']).splitlines():
             try:
                 win = Window(*parseWindow(line))
 
@@ -38,7 +38,7 @@ def handleQuery(query):
                     iconPath = iconLookup(win_instance) or iconLookup(win_class.lower())
                     results.append(Item(id="%s%s" % (__title__, win.wm_class),
                                         icon=iconPath,
-                                        text="%s  - <i>Desktop %s</i>" % (win_class.replace('-',' '), win.desktop),
+                                        text="%s  - <i>Display %s</i>" % (win_class.replace('-',' '), win.display),
                                         subtext=win.wm_name,
                                         actions=[ProcAction("Switch Window",
                                                             ["wmctrl", '-i', '-a', win.wid] ),
@@ -52,8 +52,8 @@ def handleQuery(query):
         return results
 
 def parseWindow(line):
-    win_id, desktop, rest = line.decode().split(None, 2)
+    win_id, desktop, pos_x, pos_y, size_x, size_y, rest = line.decode().split(None, 6)
     win_class, rest = rest.split('  ', 1)
     host, title = rest.strip().split(None, 1)
 
-    return [win_id, desktop, win_class, host, title]
+    return [win_id, pos_x, desktop, win_class, host, title]
