@@ -11,15 +11,18 @@ Synopsis: <trigger> [filter]"""
 
 import re
 import subprocess
-from albert import *
+import time
+
+from albert import TermAction, iconLookup, Item, UrlAction
 
 __title__ = "PacMan"
-__version__ = "0.4.3"
+__version__ = "0.4.4"
 __triggers__ = "pacman "
-__authors__ = ["manuelschneid3r", "Benedict Dudel"]
+__authors__ = ["Manuel Schneider", "Benedict Dudel"]
 __exec_deps__ = ["pacman", "expac"]
 
 iconPath = iconLookup(["archlinux-logo", "system-software-install"])
+
 
 def handleQuery(query):
     if query.isTriggered:
@@ -36,41 +39,38 @@ def handleQuery(query):
                 ]
             )
 
+        time.sleep(0.1)
+        if not query.isValid:
+            return
+
         # Get data. Results are sorted so we can merge in O(n)
-        proc_s = subprocess.Popen(["expac", "-Ss", "%n\t%v\t%r\t%d\t%u\t%E", query.string], stdout=subprocess.PIPE, universal_newlines=True)
+        proc_s = subprocess.Popen(["expac", "-Ss", "%n\t%v\t%r\t%d\t%u\t%E", query.string],
+                                  stdout=subprocess.PIPE, universal_newlines=True)
         proc_q = subprocess.Popen(["expac", "-Qs", "%n", query.string], stdout=subprocess.PIPE, universal_newlines=True)
         proc_q.wait()
 
-        def next_stripped(it):
-            n = next(it, None)
-            if n:
-                n = n.rstrip("\n")
-            return n
-
-
         items = []
         pattern = re.compile(query.string, re.IGNORECASE)
-        local_iter = iter(proc_q.stdout.readline, '')
-        next_local_package = next_stripped(local_iter)
-        for line in proc_s.stdout:
+        local_pkgs = set(proc_q.stdout.read().split('\n'))
+        remote_pkgs = [tuple(line.split('\t')) for line in proc_s.stdout.read().split('\n')[:-1]]  # newline at end
 
-            # Parse data
-            pkg_name, pkg_vers, pkg_repo, pkg_desc, pkg_purl, pkg_deps = line.rstrip("\n").split("\t")
-            pkg_installed = next_local_package == pkg_name
-            if next_local_package == pkg_name:
-                next_local_package = next_stripped(local_iter)
+        for pkg_name, pkg_vers, pkg_repo, pkg_desc, pkg_purl, pkg_deps in remote_pkgs:
+            if not pattern.search(pkg_name):
+                continue
 
-            # Create item
+            pkg_installed = True if pkg_name in local_pkgs else False
+
             item = Item(
                 id="%s:%s:%s" % (__name__, pkg_repo, pkg_name),
                 icon=iconPath,
-                text="<b>%s</b> <i>%s</i> [%s]" % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), pkg_name), pkg_vers, pkg_repo),
-                subtext="%s%s <i>(<b>%s</b>)</i>" % ("[Installed] " if pkg_installed else "", pattern.sub(lambda m: "<u>%s</u>" % m.group(0), pkg_desc), pkg_deps) if pkg_deps else pattern.sub(lambda m: "<u>%s</u>" % m.group(0), pkg_desc),
+                text="%s <i>%s</i> [%s]"
+                     % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), pkg_name), pkg_vers, pkg_repo),
+                subtext=("<b>[Installed]</b> %s%s" if pkg_installed else "%s%s")
+                        % (pkg_desc, (" <i>(%s)</i>" % pkg_deps) if pkg_deps else ""),
                 completion="%s%s" % (query.trigger, pkg_name)
             )
             items.append(item)
 
-            actions = []
             if pkg_installed:
                 item.addAction(TermAction("Remove", "sudo pacman -Rs %s" % pkg_name))
                 item.addAction(TermAction("Reinstall", "sudo pacman -S %s" % pkg_name))
