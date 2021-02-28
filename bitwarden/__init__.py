@@ -12,7 +12,7 @@ __title__ = "Bitwarden"
 __version__ = "0.4.0"
 __triggers__ = "bw "
 __authors__ = "Asger Hautop Drewsen"
-__exec_deps__ = ["rbw"]
+__exec_deps__ = ["rbw", "xclip"]
 
 ICON_PATH = iconLookup("dialog-password")
 
