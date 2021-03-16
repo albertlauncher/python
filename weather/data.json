@@ -1,0 +1,14 @@
+{
+    "clear":{"iconPath": "sun.png", "description": "Sunny"},
+    "pcloudy":{"iconPath": "cloud.png", "description": "Partially cloudy"},
+    "mcloudy":{"iconPath": "cloud.png", "description": "Partially cloudy"},
+    "cloudy":{"iconPath": "044-cloudy-2.png", "description": "Cloudy"},
+    "humid":{"iconPath": "027-humidity.png", "description": "Humid"},
+    "lightrain":{"iconPath": "022-rain-1.png", "description": "Light rain"}, 
+    "oshower": {"iconPath": "030-storm.png", "description": "Rainy"}, 
+    "ishower":{"iconPath": "rain.png", "description": "Rainy"},
+    "rain":{"iconPath": "rain.png", "description": "Rainy"},
+    "lightsnow":{"iconPath": "snowy.png", "description": "Light snow"}, 
+    "snow":{"iconPath": "snowy.png", "description": "Snowy"}, 
+    "rainsnow":{"iconPath": "017-snowy-1.png", "description": "Rain and snow"}
+}
