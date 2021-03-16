@@ -26,7 +26,7 @@ informations={}
 dirName = os.path.dirname(__file__)
 imgPath = dirName + "/images/"
 
-"""Reads the informations used for creating the item in function of the the weather service answer"""
+# Initializes the informations used for generating the answers
 def initialize():
     global informations
     f = open( dirName + "/data.json", "r")
@@ -47,7 +47,7 @@ def handleQuery(query):
         return makeAnswer(data)
 
 
-""" Main function to get the weather """
+# Main function to get the weather 
 def getData(city, query):
     data = None
     sleep(1)
@@ -61,7 +61,7 @@ def getData(city, query):
             data = {"wtInfo": data["dataseries"][0], "city": location.address}
     return data
 
-""" Initial help if no query is provided """
+# Initial help if no query is provided 
 def makeHelp():
     text = "Insert city name"
     subtext = "You may wait for a while..."
@@ -69,7 +69,7 @@ def makeHelp():
     actions = []
     return makeItem(text, subtext, icon, actions)
 
-""" Function called if a network error occurred """
+# Function called if a network error occurred 
 def makeNetworkError():
     text = "Connection error"
     subtext = "Check your network"
@@ -77,7 +77,7 @@ def makeNetworkError():
     actions = []
     return makeItem(text, subtext, icon, actions)
 
-""" Provides informations about the selected city """
+# Provides informations about the selected city 
 def makeAnswer(data):
     text = "Nothing found"
     subtext = "Check your question"
@@ -94,7 +94,7 @@ def makeAnswer(data):
     return makeItem(text, subtext, icon, actions)
 
 
-""" Creates and returns item class object """
+# Creates and returns item class object
 def makeItem(text, subtext, icon,  actions):
     return [Item(
         id = __title__,
