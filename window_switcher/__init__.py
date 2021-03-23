@@ -25,7 +25,7 @@ def handleQuery(query):
             if win.desktop == "-1":
                 continue
 
-            win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
+            win_instance, win_class = win.wm_class.replace(' ', '-').rsplit('.', 1)
             matches = [
                 win_instance.lower(),
                 win_class.lower(),
