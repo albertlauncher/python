@@ -25,7 +25,16 @@ def handleQuery(query):
             if win.desktop == "-1":
                 continue
 
-            win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
+            win_tuples = win.wm_class.replace(' ', '-').split('.')
+            if len(win_tuples) == 2:
+                win_instance, win_class = win_tuples
+            elif len(win_tuples) == 6:
+                win_instance = '-'.join(win_tuples[:3])
+                win_class = '-'.join(win_tuples[3:])
+            else:
+                # cann't parse win_class
+                continue
+
             matches = [
                 win_instance.lower(),
                 win_class.lower(),
