@@ -25,7 +25,19 @@ def handleQuery(query):
             if win.desktop == "-1":
                 continue
 
-            win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
+            # Usually the WM_CLASS output from wmctrl consists of instance and
+            # class name separated by a dot. In some cases, the instance and
+            # class name can dontain a dot themselves (e.g. org.gnome.Nautilus).
+            # In that case we assume that both parts have the same number of
+            # pieces and split them in the middle.
+            win_instance = win.wm_class
+            win_class = ""
+
+            wm_class_pieces = win.wm_class.replace(' ', '-').split('.')
+            if len(wm_class_pieces) % 2 == 0:
+                win_insthutance = '.'.join(wm_class_pieces[:len(wm_class_pieces) // 2])
+                win_class = '.'.join(wm_class_pieces[len(wm_class_pieces) // 2:])
+
             matches = [
                 win_instance.lower(),
                 win_class.lower(),
