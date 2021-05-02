@@ -23,10 +23,10 @@ __py_deps__ = "xdg"
 
 icon_path = os.path.dirname(__file__) + "/baloo.svg"
 
-###     user defined settings   ###
+### user defined settings ###
 icon_theme_path = "/usr/share/icons/breeze/mimetypes/64"
 
-###################################
+############################################################################################
 
 # Not needed
 def initialize():
