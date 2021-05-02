@@ -10,7 +10,7 @@ am using KDE's builtin indexer I thought why not give it a try.
 With that said don't expect the cleanest Python code since I am by no means a pro at it!"""
 
 from albert import *
-from subprocess import PIPE, Popen
+from subprocess import check_output
 from xdg import Mime
 import os.path
 
@@ -47,19 +47,20 @@ def handleQuery(query):
         if strip_query:
             items = []
             
-            # prepare query for tags
-            strip_query = strip_query.replace("#f",     "type:Folder")
-            strip_query = strip_query.replace("#img",   "type:Image")
-            strip_query = strip_query.replace("#doc",   "type:Document")
-            strip_query = strip_query.replace("#txt",   "type:Text")
-            strip_query = strip_query.replace("#audio", "type:Audio")
-            strip_query = strip_query.replace("#z",     "type:Archive")
-            strip_query = strip_query.replace("#video", "type:Video")
-            strip_query = strip_query.replace("#pres",  "type:Presentation")
-            strip_query = strip_query.replace("#ss",    "type:Spreadsheet")
+            if '#' in strip_query: 
+                # prepare query for tags
+                strip_query = strip_query.replace("#f",     "type:Folder")
+                strip_query = strip_query.replace("#img",   "type:Image")
+                strip_query = strip_query.replace("#doc",   "type:Document")
+                strip_query = strip_query.replace("#txt",   "type:Text")
+                strip_query = strip_query.replace("#audio", "type:Audio")
+                strip_query = strip_query.replace("#z",     "type:Archive")
+                strip_query = strip_query.replace("#video", "type:Video")
+                strip_query = strip_query.replace("#pres",  "type:Presentation")
+                strip_query = strip_query.replace("#ss",    "type:Spreadsheet")
             
             # search
-            out, err = Popen(["baloosearch", strip_query], stdout=PIPE).communicate()
+            out = check_output(["baloosearch", strip_query])
             results = out.splitlines()
             
             # remove duplicates
@@ -89,14 +90,12 @@ def handleQuery(query):
                                     subtext=item_description,
                                     actions=[
                                         TermAction(text="Open File", 
-                                                   script="xdg-open " + path, 
-                                                   behavior=TermAction.CloseBehavior.CloseOnSuccess, 
-                                                   cwd='~'),
+                                                   script="xdg-open '%s'" % path, 
+                                                   behavior=TermAction.CloseBehavior.CloseOnSuccess),
                                         
                                         TermAction(text="Open Dir", 
                                                    script="dbus-send --session --print-reply --dest=org.freedesktop.FileManager1 --type=method_call /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:'" + path + "' string:''", 
-                                                   behavior=TermAction.CloseBehavior.CloseOnSuccess, 
-                                                   cwd='~'),
+                                                   behavior=TermAction.CloseBehavior.CloseOnSuccess),
                                         
                                         ClipAction("Copy Path", path)
                                     ]))
