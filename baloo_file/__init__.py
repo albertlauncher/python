@@ -15,7 +15,7 @@ from xdg import Mime
 import os.path
 
 __title__ = "Baloo File"
-__version__ = "0.4.1"
+__version__ = "0.4.0"
 __triggers__ = "? "
 __authors__ = "XanderCode"
 __exec_deps__ = ["baloosearch","xdg-open"]
