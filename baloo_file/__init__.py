@@ -83,7 +83,7 @@ def handleQuery(query):
                 item_name = name.replace("&", "&amp;")
                 item_description = path.replace("&", "&amp;")
             
-                # return search query in correct format back to albert
+                # add item to searchresult list
                 items.append(Item(  id=__title__,
                                     icon=query_icon,
                                     text=item_name,
@@ -100,6 +100,7 @@ def handleQuery(query):
                                         ClipAction("Copy Path", path)
                                     ]))
             
+            # return searchresults to albert
             if items:
                 return items
             
