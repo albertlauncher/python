@@ -55,6 +55,13 @@ def showPasswords(query):
     results = []
     for password in passwords:
         name = password.split("/")[-1]
+        actions = [
+                    ProcAction("Copy", ["pass", "--clip", password]),
+                    ProcAction("Edit", ["pass", "edit", password]),
+                    ProcAction("Remove", ["pass", "rm", "--force", password]),
+                ]
+        if os.path.exists("/usr/lib/password-store/extensions/otp.bash") or os.path.exists("/usr/local/lib/password-store/extensions/otp.bash"):
+            actions.insert(1, ProcAction("Copy OTP",["pass", "otp", "--clip", password]))
         results.append(
             Item(
                 id=password,
@@ -62,11 +69,7 @@ def showPasswords(query):
                 text=name,
                 subtext=password,
                 completion="pass %s" % password,
-                actions=[
-                    ProcAction("Copy", ["pass", "--clip", password]),
-                    ProcAction("Edit", ["pass", "edit", password]),
-                    ProcAction("Remove", ["pass", "rm", "--force", password]),
-                ]
+                actions= actions
             ),
         )
 
