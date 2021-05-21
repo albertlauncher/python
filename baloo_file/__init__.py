@@ -19,7 +19,7 @@ __version__ = "0.4.0"
 __triggers__ = "? "
 __authors__ = "XanderCode"
 __exec_deps__ = ["baloosearch","xdg-open"]
-__py_deps__ = "pyxdg"
+__py_deps__ = "xdg"
 
 icon_path = os.path.dirname(__file__) + "/baloo.svg"
 
