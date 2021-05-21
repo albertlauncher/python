@@ -4,6 +4,8 @@
 
 Synopsis: <trigger> <searchquery>
 
+!!! YOU NEED TO INSTALL "pyxdg" via pip: "pip install pyxdg"
+
 Many thanks to https://github.com/briceio who helped make this possible!
 I've seen that a module like this was requested on Github and cause I myself
 am using KDE's builtin indexer I thought why not give it a try.
@@ -14,6 +16,7 @@ from subprocess import check_output
 from xdg import Mime
 import os.path
 
+# Albert info
 __title__ = "Baloo File"
 __version__ = "0.4.0"
 __triggers__ = "? "
@@ -23,6 +26,7 @@ __py_deps__ = "xdg"
 
 icon_path = os.path.dirname(__file__) + "/baloo.svg"
 
+############################################################################################
 ### user defined settings ###
 icon_theme_path = "/usr/share/icons/breeze/mimetypes/64"
 
