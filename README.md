@@ -16,8 +16,11 @@ Thanks to the following existing projects which this script is based on:
 
 
 # Install 
-replace the original python script in `/usr/share/albert/org.albert.extension.python/modules/window_switcher.py` with  the one from this repo
-
+```
+cd ~/.local/share/albert/org.albert.extension.python/modules/
+git pull https://github.com/vthuongt/window-switcher-plus.git
+```
+then activate the plugin in the settings 
 
 # TODO 
 improve fuzzy search by incorporating `fuzzywuzzy.token_set_ratio()`

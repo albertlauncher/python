@@ -15,24 +15,23 @@ from shutil import which
 #from fuzzywuzzy import fuzz #https://chairnerd.seatgeek.com/fuzzywuzzy-fuzzy-string-matching-in-python/
 import re
 
-from albertv0 import *
+from albert import Item, ProcAction, iconLookup
+from albert import debug as debug_orig
 
 Window = namedtuple("Window", ["wid", "desktop", "wm_class", "host", "wm_name"])
 # search algo inspired by https://github.com/daniellandau/switcher/blob/master/util.js
 
-### Seetings###
+### Settings###
 matchFuzzy = False
 orderByRelevancy = True
+DEBUG=False
 
-__iid__ = "PythonInterface/v0.1"
-__prettyname__ = "Window Switcher"
-__version__ = "1.6"
+__title__ = "Window Switcher Plus"
+__version__ = "0.4.6"
 __trigger__ = " "
-__author__ = "Ed Perez, Manuel Schneider, Viet Tran"
-__dependencies__ = ["wmctrl"]
+__authors__ = ["Ed Perez", "Manuel Schneider", "dshoreman", "Viet Tran"]
+__exec_deps__ = ["wmctrl"]
 
-if which("wmctrl") is None:
-    raise Exception("'wmctrl' is not in $PATH.")
 
 def getWindows():
     windows = []
@@ -54,10 +53,13 @@ def createItems(windows, spans=None):
         else:
             text_subtext = {'text':'%s: %s' % (win.desktop, win.wm_class.split('.')[-1].replace('-',' ')),
                             'subtext':'%s➜%s' %(win.wm_class.split('.')[-1], win.wm_name)}
-
-        results.append( Item(id="%s%s" % (__prettyname__, win.wm_class),
+        
+        
+        win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
+        iconPath = iconLookup(win_instance) or iconLookup(win_class.lower())
+        results.append( Item(id="%s%s" % (__title__, win.wm_class),
                                                 **text_subtext,
-                                                icon=iconLookup(win.wm_class.split('.')[0]),
+                                                icon=iconPath,
                                                 actions=[ProcAction(text="Switch Window",
                                                                     commandline=["wmctrl", '-i', '-a', win.wid] ),
                                                         ProcAction(text="Move window to this desktop",
@@ -195,6 +197,11 @@ def calculateScore(description, query_token):
         gotMatch = True
     return score, spans
 
+def debug(msg):
+    if DEBUG:
+        W  = '\033[0m'  # white (normal)
+        R  = '\033[31m' # red
+        debug_orig(f"{R}{__title__}:{W} {msg}")
 
 
 def createRegExp(query_token):
@@ -209,14 +216,23 @@ def createRegExp(query_token):
     return regex
     
 
+def initialize():
+    if which("wmctrl") is None:
+        raise Exception("'wmctrl' is not in $PATH.")
+    
 
 def handleQuery(query):
-    if query.isTriggered:
-        stripped = query.string.strip().lower()
+
+    stripped = query.string.strip().lower()
+    
+    if stripped:
         curWS =  getCurrentWorkspace()
         results = []
         windows = getWindows()
 
+        debug(query.string)
+        debug(windows)
+        
         windows, matchPos = filterWindows(stripped, curWS, windows)
         results = createItems(windows, spans=matchPos)
 
