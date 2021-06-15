@@ -73,7 +73,7 @@ def handleQuery(query):
                 subtext=i.id,
                 icon=icon_stopped,
                 actions=[
-                    FuncAction("Run with commmand: %s" % query.string, lambda i=i: client.containers.run(i, query.string)),
+                    FuncAction("Run with command: %s" % query.string, lambda i=i: client.containers.run(i, query.string)),
                     FuncAction("Remove", lambda i=i: i.remove())
                 ]
             )
