@@ -13,7 +13,7 @@ ro(Romanian), ru(Russian), tr(Turkish), zh(Chinese)"""
 import reverso_api.context
 from albert import *
 
-__title__ = "Reverso Context"
+__title__ = "Reverso Context Translator"
 __version__ = "0.0.3"
 __triggers__ = "rev "
 __authors__ = "adum"
