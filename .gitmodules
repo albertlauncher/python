@@ -7,3 +7,6 @@
 [submodule "macaddr"]
 	path = macaddr
 	url = https://github.com/Bierchermuesli/albert-macaddr
+[submodule "subnetcalc"]
+	path = subnetcalc
+	url = git@github.com:Bierchermuesli/albert-subnetcalc.git
