@@ -4,3 +4,6 @@
 [submodule "jetbrains_projects"]
 	path = jetbrains_projects
 	url = https://github.com/mqus/jetbrains-albert-plugin.git
+[submodule "vscode_projects"]
+	path = vscode_projects
+	url = https://github.com/Sharsie/albertlauncher-vscode-projects
