@@ -42,6 +42,9 @@ def get_vscode_project(storage_json):
             title = os.path.basename(uri)
             if uri.startswith("vscode-remote://"):
                 title = "remote: {}".format(title)
+            if uri.startswith("file://"):
+                if not os.path.isdir(uri[7:]):
+                    continue
             result.append({
                 'title': title,
                 'paths': [uri],
