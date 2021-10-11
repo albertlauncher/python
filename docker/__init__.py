@@ -2,8 +2,7 @@
 Docker wrapper (prototype)
 """
 
-from albert import *
-import os
+from albert import TermAction, FuncAction, ClipAction, Item
 import docker
 import pathlib
 
@@ -13,11 +12,10 @@ __triggers__ = "d "
 __authors__ = "manuelschneid3r"
 __py_deps__ = ["docker"]
 
-
 icon_running = str(pathlib.Path(__file__).parent / "running.png")
 icon_stopped = str(pathlib.Path(__file__).parent / "stopped.png")
-
 client = None
+
 
 def initialize():
     global client
@@ -26,55 +24,51 @@ def initialize():
         return
     client = docker.DockerClient(base_url='unix://var/run/docker.sock')
     if not client:
-        raise "fcckit"
+        raise "Failed to initialize client."
 
-
-def build_container_item(container):
-    item
 
 def handleQuery(query):
     if query.isValid and query.isTriggered:
 
         query.disableSort()
-
         items = []
 
-        for c in client.containers.list(all=True):
+        for container in client.containers.list(all=True):
 
             # Create dynamic actions
-            if c.status == 'running':
+            if container.status == 'running':
                 actions = [
-                    FuncAction("Stop container", lambda c=c: c.stop()),
-                    FuncAction("Restart", lambda c=c: c.restart()),
+                    FuncAction("Stop container", lambda c=container: c.stop()),
+                    FuncAction("Restart", lambda c=container: c.restart()),
                 ]
             else:
-                actions = [FuncAction("Start", lambda c=c: c.start())]
+                actions = [FuncAction("Start", lambda c=container: c.start())]
             actions.extend([
-                TermAction("Logs", "docker logs -f %s" % c.id,
+                TermAction("Logs", "docker logs -f %s" % container.id,
                            behavior=TermAction.CloseBehavior.DoNotClose),
-                FuncAction("Remove (forced, with volumes)", lambda c=c: c.remove(v=True, force=True)),
-                ClipAction("Copy id to clipboard", c.id)
+                FuncAction("Remove (forced, with volumes)", lambda c=container: c.remove(v=True, force=True)),
+                ClipAction("Copy id to clipboard", container.id)
             ])
 
             item = Item(
-                id=c.id,
-                text="%s <i>%s</i>" % (c.name, ", ".join(c.image.tags)),
-                subtext=c.id,
-                icon=icon_running if c.status == 'running' else icon_stopped,
+                id=container.id,
+                text="%s <i>%s</i>" % (container.name, ", ".join(container.image.tags)),
+                subtext=container.id,
+                icon=icon_running if container.status == 'running' else icon_stopped,
                 actions=actions
             )
 
             items.append(item)
 
-        for i in reversed(client.images.list()):
+        for image in reversed(client.images.list()):
             item = Item(
-                id=i.short_id,
-                text=str(i.tags),
-                subtext=i.id,
+                id=image.short_id,
+                text=str(image.tags),
+                subtext=image.id,
                 icon=icon_stopped,
                 actions=[
-                    FuncAction("Run with command: %s" % query.string, lambda i=i: client.containers.run(i, query.string)),
-                    FuncAction("Remove", lambda i=i: i.remove())
+                    FuncAction("Run with command: %s" % query.string, lambda i=image: client.containers.run(i, query.string)),
+                    FuncAction("Remove", lambda i=image: i.remove())
                 ]
             )
 
