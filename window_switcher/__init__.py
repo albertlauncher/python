@@ -25,7 +25,29 @@ def handleQuery(query):
             if win.desktop == "-1":
                 continue
 
-            win_instance, win_class = win.wm_class.replace(' ', '-').split('.')
+            # Normal wm_classes have a single dot separating the instance and
+            # the class and the better window name to display during matching
+            # is the class (e.g. "Navigator.Firefox").
+            #
+            # Some wm_classes have no dots (e.g "N/A" for Chrome's Ozone X11
+            # process) and should be skipped.
+            #
+            # Some wm_classes have more than one, such as under Wine (e.g.
+            # "rufus-3.17.exe.rufus-3.17.exe"). In this case, a decent
+            # heuristic is to use the text before the first dot to display.
+
+            clean_wm_class = win.wm_class.replace(' ', '-')
+            dots_in_wm_class = clean_wm_class.count('.')
+
+            if dots_in_wm_class == 0:
+                continue
+
+            win_instance, win_class = clean_wm_class.split('.', 1)
+            win_display = win_class
+
+            if dots_in_wm_class > 1:
+                win_display = win_instance
+
             matches = [
                 win_instance.lower(),
                 win_class.lower(),
@@ -36,7 +58,7 @@ def handleQuery(query):
                 iconPath = iconLookup(win_instance) or iconLookup(win_class.lower())
                 results.append(Item(id="%s%s" % (__title__, win.wm_class),
                                     icon=iconPath,
-                                    text="%s  - <i>Desktop %s</i>" % (win_class.replace('-',' '), win.desktop),
+                                    text="%s  - <i>Desktop %s</i>" % (win_display.replace('-',' '), win.desktop),
                                     subtext=win.wm_name,
                                     actions=[ProcAction("Switch Window",
                                                         ["wmctrl", '-i', '-a', win.wid] ),
