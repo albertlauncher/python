@@ -18,7 +18,7 @@ import re
 __title__ = "Archlinux User Repository"
 __version__ = "0.4.4"
 __triggers__ = "aur "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 iconPath = os.path.dirname(__file__)+"/arch.svg"
 baseurl = 'https://aur.archlinux.org/rpc/'

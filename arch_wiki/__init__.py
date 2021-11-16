@@ -12,7 +12,7 @@ import os
 __title__ = "Arch Wiki"
 __version__ = "0.4.1"
 __triggers__ = "awiki "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 iconPath = os.path.dirname(__file__) + "/ArchWiki.svg"
 baseurl = 'https://wiki.archlinux.org/api.php'

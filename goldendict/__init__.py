@@ -10,7 +10,7 @@ from albert import Item, ProcAction, iconLookup
 __title__ = "GoldenDict"
 __version__ = "0.4.0"
 __triggers__ = "gd "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __exec_deps__ = ["goldendict"]
 
 iconPath = iconLookup('goldendict')

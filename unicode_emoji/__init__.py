@@ -16,7 +16,7 @@ import shutil
 __title__ = "Unicode Emojis"
 __version__ = "0.4.3"
 __triggers__ = ":"
-__authors__ = ["Tim Zeitz", "manuelschneid3r"]
+__authors__ = ["Tim Zeitz", "Manuel S."]
 __exec_deps__ = ["convert"]
 
 EmojiSpec = namedtuple('EmojiSpec', ['string', 'name', 'modifiers'])

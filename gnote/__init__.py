@@ -14,7 +14,7 @@ from albert import *
 __title__ = "Gnote"
 __version__ = "0.4.1"
 __triggers__ = "gn "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __exec_deps__ = ["gnote"]
 __py_deps__ = ["dbus"]
 

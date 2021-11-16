@@ -17,7 +17,7 @@ from albert import Item, ClipAction
 __title__ = "Base Converter"
 __version__ = "0.4.1"
 __triggers__ = "base "
-__authors__ = ["manuelschneid3r", "Keating950"]
+__authors__ = ["Manuel S.", "Keating950"]
 __py_deps__ = ["numpy"]
 
 

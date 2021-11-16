@@ -15,7 +15,7 @@ import os
 
 __title__ = "Pomodoro"
 __version__ = "0.4.0"
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 
 class PomodoroTimer:

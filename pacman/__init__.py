@@ -18,7 +18,7 @@ from albert import TermAction, iconLookup, Item, UrlAction
 __title__ = "PacMan"
 __version__ = "0.4.4"
 __triggers__ = "pacman "
-__authors__ = ["Manuel Schneider", "Benedict Dudel"]
+__authors__ = ["Manuel S.", "Dudel B."]
 __exec_deps__ = ["pacman", "expac"]
 
 iconPath = iconLookup(["archlinux-logo", "system-software-install"])

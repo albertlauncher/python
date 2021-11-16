@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""""Search, open, create and delete Tomboy notes.
+"""Search, open, create and delete Tomboy notes.
 
 Synopsis: <trigger> <filter>"""
 
@@ -12,7 +12,7 @@ from albert import *
 __title__ = "Tomboy"
 __version__ = "0.4.1"
 __triggers__ = "tb "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __exec_deps__ = ["tomboy"]
 __py_deps__ = ["dbus"]
 

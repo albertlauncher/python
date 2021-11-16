@@ -15,7 +15,7 @@ from socket import timeout
 __title__ = "Wikipedia"
 __version__ = "0.4.5"
 __triggers__ = "wiki "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 iconPath = iconLookup('wikipedia') or os.path.dirname(__file__)+"/wikipedia.svg"
 baseurl = 'https://en.wikipedia.org/w/api.php'

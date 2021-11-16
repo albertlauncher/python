@@ -10,7 +10,7 @@ from albert import *
 __title__ = "Zeal"
 __version__ = "0.4.0"
 __triggers__ = "zl "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __exec_deps__ = ["zeal"]
 
 iconPath = iconLookup('zeal')

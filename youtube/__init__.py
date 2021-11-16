@@ -16,7 +16,7 @@ from albert import Item, UrlAction, iconLookup, critical, debug, info
 __title__ = 'Youtube'
 __version__ = '0.4.1'
 __triggers__ = 'yt '
-__authors__ = 'manuelschneid3r'
+__authors__ = "Manuel S."
 __icon__ = iconLookup('youtube')  # path.dirname(__file__) + '/icons/YouTube.png'
 
 DATA_REGEX = re.compile(r'^\s*(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;\s*$', re.MULTILINE)

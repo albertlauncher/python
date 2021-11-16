@@ -19,7 +19,7 @@ from albert import FuncAction, Item, critical, iconLookup
 __title__ = "Virtual Box"
 __version__ = "0.4.2"
 __triggers__ = "vbox "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __py_deps__ = ['virtualbox']
 
 vbox = None

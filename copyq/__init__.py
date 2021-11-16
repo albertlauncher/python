@@ -14,7 +14,7 @@ from albert import *
 __title__ = "CopyQ"
 __version__ = "0.4.1"
 __triggers__ = "cq "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __exec_deps__ = ["copyq"]
 
 

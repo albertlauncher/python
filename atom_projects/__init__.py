@@ -16,7 +16,7 @@ from albert import *
 __title__ = "Atom Projects"
 __version__ = "0.4.0"
 __triggers__ = "atom "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __exec_deps__ = ["atom"]
 __py_deps__ = ["cson"]
 

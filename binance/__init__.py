@@ -18,7 +18,7 @@ from threading import Thread, Event
 __title__ = "Binance"
 __version__ = "0.4.3"
 __triggers__ = "bnc "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 iconPath = os.path.dirname(__file__) + "/Binance.svg"
 exchangeInfoUrl = "https://api.binance.com/api/v1/exchangeInfo"

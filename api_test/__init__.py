@@ -17,7 +17,7 @@ from time import sleep
 __title__ = "Api Test"
 __version__ = "0.4.2"
 __triggers__ = "test "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 #__exec_deps__ = ["whatever"]
 
 iconPath = iconLookup("albert")

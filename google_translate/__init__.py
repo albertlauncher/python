@@ -15,7 +15,7 @@ from albert import *
 __title__ = "Google Translate"
 __version__ = "0.4.0"
 __triggers__ = "tr "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 ua = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36"
 urltmpl = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=%s&tl=%s&dt=t&q=%s"

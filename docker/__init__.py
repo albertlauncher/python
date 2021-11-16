@@ -9,7 +9,7 @@ import pathlib
 __title__ = "Docker"
 __version__ = "0.4.1"
 __triggers__ = "d "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __py_deps__ = ["docker"]
 
 icon_running = str(pathlib.Path(__file__).parent / "running.png")

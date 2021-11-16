@@ -13,7 +13,7 @@ from albert import Item, UrlAction, iconLookup
 
 __title__ = "Trash"
 __version__ = "0.4.0"
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 iconPath = iconLookup("user-trash-full")
 
 def handleQuery(query):

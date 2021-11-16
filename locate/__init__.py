@@ -21,7 +21,7 @@ from albert import Item, TermAction, UrlAction, iconLookup
 __title__ = "Locate"
 __version__ = "0.4.1"
 __triggers__ = ["''", "'"]  # Order matters since 2 is prefix of 1
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 __exec_deps__ = ['locate']
 
 iconPath = iconLookup(["preferences-system-search", "system-search" "search", "text-x-generic"])

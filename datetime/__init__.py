@@ -17,7 +17,7 @@ from albert import *
 
 __title__ = "DateTime"
 __version__ = "0.4.1"
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 iconPath = iconLookup('x-office-calendar')
 
