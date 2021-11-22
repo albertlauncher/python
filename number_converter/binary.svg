@@ -1,0 +1,13 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+	<title>Nuovo progetto</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #000000 } 
+	</style>
+	<path id="Forma 18" class="shp0" d="M28 10L72 10L72 24L28 24L28 10Z" />
+	<path id="Forma 19" class="shp0" d="M57 24L72 24L72 42L57 42L57 24Z" />
+	<path id="Forma 20" class="shp0" d="M28 43L72 43L72 58L28 58L28 43Z" />
+	<path id="Forma 23" class="shp0" d="M57 40L72 40L72 49L57 49L57 40Z" />
+	<path id="Forma 21" class="shp0" d="M28 57L43 57L43 90L28 90L28 57Z" />
+	<path id="Forma 22" class="shp0" d="M42 75L72 75L72 90L42 90L42 75Z" />
+</svg>

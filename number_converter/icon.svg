@@ -1,0 +1,40 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+	<title>Nuovo progetto</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #ff0000 } 
+	</style>
+	<path id="Forma 6" class="shp0" d="M10 10L90 10L90 27L10 27L10 10Z" />
+	<path id="Forma 6 copy" class="shp0" d="M10 73L90 73L90 90L10 90L10 73Z" />
+	<path id="Forma 7" class="shp0" d="M3 50L34 50L34 51L3 51L3 50Z" />
+	<path id="Forma 7 copy" class="shp0" d="M66 49L97 49L97 50L66 50L66 49Z" />
+	<path id="Forma 9" class="shp0" d="M18 50L19 50L19 68L18 68L18 50Z" />
+	<path id="Forma 9 copy" class="shp0" d="M81 32L82 32L82 50L81 50L81 32Z" />
+	<path id="Forma 23" class="shp0" d="M66.71 50.03L65.95 49.38L81.01 32L81.77 32.66L66.71 50.03Z" />
+	<path id="Forma 24" class="shp0" d="M97.08 49.35L96.33 50L81.17 32.66L81.92 32L97.08 49.35Z" />
+	<path id="Forma 25" class="shp0" d="M68 47L95 47L95 49L68 49L68 47Z" />
+	<path id="Forma 26" class="shp0" d="M70 45L93 45L93 47L70 47L70 45Z" />
+	<path id="Forma 27" class="shp0" d="M72 43L91 43L91 45L72 45L72 43Z" />
+	<path id="Forma 28" class="shp0" d="M91 44L92 44L92 45L91 45L91 44Z" />
+	<path id="Forma 29" class="shp0" d="M71 44L72 44L72 45L71 45L71 44Z" />
+	<path id="Forma 30" class="shp0" d="M73 41L90 41L90 43L73 43L73 41Z" />
+	<path id="Forma 31" class="shp0" d="M75 39L88 39L88 41L75 41L75 39Z" />
+	<path id="Forma 32" class="shp0" d="M77 37L86 37L86 39L77 39L77 37Z" />
+	<path id="Forma 33" class="shp0" d="M78 36L85 36L85 37L78 37L78 36Z" />
+	<path id="Forma 34" class="shp0" d="M79 34L84 34L84 36L79 36L79 34Z" />
+	<path id="Forma 10" class="shp0" d="M2.95 50.63L3.71 49.97L18.77 67.33L18.01 67.99L2.95 50.63Z" />
+	<path id="Forma 11" class="shp0" d="M33.33 49.96L34.08 50.61L18.96 67.99L18.2 67.33L33.33 49.96Z" />
+	<path id="Forma 12" class="shp0" d="M5 51L32 51L32 53L5 53L5 51Z" />
+	<path id="Forma 13" class="shp0" d="M7 53L30 53L30 55L7 55L7 53Z" />
+	<path id="Forma 14" class="shp0" d="M8 55L28 55L28 57L8 57L8 55Z" />
+	<path id="Forma 15" class="shp0" d="M28 55L29 55L29 56L28 56L28 55Z" />
+	<path id="Forma 16" class="shp0" d="M10 57L27 57L27 59L10 59L10 57Z" />
+	<path id="Forma 17" class="shp0" d="M12 59L25 59L25 61L12 61L12 59Z" />
+	<path id="Forma 18" class="shp0" d="M14 61L23 61L23 63L14 63L14 61Z" />
+	<path id="Forma 19" class="shp0" d="M23 61L24 61L24 62L23 62L23 61Z" />
+	<path id="Forma 20" class="shp0" d="M15 63L22 63L22 64L15 64L15 63Z" />
+	<path id="Forma 21" class="shp0" d="M16 64L21 64L21 65L16 65L16 64Z" />
+	<path id="Forma 22" class="shp0" d="M17 65L20 65L20 66L17 66L17 65Z" />
+	<path id="Forma 8" class="shp0" d="M10 27L27 27L27 50L10 50L10 27Z" />
+	<path id="Forma 8 copy" class="shp0" d="M73 50L90 50L90 73L73 73L73 50Z" />
+</svg>

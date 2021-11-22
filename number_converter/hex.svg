@@ -1,0 +1,21 @@
+<svg version="1.2" baseProfile="tiny-ps" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+	<title>Nuovo progetto</title>
+	<style>
+		tspan { white-space:pre }
+		.shp0 { fill: #000000 } 
+	</style>
+	<path id="Forma 8" class="shp0" d="M24 25L39 25L39 90L24 90L24 25Z" />
+	<path id="Forma 16" class="shp0" d="M43 0L44 0L44 0L43 0L43 0Z" />
+	<path id="Forma 16" class="shp0" d="M43 0L44 0L44 0L43 0L43 0Z" />
+	<path id="Forma 9" class="shp0" d="M44 10L59 10L59 40L44 40L44 10Z" />
+	<path id="Forma 11" class="shp0" d="M44 40L59 40L59 90L44 90L44 40Z" />
+	<path id="Forma 17" class="shp0" d="M44 38L59 38L59 41L44 41L44 38Z" />
+	<path id="Forma 13" class="shp0" d="M59 10L75 10L75 25L59 25L59 10Z" />
+	<path id="Forma 14" class="shp0" d="M58 74L77 74L77 89L58 89L58 74Z" />
+	<path id="Forma 22" class="shp0" d="M77 68L92 68L92 89L77 89L77 68Z" />
+	<path id="Forma 23" class="shp0" d="M58 43L92 43L92 58L58 58L58 43Z" />
+	<path id="Forma 24" class="shp0" d="M77 57L92 57L92 71L77 71L77 57Z" />
+	<path id="Forma 25" class="shp0" d="M89 10L92 10L92 25L89 25L89 10Z" />
+	<path id="Forma 15" class="shp0" d="M10 10L39 10L39 25L10 25L10 10Z" />
+	<path id="Forma 21" class="shp0" d="M65 10L90 10L90 25L65 25L65 10Z" />
+</svg>
