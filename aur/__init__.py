@@ -16,7 +16,7 @@ import os
 import re
 
 __title__ = "Archlinux User Repository"
-__version__ = "0.4.3"
+__version__ = "0.4.4"
 __triggers__ = "aur "
 __authors__ = "manuelschneid3r"
 
@@ -30,6 +30,8 @@ elif which("pacaur"):
     install_cmdline = "pacaur -S aur/%s"
 elif which("yay"):
     install_cmdline = "yay -S aur/%s"
+elif which("paru"):
+    install_cmdline = "paru -S aur/%s"
 
 def handleQuery(query):
     if not query.isTriggered:
