@@ -18,7 +18,7 @@ import os.path
 
 # Albert info
 __title__ = "Baloo File"
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __triggers__ = "? "
 __authors__ = "XanderCode"
 __exec_deps__ = ["baloosearch","xdg-open"]
@@ -74,6 +74,8 @@ def handleQuery(query):
                 
                 # extract path
                 path = line.decode("UTF-8")
+                # path containing the target file or folder
+                dir_path = os.path.dirname(path)
                 
                 # properties
                 name = os.path.basename(path)
@@ -93,13 +95,11 @@ def handleQuery(query):
                                     text=item_name,
                                     subtext=item_description,
                                     actions=[
-                                        TermAction(text="Open File", 
-                                                   script="xdg-open '%s'" % path, 
-                                                   behavior=TermAction.CloseBehavior.CloseOnSuccess),
+                                        ProcAction(text="Open File/Folder", 
+                                                   commandline=["xdg-open", "%s" % path]),
                                         
-                                        TermAction(text="Open Dir", 
-                                                   script="dbus-send --session --print-reply --dest=org.freedesktop.FileManager1 --type=method_call /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:'" + path + "' string:''", 
-                                                   behavior=TermAction.CloseBehavior.CloseOnSuccess),
+                                        ProcAction(text="Open containing Directory", 
+                                                   commandline=["xdg-open", "%s" % dir_path]),
                                         
                                         ClipAction("Copy Path", path)
                                     ]))
