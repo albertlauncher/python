@@ -17,7 +17,7 @@ __version__ = "0.4.5"
 __triggers__ = "wiki "
 __authors__ = "Manuel S."
 
-iconPath = iconLookup('wikipedia') or os.path.dirname(__file__)+"/wikipedia.svg"
+iconPath = ":wikipedia"
 baseurl = 'https://en.wikipedia.org/w/api.php'
 user_agent = "org.albert.wikipedia"
 limit = 20
