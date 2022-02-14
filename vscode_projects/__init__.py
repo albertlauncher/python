@@ -8,6 +8,7 @@
 import os
 import re
 import json
+import sqlite3
 from pathlib import Path
 
 try:
@@ -27,6 +28,8 @@ __exec_deps__ = ['code']
 
 
 storage_file = str(Path.home()) + "/.config/Code/storage.json"
+storage_db = str(Path.home()) + "/.config/Code/User/globalStorage/state.vscdb"
+
 iconPath = iconLookup("visual-studio-code")
 mtime = 0
 projects = []
@@ -34,7 +37,25 @@ projects = []
 
 def get_vscode_project(storage_json):
     storage_dict = json.loads(storage_json)
-    entries = storage_dict['openedPathsList']['entries']
+    entries = []
+
+    try:
+        entries = storage_dict['openedPathsList']['entries']
+    except KeyError:
+        pass
+
+    conn = sqlite3.connect(storage_db)
+    cur = conn.cursor()
+    try:
+        df = cur.execute("select value from ItemTable where key='history.recentlyOpenedPathsList'")
+        row = cur.fetchone()
+        entries = json.loads(row[0])['entries']
+    except KeyError:
+        pass
+    finally:
+        cur.close()
+        conn.close()
+
     result = []
     for entry in entries:
         if 'folderUri' in entry:
