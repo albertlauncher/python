@@ -153,4 +153,15 @@ def handleQuery(query):
             for item in items:
                 e.submit(download_item_icon, item)
 
+        # Add a link to the *YouTube* page, in case there's more results, including results we didn't include
+        items.append(
+            Item(
+                id=__title__,
+                icon=__icon__,
+                text='Show more in browser',
+                actions=[
+                    UrlAction('Show more in browser', f'https://www.youtube.com/results?search_query={query.string}')
+                ],
+            )
+        )
         return items
