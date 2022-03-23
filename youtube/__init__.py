@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
-"""Query and open YouTube videos and channels.
+'''Query and open YouTube videos and channels.
 
-Synopsis: <trigger> <query>"""
+Synopsis: <trigger> <query>'''
 
 import json
 import re
 import time
-from os import path
+from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albert import Item, UrlAction, iconLookup, critical, debug, info
+from albert import (Item, UrlAction, critical, iconLookup, info)  # pylint: disable=import-error
+
 
 __title__ = 'Youtube'
 __version__ = '0.4.1'
@@ -23,88 +24,99 @@ DATA_REGEX = re.compile(r'^\s*(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*
 
 HEADERS = {
     'User-Agent': (
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)'
-        ' Chrome/62.0.3202.62 Safari/537.36'
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36'
     )
 }
 
-def handleQuery(query):
-    if query.isTriggered and query.string.strip():
 
-        # avoid rate limiting
-        time.sleep(0.2)
-        if not query.isValid:
-            return
+def log_html(html):
+    log_time = time.strftime('%Y%m%d-%H%M%S')
+    log_name = 'albert.plugins.youtube_dump'
+    log_path = Path(f'/tmp/{log_name}-{log_time}.html')
 
-        info("Searching YouTube for '{}'".format(query.string))
-        req = Request(headers=HEADERS, url='https://www.youtube.com/results?{}'.format(
-            urlencode({ 'search_query': query.string.strip() })))
+    with log_path.open('wb') as sr:
+        sr.write(html)
 
-        with urlopen(req) as response:
-            responseBytes = response.read()
-            match = re.search(DATA_REGEX, responseBytes.decode())
-            if match is None:
-                critical("Failed to receive expected data from YouTube. This likely means API changes, but could just be a failed request.")
-                logHtml(responseBytes)
-                return
+    critical(f'The HTML output has been dumped to {log_path}')
+    critical('If the page looks ok in a browser, please include the dump in a new issue:')
+    critical('  https://www.github.com/albertlauncher/albert/issues/new')
 
-            results = json.loads(match.group(3))
-            results = results['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']
-            items = []
-            for result in results:
-                for type, data in result.items():
-                    try:
-                        if type == 'videoRenderer':
-                            subtext = ['Video']
-                            action = 'Watch on Youtube'
-                            link = 'watch?v={}'.format(data['videoId'])
 
-                            if 'lengthText' in data:
-                                subtext.append(textFrom(data['lengthText']))
-                            if 'shortViewCountText' in data:
-                                subtext.append(textFrom(data['shortViewCountText']))
-                            if 'publishedTimeText' in data:
-                                subtext.append(textFrom(data['publishedTimeText']))
-
-                        elif type == 'channelRenderer':
-                            subtext = ['Channel']
-                            action = 'Show on Youtube'
-                            link = 'channel/{}'.format(data['channelId'])
-
-                            if 'videoCountText' in data:
-                                subtext.append(textFrom(data['videoCountText']))
-                            if 'subscriberCountText' in data:
-                                subtext.append(textFrom(data['subscriberCountText']))
-                        else:
-                            continue
-                    except Exception as e:
-                        critical(e)
-                        critical(json.dumps(result, indent=4))
-
-                    item = Item(id=__title__,
-                                icon=data['thumbnail']['thumbnails'][0]['url'].split('?', 1)[0] if data['thumbnail']['thumbnails'] else __icon__,
-                                text=textFrom(data['title']),
-                                subtext=' | '.join(subtext),
-                                actions=[ UrlAction(action, 'https://www.youtube.com/' + link) ]
-                            )
-                    items.append(item)
-            return items
-
-def textFrom(val):
-    text = val['simpleText'] if 'runs' not in val else \
-        ''.join('{}'.format(v['text']) for v in val['runs'])
+def text_from(val):
+    text = val['simpleText'] if 'runs' not in val else ''.join(str(v['text']) for v in val['runs'])
 
     return text.strip()
 
-def logHtml(html):
-    logTime = time.strftime("%Y%m%d-%H%M%S")
-    logName = 'albert.plugins.youtube_dump'
-    logPath = '/tmp/{}-{}.html'.format(logName, logTime)
 
-    f = open(logPath, 'wb')
-    f.write(html)
-    f.close()
+def entry_to_item(type_, data):
+    match type_:
+        case 'videoRenderer':
+            subtext = ['Video']
+            action = 'Watch on Youtube'
+            link = f'watch?v={data["videoId"]}'
+            if 'lengthText' in data:
+                subtext.append(text_from(data['lengthText']))
+            if 'shortViewCountText' in data:
+                subtext.append(text_from(data['shortViewCountText']))
+            if 'publishedTimeText' in data:
+                subtext.append(text_from(data['publishedTimeText']))
+        case 'channelRenderer':
+            subtext = ['Channel']
+            action = 'Show on Youtube'
+            link = f'channel/{data["channelId"]}'
+            if 'videoCountText' in data:
+                subtext.append(text_from(data['videoCountText']))
+            if 'subscriberCountText' in data:
+                subtext.append(text_from(data['subscriberCountText']))
+        case _:
+            return None
 
-    critical("The HTML output has been dumped to {}.".format(logPath))
-    critical("If the page looks ok in a browser, please include the dump in a new issue:")
-    critical("  https://www.github.com/albertlauncher/albert/issues/new")
+    thumbnails = data['thumbnail']['thumbnails']
+    return Item(
+        id=__title__,
+        icon=thumbnails[0]['url'].split('?', 1)[0] if thumbnails else __icon__,
+        text=text_from(data['title']),
+        subtext=' | '.join(subtext),
+        actions=[UrlAction(action, 'https://www.youtube.com/' + link)],
+    )
+
+
+def handleQuery(query):
+    if not query.isTriggered or not query.string.strip():
+        return None
+
+    # Avoid rate limiting
+    time.sleep(0.2)
+    if not query.isValid:
+        return None
+
+    info(f'Searching YouTube for \'{query.string}\'')
+    url = f'https://www.youtube.com/results?{urlencode({"search_query": query.string.strip()})}'
+    req = Request(headers=HEADERS, url=url)
+
+    with urlopen(req) as response:
+        response_bytes = response.read()
+        match = re.search(DATA_REGEX, response_bytes.decode())
+        if match is None:
+            critical(
+                'Failed to receive expected data from YouTube. This likely means API changes, but could just be a '
+                'failed request.'
+            )
+            log_html(response_bytes)
+            return None
+
+        results = json.loads(match.group(3))
+        primary_contents = results['contents']['twoColumnSearchResultsRenderer']['primaryContents']
+        results = primary_contents['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']
+        items = []
+        for result in results:
+            for type_, data in result.items():
+                try:
+                    item = entry_to_item(type_, data)
+                    if not item:
+                        continue
+                    items.append(item)
+                except KeyError as e:
+                    critical(e)
+                    critical(json.dumps(result, indent=4))
+        return items
