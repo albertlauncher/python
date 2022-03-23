@@ -8,7 +8,6 @@ import json
 import re
 import tempfile
 import time
-import urllib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urlencode
@@ -46,6 +45,11 @@ def log_html(html):
     critical('  https://www.github.com/albertlauncher/albert/issues/new')
 
 
+def urlopen_with_headers(url):
+    req = Request(headers=HEADERS, url=url)
+    return urlopen(req)
+
+
 def text_from(val):
     text = val['simpleText'] if 'runs' not in val else ''.join(str(v['text']) for v in val['runs'])
 
@@ -56,7 +60,7 @@ def download_item_icon(item):
     url = item.icon
     video_id = url.split('/')[-2]
     path = TEMP_DIR / f'{video_id}.png'
-    with urllib.request.urlopen(item.icon) as response, path.open('wb') as sr:
+    with urlopen_with_headers(item.icon) as response, path.open('wb') as sr:
         sr.write(response.read())
     item.icon = str(path)
 
@@ -122,9 +126,8 @@ def handleQuery(query):
 
     info(f'Searching YouTube for \'{query.string}\'')
     url = f'https://www.youtube.com/results?{urlencode({"search_query": query.string.strip()})}'
-    req = Request(headers=HEADERS, url=url)
 
-    with urlopen(req) as response:
+    with urlopen_with_headers(url) as response:
         response_bytes = response.read()
         match = re.search(DATA_REGEX, response_bytes.decode())
         if match is None:
