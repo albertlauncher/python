@@ -13,14 +13,14 @@ from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albert import (Item, UrlAction, critical, iconLookup, info)  # pylint: disable=import-error
+from albert import (Item, UrlAction, critical, info)  # pylint: disable=import-error
 
 
 __title__ = 'Youtube'
 __version__ = '0.4.1'
 __triggers__ = 'yt '
 __authors__ = 'manuelschneid3r'
-__icon__ = iconLookup('youtube')
+__icon__ = str(Path(__file__).parent / 'icons/youtube.svg')
 
 DATA_REGEX = re.compile(r'\b(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;</script>', re.MULTILINE)
 TEMP_DIR = Path(tempfile.mkdtemp(prefix='albert_yt_'))
