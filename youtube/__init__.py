@@ -6,7 +6,10 @@ Synopsis: <trigger> <query>'''
 
 import json
 import re
+import tempfile
 import time
+import urllib
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -18,9 +21,10 @@ __title__ = 'Youtube'
 __version__ = '0.4.1'
 __triggers__ = 'yt '
 __authors__ = 'manuelschneid3r'
-__icon__ = iconLookup('youtube')  # path.dirname(__file__) + '/icons/YouTube.png'
+__icon__ = iconLookup('youtube')
 
-DATA_REGEX = re.compile(r'^\s*(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;\s*$', re.MULTILINE)
+DATA_REGEX = re.compile(r'\b(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;</script>', re.MULTILINE)
+TEMP_DIR = Path(tempfile.mkdtemp(prefix='albert_yt_'))
 
 HEADERS = {
     'User-Agent': (
@@ -48,7 +52,17 @@ def text_from(val):
     return text.strip()
 
 
+def download_item_icon(item):
+    url = item.icon
+    video_id = url.split('/')[-2]
+    path = TEMP_DIR / f'{video_id}.png'
+    with urllib.request.urlopen(item.icon) as response, path.open('wb') as sr:
+        sr.write(response.read())
+    item.icon = str(path)
+
+
 def entry_to_item(type_, data):
+    icon = __icon__
     match type_:
         case 'videoRenderer':
             subtext = ['Video']
@@ -60,6 +74,8 @@ def entry_to_item(type_, data):
                 subtext.append(text_from(data['shortViewCountText']))
             if 'publishedTimeText' in data:
                 subtext.append(text_from(data['publishedTimeText']))
+            if data['thumbnail']['thumbnails']:
+                icon = data['thumbnail']['thumbnails'][0]['url'].split('?', 1)[0]
         case 'channelRenderer':
             subtext = ['Channel']
             action = 'Show on Youtube'
@@ -71,14 +87,28 @@ def entry_to_item(type_, data):
         case _:
             return None
 
-    thumbnails = data['thumbnail']['thumbnails']
     return Item(
         id=__title__,
-        icon=thumbnails[0]['url'].split('?', 1)[0] if thumbnails else __icon__,
+        icon=icon,
         text=text_from(data['title']),
         subtext=' | '.join(subtext),
         actions=[UrlAction(action, 'https://www.youtube.com/' + link)],
     )
+
+
+def results_to_items(results):
+    items = []
+    for result in results:
+        for type_, data in result.items():
+            try:
+                item = entry_to_item(type_, data)
+                if not item:
+                    continue
+                items.append(item)
+            except KeyError as e:
+                critical(e)
+                critical(json.dumps(result, indent=4))
+    return items
 
 
 def handleQuery(query):
@@ -108,15 +138,16 @@ def handleQuery(query):
         results = json.loads(match.group(3))
         primary_contents = results['contents']['twoColumnSearchResultsRenderer']['primaryContents']
         results = primary_contents['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents']
-        items = []
-        for result in results:
-            for type_, data in result.items():
-                try:
-                    item = entry_to_item(type_, data)
-                    if not item:
-                        continue
-                    items.append(item)
-                except KeyError as e:
-                    critical(e)
-                    critical(json.dumps(result, indent=4))
+        items = results_to_items(results)
+
+        # Purge previous icons
+        for child in TEMP_DIR.iterdir():
+            if child.is_file():
+                child.unlink()
+
+        # Download icons
+        with ThreadPoolExecutor(max_workers=10) as e:
+            for item in items:
+                e.submit(download_item_icon, item)
+
         return items
