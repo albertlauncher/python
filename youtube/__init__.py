@@ -16,10 +16,10 @@ from urllib.request import Request, urlopen
 from albert import (Item, UrlAction, critical, info)  # pylint: disable=import-error
 
 
-__title__ = 'Youtube'
-__version__ = '0.4.1'
+__title__ = 'YouTube User'
+__version__ = '0.4.2'
 __triggers__ = 'yt '
-__authors__ = 'manuelschneid3r'
+__authors__ = ['Steven Xu', 'manuelschneid3r']
 __icon__ = str(Path(__file__).parent / 'icons/youtube.svg')
 
 DATA_REGEX = re.compile(r'\b(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;</script>', re.MULTILINE)
