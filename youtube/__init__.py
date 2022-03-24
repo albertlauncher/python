@@ -124,6 +124,8 @@ def handleQuery(query):
     if not query.isValid:
         return None
 
+    query.disableSort()
+
     info(f'Searching YouTube for \'{query.string}\'')
     url = f'https://www.youtube.com/results?{urlencode({"search_query": query.string.strip()})}'
 
