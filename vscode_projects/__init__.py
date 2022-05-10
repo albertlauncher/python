@@ -35,19 +35,11 @@ mtime = 0
 projects = []
 
 
-def get_vscode_project(storage_json):
-    storage_dict = json.loads(storage_json)
-    entries = []
-
-    try:
-        entries = storage_dict['openedPathsList']['entries']
-    except KeyError:
-        pass
-
+def get_vscode_project():
     conn = sqlite3.connect(storage_db)
     cur = conn.cursor()
     try:
-        df = cur.execute("select value from ItemTable where key='history.recentlyOpenedPathsList'")
+        df = cur.execute("select value from ItemTable where key='history.recentlyOpenedPathsList'")  # noqa
         row = cur.fetchone()
         entries = json.loads(row[0])['entries']
     except KeyError:
@@ -61,6 +53,7 @@ def get_vscode_project(storage_json):
         if 'folderUri' in entry:
             uri = entry['folderUri']
             title = os.path.basename(uri)
+            print(entry)
             if uri.startswith("vscode-remote://"):
                 title = "remote: {}".format(title)
             if uri.startswith("file://"):
@@ -76,26 +69,24 @@ def get_vscode_project(storage_json):
 def updateProjects():
     global mtime
     try:
-        new_mtime = os.path.getmtime(storage_file)
+        new_mtime = os.path.getmtime(storage_db)
     except Exception as e:
         warning("Could not get mtime of file: " + storage_file + str(e))
     if mtime != new_mtime:
         mtime = new_mtime
-        with open(storage_file) as f:
-            global projects
-            projects = get_vscode_project(f.read())
+        projects = get_vscode_project()
 
 
 def handleQuery(query):
     if not query.isTriggered:
         return
 
-    updateProjects()
+    # updateProjects()
 
     stripped = query.string.strip()
 
     items = []
-    for project in projects:
+    for project in get_vscode_project():
         if re.search(stripped, project['title'], re.IGNORECASE):
             items.append(Item(id=__title__ + project['title'],
                               icon=iconPath,
@@ -103,14 +94,13 @@ def handleQuery(query):
                               subtext="Path: %s" % (project['paths']),
                               actions=[
                                   ProcAction(text="Open project in VSCode",
-                                             commandline=["code"] + ["--folder-uri"] + project['paths'])
+                                             commandline=["code"] + ["--folder-uri"] + project['paths'])  # noqa
                               ]))
     return items
 
 
 def main():
-    with open(storage_file) as f:
-        print(get_vscode_project(f.read()))
+    get_vscode_project()
 
 
 if __name__ == "__main__":
