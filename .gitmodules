@@ -4,3 +4,6 @@
 [submodule "jetbrains_projects"]
 	path = jetbrains_projects
 	url = https://github.com/mqus/jetbrains-albert-plugin.git
+[submodule "note-app"]
+	path = note-app
+	url = https://github.com/lneute/note-app
