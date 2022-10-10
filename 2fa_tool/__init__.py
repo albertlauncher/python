@@ -43,5 +43,4 @@ def handleQuery(query):
         item.text = str(result)
         item.subtext = type(result).__name__
         item.addAction(ClipAction("Copy result to clipboard", str(result)))
-        item.addAction(FuncAction("Execute", lambda: exec(str(result))))
     return item
