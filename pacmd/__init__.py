@@ -7,13 +7,13 @@
 import subprocess
 from albert import *
 
-__title__ = "Pulseaudio cmd"
+__title__ = "Pulseaudio"
 __version__ = "0.1.0"
-__triggers__ = "pacmd "
+__triggers__ = "pa "
 __authors__ = "c4pQ"
 __exec_deps__ = ['pacmd']
 
-iconPath = iconLookup('audio-headphones')
+iconPath = iconLookup('pulseaudio-text')
 
 def buildActions():
     pacmd_actions = []
