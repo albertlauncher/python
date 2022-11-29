@@ -4,3 +4,6 @@
 [submodule "jetbrains_projects"]
 	path = jetbrains_projects
 	url = https://github.com/mqus/jetbrains-albert-plugin.git
+[submodule "1password-albert"]
+	path = 1password-albert
+	url = https://github.com/koenhendriks/1password-albert
