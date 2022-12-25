@@ -2,73 +2,85 @@
 Docker wrapper (prototype)
 """
 
-from albert import TermAction, FuncAction, ClipAction, Item
+#  Copyright (c) 2022 Manuel Schneider
+
+from albert import *
 import docker
 import pathlib
 
-__title__ = "Docker"
-__version__ = "0.4.1"
-__triggers__ = "d "
-__authors__ = "Manuel S."
-__py_deps__ = ["docker"]
-
-icon_running = str(pathlib.Path(__file__).parent / "running.png")
-icon_stopped = str(pathlib.Path(__file__).parent / "stopped.png")
-client = None
-
-
-def initialize():
-    global client
-    client = docker.from_env()
-    if client:
-        return
-    client = docker.DockerClient(base_url='unix://var/run/docker.sock')
-    if not client:
-        raise "Failed to initialize client."
+md_iid = "0.5"
+md_version = "1.2"
+md_name = "Docker"
+md_description = "Control your docker instance"
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/docker"
+md_maintainers = "@manuelschneid3r"
+md_authors = "@manuelschneid3r"
+md_bin_dependencies = "docker"
+md_lib_dependencies = "docker"
 
 
-def handleQuery(query):
-    if query.isValid and query.isTriggered:
+class Plugin(QueryHandler):
 
-        query.disableSort()
+    def id(self):
+        return __name__
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def defaultTrigger(self):
+        return "d "
+
+    def initialize(self):
+        self.icon_running = [str(pathlib.Path(__file__).parent / "running.png")]
+        self.icon_stopped = [str(pathlib.Path(__file__).parent / "stopped.png")]
+        self.client = docker.from_env()
+        if not self.client:
+            self.client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+            if not self.client:
+                raise "Failed to initialize client."
+
+
+    def handleQuery(self, query):
         items = []
-
-        for container in client.containers.list(all=True):
+        for container in self.client.containers.list(all=True):
 
             # Create dynamic actions
             if container.status == 'running':
                 actions = [
-                    FuncAction("Stop container", lambda c=container: c.stop()),
-                    FuncAction("Restart", lambda c=container: c.restart()),
+                    Action("stop", "Stop container", lambda c=container: c.stop()),
+                    Action("restart", "Restart container", lambda c=container: c.restart())
                 ]
             else:
-                actions = [FuncAction("Start", lambda c=container: c.start())]
+                actions = [
+                    Action("start", "Start container", lambda c=container: c.start())
+                ]
             actions.extend([
-                TermAction("Logs", "docker logs -f %s" % container.id,
-                           behavior=TermAction.CloseBehavior.DoNotClose),
-                FuncAction("Remove (forced, with volumes)", lambda c=container: c.remove(v=True, force=True)),
-                ClipAction("Copy id to clipboard", container.id)
+                Action("logs", "Logs", lambda c=container.id: runTerminal("docker logs -f %s" % c, close_on_exit=False)),
+                Action("remove", "Remove (forced, with volumes)", lambda c=container: c.remove(v=True, force=True)),
+                Action("copy-id", "Copy id to clipboard", lambda id=container.id: setClipboardText(id))
             ])
 
-            item = Item(
+            query.add(Item(
                 id=container.id,
-                text="%s <i>%s</i>" % (container.name, ", ".join(container.image.tags)),
+                text="%s (%s)" % (container.name, ", ".join(container.image.tags)),
                 subtext=container.id,
-                icon=icon_running if container.status == 'running' else icon_stopped,
+                icon=self.icon_running if container.status == 'running' else self.icon_stopped,
                 actions=actions
-            )
+            ))
 
-            items.append(item)
-
-        for image in reversed(client.images.list()):
+        for image in reversed(self.client.images.list()):
             item = Item(
                 id=image.short_id,
                 text=str(image.tags),
                 subtext=image.id,
-                icon=icon_stopped,
+                icon=self.icon_stopped,
                 actions=[
-                    FuncAction("Run with command: %s" % query.string, lambda i=image: client.containers.run(i, query.string)),
-                    FuncAction("Remove", lambda i=image: i.remove())
+                    Action("run", "Run with command: %s" % query.string, lambda i=image: client.containers.run(i, query.string)),
+                    Action("rmi", "Remove image", lambda i=image: i.remove())
                 ]
             )
 

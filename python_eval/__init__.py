@@ -4,40 +4,58 @@
 
 Synopsis: <trigger> <python expression>"""
 
+#  Copyright (c) 2022 Manuel Schneider
+
 from albert import *
-from math import *
 from builtins import pow
-try:
-    import numpy as np
-except ImportError:
-    pass
+from math import *
 import os
 
-__title__ = "Python Eval"
-__version__ = "0.4.0"
-__triggers__ = "py "
-__authors__ = "Manuel S."
+md_iid = "0.5"
+md_version = "1.2"
+md_name = "Python Eval"
+md_description = "Evaluate Python code"
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/python_eval"
+md_maintainers = "@manuelschneid3r"
+md_authors = "@manuelschneid3r"
 
+class Plugin(QueryHandler):
 
-iconPath = os.path.dirname(__file__)+"/python.svg"
+    def id(self):
+        return __name__
 
+    def name(self):
+        return md_name
 
-def handleQuery(query):
-    if query.isTriggered:
-        item = Item(id=__title__, icon=iconPath)
+    def description(self):
+        return md_description
+
+    def defaultTrigger(self):
+        return "py "
+
+    def synopsis(self):
+        return "<Python expression>"
+
+    def initialize(self):
+        self.iconPath = os.path.dirname(__file__)+"/python.svg"
+
+    def handleQuery(self, query):
         stripped = query.string.strip()
-
-        if stripped == '':
-            item.text = "Enter a python expression"
-            item.subtext = "Math is in the namespace and, if installed, also Numpy as 'np'"
-            return item
-        else:
+        if stripped:
             try:
-                result = eval(stripped)
+                result = str(eval(stripped))
             except Exception as ex:
-                result = ex
-            item.text = str(result)
-            item.subtext = type(result).__name__
-            item.addAction(ClipAction("Copy result to clipboard", str(result)))
-            item.addAction(FuncAction("Execute", lambda: exec(str(result))))
-        return item
+                result = str(ex)
+
+            query.add(Item(
+                id="py_eval",
+                text=str(result),
+                subtext=type(result).__name__,
+                completion=query.trigger + result,
+                icon=[self.iconPath],
+                actions = [
+                    Action("copy", "Copy result to clipboard", lambda r=str(result): setClipboardText(r)),
+                    Action("exec", "Execute python code", lambda r=str(result): exec(stripped)),
+                ]
+            ))
