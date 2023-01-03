@@ -1,27 +1,50 @@
 # -*- coding: utf-8 -*-
 
-"""Open virtual trash location.
+"""
+This extension provides a single item which opens the
+systems trash location in your default file manager.
+"""
 
-This extension provides a single item which opens the systems virtual trash \
-location in your default file manager.
+#  Copyright (c) 2023 Manuel Schneider
 
-Synopsis: <trigger>"""
+from albert import *
+import os
+from platform import system
+from pathlib import Path
 
-import re
+md_iid = "0.5"
+md_version = "1.2"
+md_name = "Trash"
+md_description = "Open trash"
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/trash"
+md_maintainers = "@manuelschneid3r"
 
-from albert import Item, UrlAction, iconLookup
+class Plugin(QueryHandler):
+    def id(self):
+        return __name__
 
-__title__ = "Trash"
-__version__ = "0.4.0"
-__authors__ = "manuelschneid3r"
-iconPath = iconLookup("user-trash-full")
+    def name(self):
+        return md_name
 
-def handleQuery(query):
-    if query.string.strip() and "trash".startswith(query.string.lower()):
-        pattern = re.compile(query.string, re.IGNORECASE)
-        return Item(id="trash-open",
-                    icon=iconPath,
-                    text=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), "Trash"),
-                    subtext="Show trash folder",
-                    completion="trash",
-                    actions=[UrlAction("Show", "trash:///")])
+    def description(self):
+        return md_description
+
+    def initialize(self):
+        if (system() == 'Linux'):
+            trash_path  = "trash:///"
+            icon = ["xdg:user-trash-full", os.path.dirname(__file__)+"/trash.svg"]
+        elif (system() == 'Darwin'):
+            trash_path  = "file://%s/.Trash" % Path.home()
+            icon = [os.path.dirname(__file__)+"/trash.svg"]
+        else:
+            raise NotImplementedError("%1 not supported" % system())
+
+        self.trash_item = Item(id="trash-open",
+                               text="Trash",
+                               subtext="Open trash folder",
+                               icon=icon,
+                               actions=[Action("trash-open", "Open trash", lambda path=trash_path: openUrl(path))])
+
+    def handleQuery(self, query):
+        query.add(self.trash_item)
