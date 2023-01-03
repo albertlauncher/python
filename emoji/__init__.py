@@ -5,7 +5,6 @@
 Synopsis: <trigger> <emoji name>"""
 
 import json
-import os
 import re
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
