@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""Access CopyQ clipboard.
-
-Synopsis: <trigger> [filter]"""
-
 #  Copyright (c) 2022 Manuel Schneider
 
-import html
 import json
-import re
 import subprocess
 
 from albert import *
@@ -17,7 +11,9 @@ md_iid = "0.5"
 md_version = "1.1"
 md_name = "CopyQ"
 md_description = "Access CopyQ clipboard"
+md_url = "https://github.com/albertlauncher/python"
 md_bin_dependencies = ["copyq"]
+md_maintainers = "@BarrensZeppelin"
 
 
 copyq_script_getAll = r"""
@@ -69,7 +65,6 @@ class Plugin(QueryHandler):
     def handleQuery(self, query):
         items = []
         q_string = query.string
-        pattern = re.compile(q_string, re.IGNORECASE)
 
         script = copyq_script_getMatches % q_string if q_string else copyq_script_getAll
         proc = subprocess.run(["copyq", "-"], input=script.encode(), stdout=subprocess.PIPE)
