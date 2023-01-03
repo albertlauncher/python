@@ -9,7 +9,7 @@ extension.
 
 Synopsis: <trigger> [delay|throw] <query>"""
 
-#  Copyright (c) 2022 Manuel Schneider
+#  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
 import os
@@ -22,7 +22,7 @@ md_description = "Test the python API 0.5"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/api_test"
 md_maintainers = "@manuelschneid3r"
-md_authors = "@manuelschneid3r"
+
 
 class Plugin(QueryHandler):
     def id(self):

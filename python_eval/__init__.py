@@ -4,7 +4,7 @@
 
 Synopsis: <trigger> <python expression>"""
 
-#  Copyright (c) 2022 Manuel Schneider
+#  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
 from builtins import pow
@@ -18,7 +18,7 @@ md_description = "Evaluate Python code"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/python_eval"
 md_maintainers = "@manuelschneid3r"
-md_authors = "@manuelschneid3r"
+
 
 class Plugin(QueryHandler):
 

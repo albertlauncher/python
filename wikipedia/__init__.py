@@ -4,7 +4,7 @@
 
 Synopsis: <trigger> <filter>"""
 
-#  Copyright (c) 2022 Manuel Schneider
+#  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
 from locale import getdefaultlocale
@@ -21,7 +21,6 @@ md_description = "Search Wikipedia articles."
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/wikipedia"
 md_maintainers = "@manuelschneid3r"
-md_authors = "@manuelschneid3r"
 
 
 class Plugin(QueryHandler):

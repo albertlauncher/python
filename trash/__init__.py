@@ -5,6 +5,8 @@ This extension provides a single item which opens the
 systems trash location in your default file manager.
 """
 
+#  Copyright (c) 2023 Manuel Schneider
+
 from albert import *
 import os
 from platform import system
@@ -16,7 +18,7 @@ md_name = "Trash"
 md_description = "Open trash"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/trash"
-md_authors = md_maintainers = "@manuelschneid3r"
+md_maintainers = "@manuelschneid3r"
 
 class Plugin(QueryHandler):
     def id(self):
