@@ -2,10 +2,9 @@
 Docker wrapper (prototype)
 """
 
-#  Copyright (c) 2022 Manuel Schneider
+#  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
-import docker
 import pathlib
 
 md_iid = "0.5"
@@ -15,7 +14,6 @@ md_description = "Control your docker instance"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/docker"
 md_maintainers = "@manuelschneid3r"
-md_authors = "@manuelschneid3r"
 md_bin_dependencies = "docker"
 md_lib_dependencies = "docker"
 
@@ -45,7 +43,6 @@ class Plugin(QueryHandler):
 
 
     def handleQuery(self, query):
-        items = []
         for container in self.client.containers.list(all=True):
 
             # Create dynamic actions
@@ -72,18 +69,15 @@ class Plugin(QueryHandler):
                 actions=actions
             ))
 
-        for image in reversed(self.client.images.list()):
-            item = Item(
-                id=image.short_id,
-                text=str(image.tags),
-                subtext=image.id,
-                icon=self.icon_stopped,
-                actions=[
-                    Action("run", "Run with command: %s" % query.string, lambda i=image: client.containers.run(i, query.string)),
-                    Action("rmi", "Remove image", lambda i=image: i.remove())
-                ]
-            )
-
-            items.append(item)
-
-        return items
+        # for image in reversed(self.client.images.list()):
+        #     query.add(Item(
+        #         id=image.short_id,
+        #         text=str(image.tags),
+        #         subtext=image.id,
+        #         # icon=self.icon_stopped,
+        #         actions=[
+        #             Action("run", "Run with command: %s" % query.string,
+        #                    lambda i=image, s=query.string: client.containers.run(i, s)),
+        #             Action("rmi", "Remove image", lambda i=image: i.remove())
+        #         ]
+        #     ))
