@@ -20,6 +20,7 @@ md_description = "Find emojis by name"
 md_license = "GPL-3.0"
 md_url = "https://github.com/albertlauncher/python/tree/master/emoji"
 md_maintainers = "@tyilo"
+md_bin_dependencies = ["convert"]
 
 
 EXTENSION_DIR = Path(__file__).parent
