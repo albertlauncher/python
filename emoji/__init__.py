@@ -107,7 +107,7 @@ class Plugin(QueryHandler):
                         search_tokens = [e["name"]]
                         if e["modifiers"]:
                             search_tokens.append(e["modifiers"])
-                        e["aliases"] = aliases.get(e["name"], [])
+                        e["aliases"] = [a.lower() for a in aliases.get(e["name"], [])]
                         search_tokens += e["aliases"]
                         e["search_tokens"] = search_tokens
                         self.emojis.append(e)
