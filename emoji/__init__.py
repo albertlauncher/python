@@ -8,6 +8,7 @@ import json
 import re
 import subprocess
 from concurrent.futures import ThreadPoolExecutor
+from itertools import islice
 from pathlib import Path
 
 from albert import Action, Item, QueryHandler, cacheLocation, setClipboardText
@@ -130,7 +131,7 @@ class Plugin(QueryHandler):
         if not query_tokens:
             return
 
-        for emoji in self.matched_emojis(query_tokens):
+        for emoji in islice(self.matched_emojis(query_tokens), 100):
             query.add(
                 Item(
                     id=f"emoji_{emoji['emoji']}",
