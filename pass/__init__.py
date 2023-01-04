@@ -24,8 +24,6 @@ ICON = ["xdg:dialog-password"]
 
 class Plugin(QueryHandler):
 
-    icon = "xdg:dialog-password"
-
     def id(self):
         return __name__
 
