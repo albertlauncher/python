@@ -133,7 +133,7 @@ class Plugin(QueryHandler):
         for emoji in self.matched_emojis(query_tokens):
             query.add(
                 Item(
-                    id="emoji",
+                    id=f"emoji_{emoji['emoji']}",
                     text=f"{emoji['emoji']} {emoji['name']}",
                     subtext=emoji["modifiers"] or "",
                     icon=[str(icon_path(emoji["emoji"]))],
