@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
-#  Copyright (c) 2022 Manuel Schneider
-
 import json
 import subprocess
 
 from albert import *
 
 md_iid = "0.5"
-md_version = "1.1"
+md_version = "1.2"
 md_name = "CopyQ"
 md_description = "Access CopyQ clipboard"
+md_license = "BSD-2-Clause"
 md_url = "https://github.com/albertlauncher/python"
 md_bin_dependencies = ["copyq"]
 md_maintainers = "@BarrensZeppelin"
