@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""Manage passwords.
-
-This is a 'pass' wrapper extension.
-
-Synopsis:
-    <trigger> generate <location>
-    <trigger> <filter>"""
-
 import fnmatch
 import os
 from albert import *
@@ -17,6 +9,8 @@ md_version = "0.5"
 md_name = "Pass"
 md_description = "Manage passwords in pass"
 md_bin_dependencies = ["pass"]
+md_maintainers = "@maxmil"
+md_license = "BSD-3"
 
 HOME_DIR = os.environ["HOME"]
 PASS_DIR = os.environ.get("PASSWORD_STORE_DIR", os.path.join(HOME_DIR, ".password-store/"))
@@ -84,7 +78,7 @@ class Plugin(QueryHandler):
                 ),
             )
 
-        return query.add(results)
+        query.add(results)
 
     def getPasswords(self):
         passwords = []
