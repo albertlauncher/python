@@ -5,7 +5,7 @@ import os
 from albert import *
 
 md_iid = "0.5"
-md_version = "0.5"
+md_version = "1.2"
 md_name = "Pass"
 md_description = "Manage passwords in pass"
 md_bin_dependencies = ["pass"]
