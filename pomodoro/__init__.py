@@ -39,11 +39,11 @@ class PomodoroTimer:
             if self.remainingTillLongBreak == 0:
                 self.remainingTillLongBreak = self.count
                 sendTrayNotification("PomodoroTimer", "Take a long break (%s min)" % self.longBreakDuration)
-                critical("Take a long break (%s min)" % duration)
+                critical("Take a long break (%s min)" % self.longBreakDuration)
                 duration = self.longBreakDuration * 60
             else:
                 sendTrayNotification("PomodoroTimer", "Take a short break (%s min)" % self.breakDuration)
-                critical("Take a short break (%s min)" % duration)
+                critical("Take a short break (%s min)" % self.breakDuration)
                 duration = self.breakDuration * 60
             self.endTime = time.time() + duration
             self.timer = threading.Timer(duration, self.timeout)
