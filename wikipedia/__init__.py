@@ -8,11 +8,11 @@ Synopsis: <trigger> <filter>"""
 
 from albert import *
 from locale import getdefaultlocale
+from socket import timeout
+from time import sleep
 from urllib import request, parse
 import json
-import time
 import os
-from socket import timeout
 
 md_iid = "0.5"
 md_version = "1.5"
@@ -71,9 +71,10 @@ class Plugin(QueryHandler):
         stripped = query.string.strip()
         if stripped:
             # avoid rate limiting
-            time.sleep(0.1)
-            if not query.isValid:
-                return
+            for number in range(50):
+                sleep(0.01)
+                if not query.isValid:
+                    return;
 
             results = []
 
@@ -98,7 +99,6 @@ class Plugin(QueryHandler):
                     results.append(Item(id="wiki",
                                         text=title,
                                         subtext=summary if summary else url,
-                                        completion=title,
                                         icon=[self.iconPath],
                                         actions=[
                                             Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
