@@ -83,6 +83,9 @@ class Plugin(QueryHandler):
     def description(self):
         return md_description
 
+    def defaultTrigger(self):
+        return "pomo "
+
     def initialize(self):
         self.pomodoro = PomodoroTimer()
 
