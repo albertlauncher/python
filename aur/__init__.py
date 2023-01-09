@@ -55,8 +55,12 @@ class Plugin(QueryHandler):
             self.install_cmdline = None
 
     def handleQuery(self, query):
-        stripped = query.string.strip()
+        for number in range(50):
+            sleep(0.01)
+            if not query.isValid:
+                return;
 
+        stripped = query.string.strip()
         if stripped:
             params = {
                 'v': '5',

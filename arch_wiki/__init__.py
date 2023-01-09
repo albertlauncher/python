@@ -2,6 +2,7 @@
 #  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
+from time import sleep
 from urllib import request, parse
 import json
 import os
@@ -37,6 +38,13 @@ class Plugin(QueryHandler):
     def handleQuery(self, query):
         stripped = query.string.strip()
         if stripped:
+
+            # avoid rate limiting
+            for number in range(50):
+                sleep(0.01)
+                if not query.isValid:
+                    return;
+
             results = []
 
             params = {
