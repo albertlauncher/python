@@ -34,6 +34,9 @@ class Plugin(QueryHandler):
     def initialize(self):
         pass
 
+    def defaultTrigger(self):
+        return "kill "
+
     def handleQuery(self, query):
         if not query.isValid:
             return

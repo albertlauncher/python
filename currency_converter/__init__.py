@@ -2,7 +2,7 @@
 
 Current backends: ECB, Yahoo.
 
-Synopsis: <amount> <src currency> [to|as|in] <dest currency>
+Synopsis: convert <amount> <src currency> [to|as|in] <dest currency>
 """
 
 import os
@@ -87,6 +87,9 @@ class Plugin(QueryHandler):
 
     def initialize(self):
         pass
+
+    def defaultTrigger(self):
+        return "convert "
 
     def handleQuery(self, query):
         match = self.regex.fullmatch(query.string.strip())
