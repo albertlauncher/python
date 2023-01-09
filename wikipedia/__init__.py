@@ -102,7 +102,7 @@ class Plugin(QueryHandler):
                                         icon=[self.iconPath],
                                         actions=[
                                             Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
-                                            Action("copy", "Copy URL to clipboard", lambda u=url: setClipBoardText(u))
+                                            Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
                                         ]))
 
             query.add(results)
