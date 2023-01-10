@@ -321,13 +321,47 @@ class Plugin(albert.QueryHandler):
         re.I,
     )
 
-    config = {}
+    config: dict[str, Any] = {
+        # Number of decimal places to round to
+        # If specified as -1, the number will not be manually rounded
+        "rounding_precision": 3,
+        # Number of decimal places to round to when the result is close to zero
+        # If specified as -1, the number will not be manually rounded
+        "rounding_precision_zero": 12,
+        # Unit aliases to replace when parsing
+        # Units may be added here to override the default behavior or create aliases for existing units
+        # The alias is the key, the string to replace it with is the value
+        "aliases": {
+            "sec": "second",
+            "kph": "km/hour",
+            "km/h": "km/hour",
+            "mph": "mile/hour",
+            "degrees F": "degF",
+            "degrees C": "degC",
+            "F": "degF",
+            "C": "degC",
+        },
+        # Display names for units
+        # Units may be added here to override the default display names
+        # The string version of the unit is the key, the display name to replace with is the value
+        # Both the unpluralized and the pluralized version should be included
+        "display_names": {
+            "degree_Celsius": "°C",
+            "degree_Celsiuses": "°C",
+            "degree_Fahrenheit": "°F",
+            "degree_Fahrenheits": "°F",
+            "mile / hour": "mph",
+            "mile / hours": "mph",
+            "kilometer / hour": "km/h",
+            "kilometer / hours": "km/h",
+            "kilometer_per_hour": "km/h",
+            "kilometer_per_hours": "km/h",
+        },
+    }
 
     def initialize(self):
         self.unit_converter = StandardUnitConverter()
         self.currency_converter = CurrencyConverter()
-        config_path = Path(__file__).parent / "config.jsonc"
-        self.config = self._load_config(config_path)
 
     def id(self) -> str:
         return __name__
@@ -446,11 +480,3 @@ class Plugin(albert.QueryHandler):
             albert.warning(f"UnknownCurrencyError: {e}")
             albert.warning(traceback.format_exc())
             return []
-
-    @staticmethod
-    def _load_config(config_path: Path) -> dict[str, Any]:
-        """Strip comments and load the config from the config file."""
-        with config_path.open("r") as config_file:
-            contents = config_file.read()
-        contents = re.sub(r"^\s*//.*$", "", contents, flags=re.MULTILINE)
-        return json.loads(contents)
