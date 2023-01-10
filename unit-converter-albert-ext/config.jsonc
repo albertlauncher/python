@@ -1,0 +1,46 @@
+{
+    // Number of decimal places to round to
+    //
+    // If specified as -1, the number will not be manually rounded
+    "rounding_precision": 3,
+
+    // Number of decimal places to round to when the result is close to zero
+    //
+    // If specified as -1, the number will not be manually rounded
+    "rounding_precision_zero": 12,
+
+    // Unit aliases to replace when parsing
+    //
+    // Units may be added here to override the default behavior or create aliases for existing units
+    //
+    // The alias is the key, the string to replace it with is the value
+    "aliases": {
+        "sec": "second",
+        "kph": "km/hour",
+        "km/h": "km/hour",
+        "mph": "mile/hour",
+        "degrees F": "degF",
+        "degrees C": "degC",
+        "F": "degF",
+        "C": "degC"
+    },
+
+    // Display names for units
+    // 
+    // Units may be added here to override the default display names
+    //
+    // The string version of the unit is the key, the display name to replace with is the value
+    // Both the unpluralized and the pluralized version should be included
+    "display_names": {
+        "degree_Celsius": "°C",
+        "degree_Celsiuses": "°C",
+        "degree_Fahrenheit": "°F",
+        "degree_Fahrenheits": "°F",
+        "mile / hour": "mph",
+        "mile / hours": "mph",
+        "kilometer / hour": "km/h",
+        "kilometer / hours": "km/h",
+        "kilometer_per_hour": "km/h",
+        "kilometer_per_hours": "km/h"
+    }
+}
