@@ -70,8 +70,6 @@ class ConversionResult:
         self.dimensionality = dimensionality
         self.source = source
         self.display_names = Plugin.config.get("display_names", {})
-        self.rounding_precision = int(Plugin.config.get("rounding_precision", 3))
-        self.rounding_precision_zero = int(Plugin.config.get("rounding_precision_zero", 12))
         self.inflect_engine = inflect.engine()
 
     def __pluralize_unit(self, unit: str) -> str:
@@ -109,18 +107,8 @@ class ConversionResult:
         Returns:
             str: The formatted number
         """
-        # if rounding precision is -1, leave as is
-        if self.rounding_precision == -1:
-            return str(num)
-        # round to the given rounding precision
-        rounded = round(num, self.rounding_precision)
-        # if it is close to zero, round to the given precision for zero
-        if rounded == 0 and self.rounding_precision_zero > 0:
-            zero_delta = 1 / 10**self.rounding_precision_zero
-            if abs(num) > zero_delta:
-                rounded = round(num, self.rounding_precision_zero)
         # format the float to remove trailing zeros and decimal point
-        return f"{rounded:f}".rstrip("0").rstrip(".")
+        return f"{num:f}".rstrip("0").rstrip(".")
 
     @property
     def formatted_result(self) -> str:
@@ -192,9 +180,9 @@ class StandardUnitConverter(UnitConverter):
         unit = self.aliases.get(unit, unit)
         if unit in self.units:
             # return the unit if it is valid
-            return self.units[unit]
+            return self.units.__getattr__(unit)
         # check if the lowercase version is a valid unit
-        return self.units[unit.lower()]
+        return self.units.__getattr__(unit.lower())
 
     def convert(self, amount: float, from_unit: str, to_unit: str) -> ConversionResult:
         """Convert a unit to another unit
@@ -322,12 +310,6 @@ class Plugin(albert.QueryHandler):
     )
 
     config: dict[str, Any] = {
-        # Number of decimal places to round to
-        # If specified as -1, the number will not be manually rounded
-        "rounding_precision": 3,
-        # Number of decimal places to round to when the result is close to zero
-        # If specified as -1, the number will not be manually rounded
-        "rounding_precision_zero": 12,
         # Unit aliases to replace when parsing
         # Units may be added here to override the default behavior or create aliases for existing units
         # The alias is the key, the string to replace it with is the value
