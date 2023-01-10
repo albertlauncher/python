@@ -26,14 +26,11 @@ md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
 md_maintainers = "@DenverCoder1"
 
-single_dice_regex = re.compile(r"(\d+)d(\d+)", re.I)
-
-multiple_dice_regex = re.compile(r"(?:(\d+)d(\d+)(?:\D+|$))+", re.I)
+dice_regex = re.compile(r"(\d+)d(\d+)", re.I)
 
 
 def get_icon_path(num_sides: int | None) -> str:
-    """
-    Get the path to the icon for a die with num_sides sides.
+    """Get the path to the icon for a die with num_sides sides.
 
     Args:
         num_sides (Optional[int]): Number of sides on the die or None for the overall total.
@@ -52,8 +49,7 @@ def get_icon_path(num_sides: int | None) -> str:
 
 
 def roll_dice(num_dice: int, num_sides: int) -> tuple[int, list[int]]:
-    """
-    Roll multiple dice with num_sides sides.
+    """Roll multiple dice with num_sides sides.
 
     Args:
         num_dice (int): Number of dice to roll.
@@ -71,8 +67,7 @@ def get_item_from_rolls(
     sum_rolls: int,
     num_sides: int | None = None,
 ) -> albert.Item:
-    """
-    Creates an Albert Item from a list of rolls, the total, and the number of sides.
+    """Creates an Albert Item from a list of rolls, the total, and the number of sides.
     If num_sides is not provided, an "Overall Total" summary item is created.
 
     Args:
@@ -108,8 +103,7 @@ def get_item_from_rolls(
 
 
 def get_items(query_string: str) -> list[albert.Item]:
-    """
-    Convert a query string of dice rolls into a list of Albert Items.
+    """Convert a query string of dice rolls into a list of Albert Items.
 
     Args:
         query_string (str): The query string to be parsed.
@@ -121,7 +115,7 @@ def get_items(query_string: str) -> list[albert.Item]:
     sum_all_rolls = 0
     all_rolls = []
     # get (num_dice, num_sides) pairs from query string
-    matches = single_dice_regex.findall(query_string)
+    matches = dice_regex.findall(query_string)
     # roll each pair
     for match in matches:
         num_dice, num_sides = int(match[0]), int(match[1])
@@ -159,10 +153,9 @@ class Plugin(albert.QueryHandler):
 
     def handleQuery(self, query: albert.Query) -> None:
         query_string = query.string.strip()
-        if multiple_dice_regex.fullmatch(query_string):
-            try:
-                items = get_items(query_string)
-                query.add(items)
-            except Exception as e:
-                albert.warning(e)
-                albert.info("Something went wrong. Make sure you're using the correct format.")
+        try:
+            items = get_items(query_string)
+            query.add(items)
+        except Exception as e:
+            albert.warning(e)
+            albert.info("Something went wrong. Make sure you're using the correct format.")
