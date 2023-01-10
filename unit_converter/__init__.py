@@ -14,54 +14,31 @@ import albert
 import inflect
 import pint
 
-default_trigger = "convert "
-synopsis = "<amount> <from_unit> to <to_unit>"
-
-__doc__ = f"""
+__doc__ = """
 Extension for converting units of length, mass, speed, temperature, time,
-current, luminosity, printing measurements, molecular substance, currency, and more
+current, luminosity, printing measurements, molecular substance, and currency.
 
-Synopsis: {default_trigger}{synopsis}
+All units from the Pint Python library are supported.
+
+Currency conversion rates are provided by https://www.exchangerate-api.com
 
 Examples:
-`{default_trigger}180 minutes to hrs`
-`{default_trigger}100 km to miles`
-`{default_trigger}88 mph to kph`
-`{default_trigger}32 degrees F to C`
-`{default_trigger}3.14159 rad to degrees`
-`{default_trigger}100 USD to EUR`
+`convert 180 minutes to hrs`
+`convert 100 km to miles`
+`convert 88 mph to kph`
+`convert 32 degrees F to C`
+`convert 3.14159 rad to degrees`
+`convert 100 USD to EUR`
 """
 
 md_iid = "0.5"
-md_version = "1.2"
+md_version = "1.0"
 md_name = "Unit Converter"
-md_description = "Convert length, mass, temperature, time, currency, and more"
+md_description = "Convert between units"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
 md_lib_dependencies = ["pint", "inflect"]
 md_maintainers = "@DenverCoder1"
-
-unit_convert_regex = re.compile(
-    r"(?P<from_amount>-?\d+\.?\d*)\s?(?P<from_unit>.*)\s(?:to|in)\s(?P<to_unit>.*)",
-    re.I,
-)
-
-units = pint.UnitRegistry()
-inflect_engine = inflect.engine()
-
-
-def load_config(config_path: Path) -> dict[str, Any]:
-    """
-    Strip comments and load the config from the config file.
-    """
-    with config_path.open("r") as config_file:
-        contents = config_file.read()
-    contents = re.sub(r"^\s*//.*$", "", contents, flags=re.MULTILINE)
-    return json.loads(contents)
-
-
-config_path = Path(__file__).parent / "config.jsonc"
-config = load_config(config_path)
 
 
 class ConversionResult:
@@ -92,9 +69,10 @@ class ConversionResult:
         self.to_unit = to_unit
         self.dimensionality = dimensionality
         self.source = source
-        self.display_names = config.get("display_names", {})
-        self.rounding_precision = int(config.get("rounding_precision", 3))
-        self.rounding_precision_zero = int(config.get("rounding_precision_zero", 12))
+        self.display_names = Plugin.config.get("display_names", {})
+        self.rounding_precision = int(Plugin.config.get("rounding_precision", 3))
+        self.rounding_precision_zero = int(Plugin.config.get("rounding_precision_zero", 12))
+        self.inflect_engine = inflect.engine()
 
     def __pluralize_unit(self, unit: str) -> str:
         """Pluralize the unit
@@ -108,7 +86,7 @@ class ConversionResult:
         # if all characters are uppercase, don't pluralize
         if unit.isupper():
             return unit
-        return inflect_engine.plural(unit)
+        return self.inflect_engine.plural(unit)
 
     def __display_unit_name(self, amount: float, unit: str) -> str:
         """Display the name of the unit with plural if necessary
@@ -193,7 +171,8 @@ class StandardUnitConverter(UnitConverter):
 
     def __init__(self):
         """Initialize the UnitConverter"""
-        self.aliases: dict[str, str] = config.get("aliases", {})
+        self.aliases: dict[str, str] = Plugin.config.get("aliases", {})
+        self.units = pint.UnitRegistry()
 
     def _get_unit(self, unit: str) -> pint.Unit:
         """Check if the unit is a valid unit and return it
@@ -211,11 +190,11 @@ class StandardUnitConverter(UnitConverter):
             pint.errors.UndefinedUnitError: If the unit is not valid
         """
         unit = self.aliases.get(unit, unit)
-        if units.__contains__(unit):
+        if unit in self.units:
             # return the unit if it is valid
-            return units.__getattr__(unit)
+            return self.units[unit]
         # check if the lowercase version is a valid unit
-        return units.__getattr__(unit.lower())
+        return self.units[unit.lower()]
 
     def convert(self, amount: float, from_unit: str, to_unit: str) -> ConversionResult:
         """Convert a unit to another unit
@@ -232,7 +211,7 @@ class StandardUnitConverter(UnitConverter):
             pint.errors.UndefinedUnitError: If the unit is not valid
             pint.errors.DimensionalityError: If the units are not compatible
         """
-        input_unit = units.Quantity(amount, self._get_unit(from_unit))
+        input_unit = self.units.Quantity(amount, self._get_unit(from_unit))
         output_unit = self._get_unit(to_unit)
         result = input_unit.to(output_unit)
         return ConversionResult(
@@ -240,7 +219,7 @@ class StandardUnitConverter(UnitConverter):
             from_unit=str(self._get_unit(from_unit)),
             to_amount=result.magnitude,
             to_unit=str(result.units),
-            dimensionality=str(units._get_dimensionality(result.units)),
+            dimensionality=str(self.units._get_dimensionality(result.units)),
         )
 
 
@@ -266,7 +245,7 @@ class CurrencyConverter(UnitConverter):
     def __init__(self):
         """Initialize the CurrencyConverter"""
         self.last_update = datetime.now()
-        self.aliases: dict[str, str] = config.get("aliases", {})
+        self.aliases: dict[str, str] = Plugin.config.get("aliases", {})
         self.currencies = self._get_currencies()
 
     def _get_currencies(self) -> dict[str, float]:
@@ -299,13 +278,13 @@ class CurrencyConverter(UnitConverter):
         currency = self.aliases.get(currency, currency).upper()
         return currency if currency in self.currencies else None
 
-    def convert(self, amount: float, from_currency: str, to_currency: str) -> ConversionResult:
+    def convert(self, amount: float, from_unit: str, to_unit: str) -> ConversionResult:
         """Convert a currency to another currency
 
         Args:
             amount (float): The amount to convert
-            from_currency (str): The currency to convert from
-            to_currency (str): The currency to convert to
+            from_unit (str): The currency to convert from
+            to_unit (str): The currency to convert to
 
         Returns:
             str: The resulting amount in the new currency
@@ -314,21 +293,21 @@ class CurrencyConverter(UnitConverter):
             UnknownCurrencyError: If the currency is not valid
         """
         # get the currency rates
-        from_unit = self.get_currency(from_currency)
-        to_unit = self.get_currency(to_currency)
+        from_currency = self.get_currency(from_unit)
+        to_currency = self.get_currency(to_unit)
         # convert the currency
-        if from_unit is None:
-            raise UnknownCurrencyError(from_currency)
-        if to_unit is None:
-            raise UnknownCurrencyError(to_currency)
-        from_rate = self.currencies[from_unit]
-        to_rate = self.currencies[to_unit]
+        if from_currency is None:
+            raise UnknownCurrencyError(from_unit)
+        if to_currency is None:
+            raise UnknownCurrencyError(to_unit)
+        from_rate = self.currencies[from_currency]
+        to_rate = self.currencies[to_currency]
         result = amount * to_rate / from_rate
         return ConversionResult(
             from_amount=float(amount),
-            from_unit=from_unit,
+            from_unit=from_currency,
             to_amount=result,
-            to_unit=to_unit,
+            to_unit=to_currency,
             dimensionality="currency",
             source=self.ATTRIBUTION,
         )
@@ -337,9 +316,18 @@ class CurrencyConverter(UnitConverter):
 class Plugin(albert.QueryHandler):
     """The plugin class"""
 
+    unit_convert_regex = re.compile(
+        r"(?P<from_amount>-?\d+\.?\d*)\s?(?P<from_unit>.*)\s(?:to|in)\s(?P<to_unit>.*)",
+        re.I,
+    )
+
+    config = {}
+
     def initialize(self):
         self.unit_converter = StandardUnitConverter()
         self.currency_converter = CurrencyConverter()
+        config_path = Path(__file__).parent / "config.jsonc"
+        self.config = self._load_config(config_path)
 
     def id(self) -> str:
         return __name__
@@ -351,14 +339,14 @@ class Plugin(albert.QueryHandler):
         return md_description
 
     def synopsis(self) -> str:
-        return synopsis
+        return "<amount> <from_unit> to <to_unit>"
 
     def defaultTrigger(self) -> str:
-        return default_trigger
+        return "convert "
 
     def handleQuery(self, query: albert.Query) -> None:
         query_string = query.string.strip()
-        match = unit_convert_regex.fullmatch(query_string)
+        match = self.unit_convert_regex.fullmatch(query_string)
         if match:
             albert.info(f"Matched {query_string}")
             try:
@@ -458,3 +446,11 @@ class Plugin(albert.QueryHandler):
             albert.warning(f"UnknownCurrencyError: {e}")
             albert.warning(traceback.format_exc())
             return []
+
+    @staticmethod
+    def _load_config(config_path: Path) -> dict[str, Any]:
+        """Strip comments and load the config from the config file."""
+        with config_path.open("r") as config_file:
+            contents = config_file.read()
+        contents = re.sub(r"^\s*//.*$", "", contents, flags=re.MULTILINE)
+        return json.loads(contents)
