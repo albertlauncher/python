@@ -10,6 +10,7 @@ from albert import *
 from shutil import which
 from datetime import datetime
 from urllib import request, parse
+from time import sleep
 import json
 import os
 
