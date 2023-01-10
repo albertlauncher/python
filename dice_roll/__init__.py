@@ -8,25 +8,19 @@ from pathlib import Path
 
 import albert
 
-default_trigger = "roll "
-synopsis = "<amount>d<sides> [<amount>d<sides> ...]"
 __doc__ = f"""
-Roll any number of dice using the format _d_.
+Roll any number of dice using the format `_d_`.
 
-Synopsis: `{default_trigger}{synopsis}`
-
-Example: "{default_trigger}2d6 3d8 1d20"
+Example: "roll 2d6 3d8 1d20"
 """
 
 md_iid = "0.5"
 md_version = "1.0"
 md_name = "Dice Roll"
-md_description = "Roll any number of dice using the format _d_"
+md_description = "Roll any number of dice"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
 md_maintainers = "@DenverCoder1"
-
-dice_regex = re.compile(r"(\d+)d(\d+)", re.I)
 
 
 def get_icon_path(num_sides: int | None) -> str:
@@ -115,6 +109,7 @@ def get_items(query_string: str) -> list[albert.Item]:
     sum_all_rolls = 0
     all_rolls = []
     # get (num_dice, num_sides) pairs from query string
+    dice_regex = re.compile(r"(\d+)d(\d+)", re.I)
     matches = dice_regex.findall(query_string)
     # roll each pair
     for match in matches:
@@ -146,10 +141,10 @@ class Plugin(albert.QueryHandler):
         return md_description
 
     def synopsis(self) -> str:
-        return synopsis
+        return "<amount>d<sides> [<amount>d<sides> ...]"
 
     def defaultTrigger(self) -> str:
-        return default_trigger
+        return "roll "
 
     def handleQuery(self, query: albert.Query) -> None:
         query_string = query.string.strip()
