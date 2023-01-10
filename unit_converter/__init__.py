@@ -468,15 +468,12 @@ class Plugin(albert.QueryHandler):
             ]
         except pint.errors.DimensionalityError as e:
             albert.warning(f"DimensionalityError: {e}")
-            albert.warning(traceback.format_exc())
             return [
                 self._create_item(f"Unable to convert {amount} {from_unit} to {to_unit}", str(e))
             ]
         except pint.errors.UndefinedUnitError as e:
             albert.warning(f"UndefinedUnitError: {e}")
-            albert.warning(traceback.format_exc())
             return []
         except UnknownCurrencyError as e:
             albert.warning(f"UnknownCurrencyError: {e}")
-            albert.warning(traceback.format_exc())
             return []
