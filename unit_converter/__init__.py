@@ -37,7 +37,7 @@ md_version = "1.2"
 md_name = "Unit Converter"
 md_description = "Convert length, mass, temperature, time, currency, and more"
 md_license = "MIT"
-md_url = "https://github.com/DenverCoder1/unit-converter-albert-ext"
+md_url = "https://github.com/albertlauncher/python"
 md_lib_dependencies = ["pint", "inflect"]
 md_maintainers = "@DenverCoder1"
 
