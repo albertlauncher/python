@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-
-"""Evaluate simple python expressions.
-
-Synopsis: <trigger> <python expression>"""
-
 #  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
