@@ -69,7 +69,7 @@ class ConversionResult:
         self.to_unit = to_unit
         self.dimensionality = dimensionality
         self.source = source
-        self.display_names = Plugin.config.get("display_names", {})
+        self.display_names: dict[str, str] = Plugin.config["display_names"]
         self.inflect_engine = inflect.engine()
 
     def __pluralize_unit(self, unit: str) -> str:
@@ -109,7 +109,8 @@ class ConversionResult:
             str: The formatted number
         """
         # format the float to remove trailing zeros and decimal point
-        return f"{num:.16f}".rstrip("0").rstrip(".")
+        precision: int = Plugin.config["precision"]
+        return f"{num:.{precision}f}".rstrip("0").rstrip(".")
 
     @property
     def formatted_result(self) -> str:
@@ -141,6 +142,10 @@ class ConversionResult:
 class UnitConverter:
     """Base class for unit converters"""
 
+    def __init__(self):
+        """Initialize the UnitConverter"""
+        self.aliases: dict[str, str] = Plugin.config["aliases"]
+
     def convert(self, amount: float, from_unit: str, to_unit: str) -> ConversionResult:
         """Convert a unit to another unit
 
@@ -159,9 +164,9 @@ class StandardUnitConverter(UnitConverter):
     """Class to convert standard units of measurement"""
 
     def __init__(self):
-        """Initialize the UnitConverter"""
-        self.aliases: dict[str, str] = Plugin.config.get("aliases", {})
+        """Initialize the StandardUnitConverter"""
         self.units = pint.UnitRegistry()
+        super().__init__()
 
     def _get_unit(self, unit: str) -> pint.Unit:
         """Check if the unit is a valid unit and return it
@@ -234,8 +239,8 @@ class CurrencyConverter(UnitConverter):
     def __init__(self):
         """Initialize the CurrencyConverter"""
         self.last_update = datetime.now()
-        self.aliases: dict[str, str] = Plugin.config.get("aliases", {})
         self.currencies = self._get_currencies()
+        super().__init__()
 
     def _get_currencies(self) -> dict[str, float]:
         """Get the currencies from the API
@@ -311,6 +316,8 @@ class Plugin(albert.QueryHandler):
     )
 
     config: dict[str, Any] = {
+        # Maximum number of decimal places for precision
+        "precision": 12,
         # Unit aliases to replace when parsing
         # Units may be added here to override the default behavior or create aliases for existing units
         # The alias is the key, the string to replace it with is the value
