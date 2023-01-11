@@ -8,6 +8,7 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.error import URLError
 from urllib.request import urlopen
 
 import albert
@@ -248,13 +249,17 @@ class CurrencyConverter(UnitConverter):
         Returns:
             dict[str, float]: The currencies
         """
-        with urlopen(self.API_URL) as response:
-            data = json.loads(response.read().decode("utf-8"))
-        if not data or "rates" not in data:
-            albert.info("No currencies found")
+        try:
+            with urlopen(self.API_URL) as response:
+                data = json.loads(response.read().decode("utf-8"))
+            if not data or "rates" not in data:
+                albert.info("No currencies found")
+                return {}
+            albert.info(f'Currencies updated: {data["rates"]}')
+            return data["rates"]
+        except URLError as error:
+            albert.warning(f"Error getting currencies: {error}")
             return {}
-        albert.info(f'Currencies updated: {data["rates"]}')
-        return data["rates"]
 
     def get_currency(self, currency: str) -> str | None:
         """Get the currency name normalized using aliases and capitalization
