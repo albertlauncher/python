@@ -109,7 +109,7 @@ class ConversionResult:
             str: The formatted number
         """
         # format the float to remove trailing zeros and decimal point
-        return f"{num:f}".rstrip("0").rstrip(".")
+        return f"{num:.16f}".rstrip("0").rstrip(".")
 
     @property
     def formatted_result(self) -> str:
