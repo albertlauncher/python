@@ -22,7 +22,7 @@ md_maintainers = "@manuelschneid3r"
 
 class Plugin(QueryHandler):
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -40,7 +40,7 @@ class Plugin(QueryHandler):
         else:
             raise NotImplementedError("%1 not supported" % system())
 
-        self.trash_item = Item(id="trash-open",
+        self.trash_item = Item(id=md_id,
                                text="Trash",
                                subtext="Open trash folder",
                                icon=icon,

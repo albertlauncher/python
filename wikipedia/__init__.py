@@ -31,7 +31,7 @@ class Plugin(QueryHandler):
     limit = 20
 
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -74,7 +74,7 @@ class Plugin(QueryHandler):
             for number in range(50):
                 sleep(0.01)
                 if not query.isValid:
-                    return;
+                    return
 
             results = []
 
@@ -96,7 +96,7 @@ class Plugin(QueryHandler):
                     summary = data[2][i]
                     url = data[3][i]
 
-                    results.append(Item(id="wiki",
+                    results.append(Item(id=md_id,
                                         text=title,
                                         subtext=summary if summary else url,
                                         icon=[self.iconPath],
@@ -107,7 +107,7 @@ class Plugin(QueryHandler):
 
             query.add(results)
         else:
-            query.add(Item(id="wiki",
+            query.add(Item(id=md_id,
                            text=md_name,
                            subtext="Enter a query to search on Wikipedia",
                            icon=[self.iconPath]))

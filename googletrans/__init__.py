@@ -22,7 +22,7 @@ md_maintainers = "@manuelschneid3r"
 class Plugin(QueryHandler):
 
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -47,7 +47,7 @@ class Plugin(QueryHandler):
             for number in range(50):
                 sleep(0.01)
                 if not query.isValid:
-                    return;
+                    return
 
             src = None
             dest, text = self.lang, stripped
@@ -65,7 +65,7 @@ class Plugin(QueryHandler):
                 translation = self.translator.translate(text, dest=dest)
 
             query.add(Item(
-                id="googletrans",
+                id=md_id,
                 text=translation.text,
                 subtext=f'From {LANGUAGES[translation.src]} to {LANGUAGES[translation.dest]}',
                 icon=self.icon,

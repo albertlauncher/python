@@ -89,7 +89,7 @@ class Plugin(QueryHandler):
         item.addAction(FuncAction("Print warning", lambda: warning(query.string)))
         results.append(item)
 
-        item = Item(id=__title__,
+        item = Item(id=md_id,
                     text="This is the primary text",
                     subtext="This is the subtext, some kind of description",
                     completion=__triggers__ + 'Hellooohooo!',

@@ -75,7 +75,7 @@ class Plugin(QueryHandler):
     default_pomodoro_count = 4
 
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -94,7 +94,7 @@ class Plugin(QueryHandler):
 
     def handleQuery(self, query):
         item = Item(
-            id=__name__,
+            id=md_id,
             icon=self.icon,
             text=md_name
         )

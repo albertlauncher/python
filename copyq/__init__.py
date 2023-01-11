@@ -47,7 +47,7 @@ JSON.stringify(result);
 
 class Plugin(QueryHandler):
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -82,7 +82,7 @@ class Plugin(QueryHandler):
             )
             items.append(
                 Item(
-                    id=md_name,
+                    id=md_id,
                     icon=["xdg:copyq"],
                     text=text,
                     subtext="%s: %s" % (row, ", ".join(json_obj["mimetypes"])),

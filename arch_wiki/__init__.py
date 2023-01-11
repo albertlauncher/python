@@ -24,7 +24,7 @@ class Plugin(QueryHandler):
     user_agent = "org.albert.extension.python.archwiki"
 
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -65,7 +65,7 @@ class Plugin(QueryHandler):
                     summary = data[2][i]
                     url = data[3][i]
 
-                    results.append(Item(id=__name__,
+                    results.append(Item(id=md_id,
                                         text=title,
                                         subtext=summary if summary else url,
                                         icon=self.icon,
@@ -75,15 +75,15 @@ class Plugin(QueryHandler):
                                         ]))
             if results:
                 query.add(results)
-
-            query.add( Item(id=__name__,
-                            text="Search '%s'" % query.string,
-                            subtext="No results. Start online search on Arch Wiki",
-                            icon=self.icon,
-                            actions=[Action("search", "Open search", lambda s=query.string: self.search_url % s)]))
+            else:
+                query.add(Item(id=md_id,
+                               text="Search '%s'" % query.string,
+                               subtext="No results. Start online search on Arch Wiki",
+                               icon=self.icon,
+                               actions=[Action("search", "Open search", lambda s=query.string: self.search_url % s)]))
 
         else:
-            query.add(Item(id=__name__,
+            query.add(Item(id=md_id,
                            text=md_name,
                            icon=self.icon,
                            subtext="Enter a query to search on the Arch Wiki"))
