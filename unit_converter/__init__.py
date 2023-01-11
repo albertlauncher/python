@@ -32,7 +32,7 @@ Examples:
 """
 
 md_iid = "0.5"
-md_version = "1.0"
+md_version = "1.2"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
