@@ -90,6 +90,7 @@ class ConversionResult:
         """Display the name of the unit with plural if necessary
 
         Args:
+            amount (float): The amount to display
             unit (str): The unit to display
 
         Returns:
