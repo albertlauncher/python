@@ -149,7 +149,7 @@ class UnitConverter:
             to_unit (str): The unit to convert to
 
         Returns:
-            str: The resulting amount in the new unit
+            ConversionResult: Object containing information about the conversion result
         """
         raise NotImplementedError
 
@@ -193,7 +193,7 @@ class StandardUnitConverter(UnitConverter):
             to_unit (str): The unit to convert to
 
         Returns:
-            str: The resulting amount in the new unit
+            ConversionResult: Object containing information about the conversion result
 
         Raises:
             pint.errors.UndefinedUnitError: If the unit is not valid
@@ -275,7 +275,7 @@ class CurrencyConverter(UnitConverter):
             to_unit (str): The currency to convert to
 
         Returns:
-            str: The resulting amount in the new currency
+            ConversionResult: Object containing information about the conversion result
 
         Raises:
             UnknownCurrencyError: If the currency is not valid
