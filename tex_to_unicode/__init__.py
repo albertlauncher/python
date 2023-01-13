@@ -21,7 +21,7 @@ md_maintainers = "@DenverCoder1"
 
 class Plugin(QueryHandler):
     def id(self) -> str:
-        return md_iid
+        return md_id
 
     def name(self) -> str:
         return md_name
@@ -50,7 +50,7 @@ class Plugin(QueryHandler):
                 )
             )
         return Item(
-            id=md_iid,
+            id=md_id,
             icon=self.icon,
             text=text,
             subtext=subtext,
