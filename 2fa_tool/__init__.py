@@ -117,7 +117,8 @@ def get_totp(
 def handleQuery(query):
     if query.isTriggered:
         item = Item(id=__title__, icon=iconPath)
-        key_path = '~/.2fa/.key'
+        key_file = '.2fa/.key'
+        key_path = os.path.join(os.environ.get('HOME', ''), key_file)
         if os.path.exists(os.path.expanduser(key_path)):
             try:
                 with open(key_path, 'r') as f:
