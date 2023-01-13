@@ -36,12 +36,6 @@ class Plugin(QueryHandler):
     def defaultTrigger(self):
         return 'vpn '
 
-    def initialize(self):
-        info('initialize')
-
-    def finalize(self):
-        info('finalize')
-
     def handleQuery(self, query):
         if query.isValid:
             connections = getVPNConnections()
