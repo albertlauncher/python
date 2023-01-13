@@ -9,15 +9,46 @@ import subprocess
 from collections import namedtuple
 from albert import *
 
-__title__ = "VPN"
-__version__ = "0.4.0"
-__triggers__ = "vpn "
-__authors__ = "janeklb"
-__exec_deps__ = ['nmcli']
 
-iconPath = iconLookup('network-wireless') or ":python_module"
+md_iid = "0.5"
+md_version = "1.2"
+md_name = "VPN"
+md_description = "Plugin for VPN management"
+md_license = "BSD-2"
+md_url = "https://url.com/to/upstream/sources/and/maybe/issues"
+md_maintainers = ["@janeklb","@uztnus"]
+md_bin_dependencies = ["nmcli"]
+
+# iconPath = iconLookup('network-wireless') or ":python_module"
 
 VPNConnection = namedtuple('VPNConnection', ['name', 'connected'])
+
+class Plugin(QueryHandler):
+    def id(self):
+        return __name__
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def defaultTrigger(self):
+        return 'vpn '
+
+    def initialize(self):
+        info('initialize')
+
+    def finalize(self):
+        info('finalize')
+
+    def handleQuery(self, query):
+        if query.isValid:
+            connections = getVPNConnections()
+            if query.string:
+                connections = [ con for con in connections if query.string.lower() in con.name.lower() ]
+
+            query.add([ buildItem(con) for con in connections ])
 
 
 def getVPNConnections():
@@ -41,16 +72,9 @@ def buildItem(con):
         id=f'vpn-{command}-{name}',
         text=name,
         subtext=text,
-        icon=iconPath,
+        icon=[],
         completion=name,
-        actions=[ ProcAction(text=text, commandline=commandline) ]
+        actions=[ Action(id=f"vpn-{command}-{name}",text=text, callable=lambda: runDetachedProcess(commandline)) ]
     )
 
 
-def handleQuery(query):
-    if query.isValid and query.isTriggered:
-        connections = getVPNConnections()
-        if query.string:
-            connections = [ con for con in connections if query.string.lower() in con.name.lower() ]
-        return [ buildItem(con) for con in connections ]
-    return []
