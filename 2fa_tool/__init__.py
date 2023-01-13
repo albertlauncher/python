@@ -10,19 +10,28 @@ $ echo 'your key' > ~/.2fa/.key
 
 Synopsis: <trigger> """
 
-from albert import *
-import os
 import base64
 import hashlib
 import hmac
-import time
-import six
+import os
 import struct
+import time
+
+import six
+from albert import *
 
 __title__ = "2FA Tool"
 __version__ = "0.1.1"
 __triggers__ = "2fa "
 __authors__ = "geeknonerd"
+
+md_iid = "0.2"
+md_version = "1.2"
+md_name = "2FA Tool"
+md_description = "Generates 2 step verification (2FA) codes."
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/2fa_tool"
+md_maintainers = "@geeknonerd"
 
 iconPath = os.path.dirname(__file__) + "/2fa.svg"
 
@@ -114,6 +123,7 @@ def get_totp(
     )
 
 
+# old version
 def handleQuery(query):
     if query.isTriggered:
         item = Item(id=__title__, icon=iconPath)
@@ -131,3 +141,50 @@ def handleQuery(query):
         item.subtext = type(result).__name__
         item.addAction(ClipAction("Copy result to clipboard", str(result)))
     return item
+
+
+# new version
+class Plugin(QueryHandler):
+
+    def id(self):
+        return md_id
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def defaultTrigger(self):
+        return "2fa "
+
+    def synopsis(self):
+        return ""
+
+    def initialize(self):
+        self.iconPath = os.path.dirname(__file__) + "/2fa.svg"
+
+    def handleQuery(self, query):
+        stripped = query.string.strip()
+        if stripped:
+            key_file = '.2fa/.key'
+            key_path = os.path.join(os.environ.get('HOME', ''), key_file)
+            if os.path.exists(os.path.expanduser(key_path)):
+                try:
+                    with open(key_path, 'r') as f:
+                        result = get_totp(f.read().strip(), as_string=True).decode('utf-8')
+                except Exception as ex:
+                    result = ex
+            else:
+                result = 'Save key in a file located in "~/.2fa/.key"'
+
+            query.add(Item(
+                id=md_id,
+                text=str(result),
+                subtext=type(result).__name__,
+                completion=query.trigger + result,
+                icon=[self.iconPath],
+                actions=[
+                    Action("copy", "Copy result to clipboard", lambda r=str(result): setClipboardText(r)),
+                ]
+            ))
