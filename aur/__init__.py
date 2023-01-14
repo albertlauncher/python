@@ -10,6 +10,7 @@ from albert import *
 from shutil import which
 from datetime import datetime
 from urllib import request, parse
+from time import sleep
 import json
 import os
 
@@ -28,7 +29,7 @@ class Plugin(QueryHandler):
     baseurl = 'https://aur.archlinux.org/rpc/'
 
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -55,8 +56,12 @@ class Plugin(QueryHandler):
             self.install_cmdline = None
 
     def handleQuery(self, query):
-        stripped = query.string.strip()
+        for number in range(50):
+            sleep(0.01)
+            if not query.isValid:
+                return
 
+        stripped = query.string.strip()
         if stripped:
             params = {
                 'v': '5',
@@ -71,7 +76,7 @@ class Plugin(QueryHandler):
                 data = json.loads(response.read().decode())
                 if data['type'] == "error":
                     query.add(Item(
-                        id=__name__,
+                        id=md_id,
                         text="Error",
                         subtext=data['error'],
                         icon=self.icon
@@ -85,18 +90,18 @@ class Plugin(QueryHandler):
                     for entry in results_json:
                         name = entry['Name']
                         item = Item(
-                            id = __name__,
+                            id = md_id,
                             icon = self.icon,
                             text = f"{entry['Name']} {entry['Version']}"
                         )
 
-                        subtext = f"☆{entry['NumVotes']} "
-                        if entry['OutOfDate']:
-                            subtext += '[Out of date: %s] ' % datetime.fromtimestamp(entry['OutOfDate']).strftime("%F")
+                        subtext = f"☆{entry['NumVotes']}"
                         if entry['Maintainer'] is None:
-                            subtext += '[Orphan] '
+                            subtext += ', Unmaintained!'
+                        if entry['OutOfDate']:
+                            subtext += ', Out of date: %s' % datetime.fromtimestamp(entry['OutOfDate']).strftime("%F")
                         if entry['Description']:
-                            subtext += entry['Description']
+                            subtext += ', %s' % entry['Description']
                         item.subtext = subtext
 
                         actions = []
@@ -111,7 +116,7 @@ class Plugin(QueryHandler):
                                 )
                             ))
                             actions.append(Action(
-                                id="inst",
+                                id="instnc",
                                 text="Install using %s (noconfirm)" % pacman,
                                 callable=lambda n=name: runTerminal(
                                     script=self.install_cmdline % n + " --noconfirm",
@@ -132,7 +137,7 @@ class Plugin(QueryHandler):
                     query.add(results)
         else:
             query.add(Item(
-                id=__name__,
+                id=md_id,
                 text=md_name,
                 subtext="Enter a query to search the AUR",
                 icon=self.icon,

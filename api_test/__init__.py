@@ -60,9 +60,7 @@ class Plugin(QueryHandler):
             raise ValueError('EXPLICITLY REQUESTED TEST EXCEPTION!')
 
         info(query.string)
-        info(query.rawString)
         info(query.trigger)
-        info(str(query.isTriggered))
         info(str(query.isValid))
 
         critical(query.string)
@@ -74,26 +72,21 @@ class Plugin(QueryHandler):
 
         item = Item()
 
-        item.icon = iconPath
+        item.icon = ['xdg:albert']
         item.text = 'Python item containing %s' % query.string
         item.subtext = 'Python description'
-        item.completion = __triggers__ + 'Completion Harharhar'
-        item.urgency = ItemBase.Notification  # Alert, Normal
+        item.completion = 'Completion test'
         info(item.icon)
         info(item.text)
         info(item.subtext)
         info(item.completion)
-        info(str(item.urgency))
-        def function(): info(query.string)
-        item.addAction(FuncAction("Print info", function))
-        item.addAction(FuncAction("Print warning", lambda: warning(query.string)))
         results.append(item)
 
-        item = Item(id=__title__,
+        item = Item(id=md_id,
                     text="This is the primary text",
                     subtext="This is the subtext, some kind of description",
-                    completion=__triggers__ + 'Hellooohooo!',
-                    icons=os.path.dirname(__file__)+"/plugin.svg",
+                    completion='Hellooohooo!',
+                    icon=[os.path.dirname(__file__)+"/plugin.svg"],
                     actions=[
                         Action(
                             id="clip",

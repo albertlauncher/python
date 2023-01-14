@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-
-"""Evaluate simple python expressions.
-
-Synopsis: <trigger> <python expression>"""
-
 #  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
@@ -23,7 +18,7 @@ md_maintainers = "@manuelschneid3r"
 class Plugin(QueryHandler):
 
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -49,7 +44,7 @@ class Plugin(QueryHandler):
                 result = str(ex)
 
             query.add(Item(
-                id="py_eval",
+                id=md_id,
                 text=str(result),
                 subtext=type(result).__name__,
                 completion=query.trigger + result,
