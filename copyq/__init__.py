@@ -3,10 +3,10 @@
 import json
 import subprocess
 
-from albert import *
+from albert import Action, Item, Query, QueryHandler, runDetachedProcess
 
 md_iid = "0.5"
-md_version = "1.2"
+md_version = "1.3"
 md_name = "CopyQ"
 md_description = "Access CopyQ clipboard"
 md_license = "BSD-2-Clause"
@@ -82,7 +82,7 @@ class Plugin(QueryHandler):
             )
             items.append(
                 Item(
-                    id=md_id,
+                    id=f"{md_id}-item",
                     icon=["xdg:copyq"],
                     text=text,
                     subtext="%s: %s" % (row, ", ".join(json_obj["mimetypes"])),
