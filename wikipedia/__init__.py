@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""Search Wikipedia articles.
-
-Synopsis: <trigger> <filter>"""
-
 #  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *

@@ -16,7 +16,7 @@ import os
 
 md_iid = "0.5"
 md_version = "1.5"
-md_name = "Archlinux User Repository"
+md_name = "AUR"
 md_description = "Query and install AUR packages"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/aur"
