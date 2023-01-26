@@ -1,22 +1,19 @@
-"""VPN Extension
-
-Connect or disconnect from a network manager VPN profile"""
-
+"""connect or disconnect from a NetworkManager  VPN profiles (via nmcli)"""
 
 from albert import *
 from collections import namedtuple
 import subprocess
 
 md_iid = "0.5"
-md_version = "0.5"
+md_version = "1.1"
 md_id = "vpn"
 md_name = "VPN"
-md_description = "Manages VPN (via nmcli)"
+md_description = "Manage VPN connection"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
 md_maintainers = ["@Bierchermuesli"]
-md_authors = ["@janeklb"]
-md_lib_dependencies = ["nmcli"]
+md_credits = ["@janeklb"]
+md_bin_dependencies = ["nmcli"]
 
 
 
