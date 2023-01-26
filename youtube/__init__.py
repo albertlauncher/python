@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-
 import json
 import re
 import tempfile
 import time
-from os import path
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -15,15 +12,14 @@ from albert import Action, Item, Query, QueryHandler, critical, info, openUrl  #
 
 
 md_iid = '0.5'
-md_version = '1.2'
+md_version = '1.3'
 md_name = 'YouTube'
 md_description = 'Query and open YouTube videos and channels'
 md_url = 'https://github.com/albertlauncher/python/'
 md_maintainers = '@stevenxxiu'
 
-ICON = path.dirname(__file__) + '/youtube.svg'
+ICON_PATH = str(Path(__file__).parent / 'youtube.svg')
 DATA_REGEX = re.compile(r'\b(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;</script>', re.MULTILINE)
-TEMP_DIR = Path(tempfile.mkdtemp(prefix='albert_yt_'))
 
 HEADERS = {
     'User-Agent': (
@@ -50,23 +46,23 @@ def urlopen_with_headers(url: str) -> Any:
     return urlopen(req)
 
 
-def text_from(val: Dict[str, Any]) -> str:
+def text_from(val: dict[str, Any]) -> str:
     text = val['simpleText'] if 'runs' not in val else ''.join(str(v['text']) for v in val['runs'])
 
     return text.strip()
 
 
-def download_item_icon(item: Item) -> None:
+def download_item_icon(item: Item, temp_dir: Path) -> None:
     url = item.icon[0]
     video_id = url.split('/')[-2]
-    path = TEMP_DIR / f'{video_id}.png'
+    path = temp_dir / f'{video_id}.png'
     with urlopen_with_headers(url) as response, path.open('wb') as sr:
         sr.write(response.read())
     item.icon = [str(path)]
 
 
 def entry_to_item(type_, data) -> Item | None:
-    icon = ICON
+    icon = ICON_PATH
     match type_:
         case 'videoRenderer':
             subtext = ['Video']
@@ -100,8 +96,8 @@ def entry_to_item(type_, data) -> Item | None:
     )
 
 
-def results_to_items(results: dict) -> List[Item]:
-    items: List[Item] = []
+def results_to_items(results: dict) -> list[Item]:
+    items: list[Item] = []
     for result in results:
         for type_, data in result.items():
             try:
@@ -116,6 +112,8 @@ def results_to_items(results: dict) -> List[Item]:
 
 
 class Plugin(QueryHandler):
+    temp_dir = None
+
     def id(self) -> str:
         return __name__
 
@@ -124,6 +122,14 @@ class Plugin(QueryHandler):
 
     def description(self) -> str:
         return md_description
+
+    def initialize(self) -> None:
+        self.temp_dir = Path(tempfile.mkdtemp(prefix='albert_yt_'))
+
+    def finalize(self) -> None:
+        for child in self.temp_dir.iterdir():
+            child.unlink()
+        self.temp_dir.rmdir()
 
     def defaultTrigger(self) -> str:
         return 'yt '
@@ -162,14 +168,13 @@ class Plugin(QueryHandler):
             items = results_to_items(results)
 
             # Purge previous icons
-            for child in TEMP_DIR.iterdir():
-                if child.is_file():
-                    child.unlink()
+            for child in self.temp_dir.iterdir():
+                child.unlink()
 
             # Download icons
             with ThreadPoolExecutor(max_workers=10) as e:
                 for item in items:
-                    e.submit(download_item_icon, item)
+                    e.submit(download_item_icon, item, self.temp_dir)
                     if not query.isValid:
                         return
 
@@ -180,7 +185,7 @@ class Plugin(QueryHandler):
             item = Item(
                 id=f'{md_name}/show_more',
                 text='Show more in browser',
-                icon=[ICON],
+                icon=[ICON_PATH],
                 actions=[
                     Action(
                         f'{md_name}/show_more',
