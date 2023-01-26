@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg fill="#ff3bf8" stroke-width="0" viewBox="0 0 576 576" version="1.1" sodipodi:docname="printing_unit.svg" height="576px" width="576px" inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)" id="svg92"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+   <defs id="defs40" />
+   <sodipodi:namedview id="namedview38" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" showgrid="false" inkscape:zoom="1.21875" inkscape:cx="326.97436" inkscape:cy="391.79487" inkscape:window-width="1600" inkscape:window-height="844" inkscape:window-x="0" inkscape:window-y="32" inkscape:window-maximized="1" inkscape:current-layer="svg92" />
+   <path d="M 528,32 H 48 C 21.5,32 0,53.5 0,80 v 320 c 0,26.5 21.5,48 48,48 h 192 l -16,48 h -72 c -13.3,0 -24,10.7 -24,24 0,13.3 10.7,24 24,24 h 272 c 13.3,0 24,-10.7 24,-24 0,-13.3 -10.7,-24 -24,-24 h -72 l -16,-48 h 192 c 26.5,0 48,-21.5 48,-48 V 80 C 576,53.5 554.5,32 528,32 Z M 512,384 H 64 V 96 h 448 z" id="path34" />
+</svg>

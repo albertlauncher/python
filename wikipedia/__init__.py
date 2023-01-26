@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""Search Wikipedia articles.
-
-Synopsis: <trigger> <filter>"""
-
 #  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
@@ -102,7 +98,7 @@ class Plugin(QueryHandler):
                                         icon=[self.iconPath],
                                         actions=[
                                             Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
-                                            Action("copy", "Copy URL to clipboard", lambda u=url: setClipBoardText(u))
+                                            Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
                                         ]))
 
             query.add(results)

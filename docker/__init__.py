@@ -6,14 +6,14 @@ Docker wrapper (prototype)
 
 from albert import *
 import pathlib
+import docker
 
 md_iid = "0.5"
-md_version = "1.2"
+md_version = "1.3"
 md_name = "Docker"
 md_description = "Control your docker instance"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/docker"
-md_maintainers = "@manuelschneid3r"
 md_bin_dependencies = "docker"
 md_lib_dependencies = "docker"
 
@@ -21,7 +21,7 @@ md_lib_dependencies = "docker"
 class Plugin(QueryHandler):
 
     def id(self):
-        return __name__
+        return md_id
 
     def name(self):
         return md_name
@@ -69,15 +69,15 @@ class Plugin(QueryHandler):
                 actions=actions
             ))
 
-        # for image in reversed(self.client.images.list()):
-        #     query.add(Item(
-        #         id=image.short_id,
-        #         text=str(image.tags),
-        #         subtext=image.id,
-        #         # icon=self.icon_stopped,
-        #         actions=[
-        #             Action("run", "Run with command: %s" % query.string,
-        #                    lambda i=image, s=query.string: client.containers.run(i, s)),
-        #             Action("rmi", "Remove image", lambda i=image: i.remove())
-        #         ]
-        #     ))
+        for image in reversed(self.client.images.list()):
+            query.add(Item(
+                id=image.short_id,
+                text=str(image.tags),
+                subtext=image.id,
+                icon=self.icon_stopped,
+                actions=[
+                    Action("run", "Run with command: %s" % query.string,
+                           lambda i=image, s=query.string: client.containers.run(i, s)),
+                    Action("rmi", "Remove image", lambda i=image: i.remove())
+                ]
+            ))
