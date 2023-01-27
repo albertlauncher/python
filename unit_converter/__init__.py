@@ -252,7 +252,7 @@ class CurrencyConverter(UnitConverter):
             if not data or "rates" not in data:
                 albert.info("No currencies found")
                 return {}
-            albert.info(f'Currencies updated: {data["rates"]}')
+            albert.info(f'Currencies updated')
             return data["rates"]
         except URLError as error:
             albert.warning(f"Error getting currencies: {error}")
