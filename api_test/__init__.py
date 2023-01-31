@@ -26,7 +26,7 @@ md_maintainers = "@manuelschneid3r"
 
 class Plugin(QueryHandler):
     def id(self):
-        return "someid";
+        return "test";
 
     def name(self):
         return "somename";
@@ -51,10 +51,10 @@ class Plugin(QueryHandler):
 
         if query.string.startswith("delay"):
             sleep(2)
-            return Item(id=__title__,
+            return query.add(Item(id=md_id,
                         text="Delayed test item",
                         subtext="Query string: %s" % query.string,
-                        icons=os.path.dirname(__file__)+"/plugin.svg")
+                        icon=[os.path.dirname(__file__)+"/plugin.svg"]))
 
         if query.string.startswith("throw"):
             raise ValueError('EXPLICITLY REQUESTED TEST EXCEPTION!')
