@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
@@ -25,11 +24,11 @@ class Project:
 @dataclass
 class Editor:
     name: str
-    icon: str
+    icon: Path
     config_dir_prefix: str
     binary: str
 
-    def __init__(self, name: str, icon: str, config_dir_prefix: str, binaries: list[str]):
+    def __init__(self, name: str, icon: Path, config_dir_prefix: str, binaries: list[str]):
         self.name = name
         self.icon = icon
         self.config_dir_prefix = config_dir_prefix
@@ -55,7 +54,7 @@ class Editor:
 
             projects = []
             for entry in entries:
-                project_path = entry.attrib["key"].replace("$USER_HOME$", Path.home().as_posix())
+                project_path = entry.attrib["key"].replace("$USER_HOME$", str(Path.home()))
 
                 tag_opened = entry.find(".//option[@name='projectOpenTimestamp']")
                 last_opened = int(
@@ -66,7 +65,7 @@ class Editor:
 
                 if project_path and last_opened:
                     projects.append(
-                        Project(name=os.path.basename(project_path), path=project_path, last_opened=last_opened)
+                        Project(name=Path(project_path).name, path=project_path, last_opened=last_opened)
                     )
             return projects
         except ElementTree.ParseError:
@@ -89,64 +88,64 @@ class Plugin(QueryHandler):
         return "jb "
 
     def initialize(self):
-        plugin_dir = os.path.dirname(__file__)
+        plugin_dir = Path(__file__).parent
         self.editors = [
             Editor(
                 name="Android Studio",
-                icon=plugin_dir + "/androidstudio.svg",
+                icon=plugin_dir / "androidstudio.svg",
                 config_dir_prefix="Google/AndroidStudio",
                 binaries=["studio", "androidstudio", "android-studio", "android-studio-canary", "jdk-android-studio",
                           "android-studio-system-jdk"]),
             Editor(
                 name="CLion",
-                icon=plugin_dir + "/clion.svg",
+                icon=plugin_dir / "clion.svg",
                 config_dir_prefix="JetBrains/CLion",
                 binaries=["clion", "clion-eap"]),
             Editor(
                 name="DataGrip",
-                icon=plugin_dir + "/datagrip.svg",
+                icon=plugin_dir / "datagrip.svg",
                 config_dir_prefix="JetBrains/DataGrip",
                 binaries=["datagrip", "datagrip-eap"]),
             Editor(
                 name="DataSpell",
-                icon=plugin_dir + "/dataspell.svg",
+                icon=plugin_dir / "dataspell.svg",
                 config_dir_prefix="JetBrains/DataSpell",
                 binaries=["dataspell", "dataspell-eap"]),
             Editor(
                 name="GoLand",
-                icon=plugin_dir + "/goland.svg",
+                icon=plugin_dir / "goland.svg",
                 config_dir_prefix="JetBrains/GoLand",
                 binaries=["goland", "goland-eap"]),
             Editor(
                 name="IntelliJ IDEA",
-                icon=plugin_dir + "/idea.svg",
+                icon=plugin_dir / "idea.svg",
                 config_dir_prefix="JetBrains/IntelliJIdea",
                 binaries=["idea", "idea-ultimate", "idea-ce-eap", "idea-ue-eap", "intellij-idea-ce",
                           "intellij-idea-ce-eap", "intellij-idea-ue-bundled-jre", "intellij-idea-ultimate-edition",
                           "intellij-idea-community-edition-jre", "intellij-idea-community-edition-no-jre"]),
             Editor(
                 name="PhpStorm",
-                icon=plugin_dir + "/phpstorm.svg",
+                icon=plugin_dir / "phpstorm.svg",
                 config_dir_prefix="JetBrains/PhpStorm",
                 binaries=["phpstorm", "phpstorm-eap"]),
             Editor(
                 name="PyCharm",
-                icon=plugin_dir + "/pycharm.svg",
+                icon=plugin_dir / "pycharm.svg",
                 config_dir_prefix="JetBrains/PyCharm",
                 binaries=["charm", "pycharm", "pycharm-eap"]),
             Editor(
                 name="Rider",
-                icon=plugin_dir + "/rider.svg",
+                icon=plugin_dir / "rider.svg",
                 config_dir_prefix="JetBrains/Rider",
                 binaries=["rider", "rider-eap"]),
             Editor(
                 name="RubyMine",
-                icon=plugin_dir + "/rubymine.svg",
+                icon=plugin_dir / "rubymine.svg",
                 config_dir_prefix="JetBrains/RubyMine",
                 binaries=["rubymine", "rubymine-eap", "jetbrains-rubymine", "jetbrains-rubymine-eap"]),
             Editor(
                 name="WebStorm",
-                icon=plugin_dir + "/webstorm.svg",
+                icon=plugin_dir / "webstorm.svg",
                 config_dir_prefix="JetBrains/WebStorm",
                 binaries=["webstorm", "webstorm-eap"]),
         ]
@@ -170,7 +169,7 @@ class Plugin(QueryHandler):
             text=project.name,
             subtext=project.path,
             completion=query.trigger + project.name,
-            icon=[editor.icon],
+            icon=[str(editor.icon)],
             actions=[
                 Action(
                     "Open",
