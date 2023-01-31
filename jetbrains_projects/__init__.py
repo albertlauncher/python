@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
 from shutil import which
+from sys import platform
 from xml.etree import ElementTree
 from albert import *
 
@@ -41,7 +42,12 @@ class Editor:
         return None
 
     def list_projects(self) -> list[Project]:
-        dirs = list(Path.home().glob(f".config/{self.config_dir_prefix}*/"))
+        config_dir = Path.home() / ".config"
+        if platform == "darwin":
+            config_dir = Path.home() / "Library" / "Preferences"
+
+        dirs = list(config_dir.glob(f"{self.config_dir_prefix}*/"))
+        print(dirs)
         if not dirs:
             return []
         latest = sorted(dirs)[-1]
