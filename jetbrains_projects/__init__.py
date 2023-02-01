@@ -1,3 +1,12 @@
+"""
+Supported IDEs:
+
+Android Studio, CLion, DataGrip, DataSpell, GoLand, IntelliJ IDEA, PhpStorm, PyCharm, Rider, RubyMine, WebStorm.
+
+Note: To open projects the command-line launcher is required. If your IDE has no \
+command-line launcher in $PATH, use `Tools` > `Create Command-line Launcher`.
+"""
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Union
@@ -7,9 +16,9 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = "0.5"
-md_version = "1.0"
+md_version = "1.1"
 md_name = "Jetbrains projects"
-md_description = "Open projects using JetBrains IDEs"
+md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
 md_url = "https://github.com/tomsquest/albert-jetbrains-projects-plugin"
 md_maintainers = ["@mqus", "@tomsquest"]
@@ -44,10 +53,9 @@ class Editor:
     def list_projects(self) -> list[Project]:
         config_dir = Path.home() / ".config"
         if platform == "darwin":
-            config_dir = Path.home() / "Library" / "Preferences"
+            config_dir = Path.home() / "Library" / "Application Support"
 
         dirs = list(config_dir.glob(f"{self.config_dir_prefix}*/"))
-        print(dirs)
         if not dirs:
             return []
         latest = sorted(dirs)[-1]
@@ -95,7 +103,7 @@ class Plugin(QueryHandler):
 
     def initialize(self):
         plugin_dir = Path(__file__).parent
-        self.editors = [
+        editors = [
             Editor(
                 name="Android Studio",
                 icon=plugin_dir / "androidstudio.svg",
@@ -155,6 +163,7 @@ class Plugin(QueryHandler):
                 config_dir_prefix="JetBrains/WebStorm",
                 binaries=["webstorm", "webstorm-eap"]),
         ]
+        self.editors = [e for e in editors if e.binary is not None]
 
     def handleQuery(self, query: Query):
         editor_project_pairs = []
