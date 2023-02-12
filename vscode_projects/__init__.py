@@ -1,6 +1,5 @@
 """
-This extension provides a quick introduction on how to use the new Python pluging interface.
-Hope you like it.
+This extension make it possible search VSCode Projects by albert
 """
 
 from albert import *
@@ -10,11 +9,11 @@ import json
 import urllib.parse
 
 md_iid = "0.5"
-md_version = "1.1"
-md_name = "vscode projects"
-md_description = "vscode projects"
+md_version = "1.0"
+md_name = "VSCode projects"
+md_description = "Open VSCode projects"
 md_license = "BSD-3"
-md_url = "https://github.com/albertlauncher/python/tree/master/kill"
+md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
 md_maintainers = "@cathaysia"
 md_credits = "Original idea by Longtao Zhang"
 
@@ -27,16 +26,13 @@ class Plugin(QueryHandler):
     icon_path = "xdg:code"
 
     def id(self):
-        return __name__
+        return md_iid
 
     def name(self):
         return md_name
 
     def description(self):
         return md_description
-
-    def initialize(self):
-        pass
 
     def defaultTrigger(self):
         return "vsc "
@@ -65,8 +61,8 @@ class Plugin(QueryHandler):
                             subtext=full_prj_path,
                             actions=[
                                 Action(
-                                    "打开",
-                                    "使用 vscode 打开项目",
+                                    "Open",
+                                    "Open project by VSCode",
                                     lambda pro=full_prj_path: runDetachedProcess(
                                         ["code", pro]
                                     ),
