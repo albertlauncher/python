@@ -7,6 +7,7 @@ import os
 
 import json
 import urllib.parse
+import platform
 
 md_iid = "0.5"
 md_version = "1.0"
@@ -17,9 +18,15 @@ md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
 md_maintainers = "@cathaysia"
 md_credits = "Original idea by Longtao Zhang"
 
-vsc_db = "~/.config/Code/User/globalStorage/state.vscdb"
-vsc_storage = "~/.config/Code/User/globalStorage/storage.json"
-vsc_workspace = "~/.config/Code/User/workspaceStorage/"
+os_prefix: str = '~'
+plat = platform.system().lower()
+if plat == 'windows':
+   os_prefix = os.getenv('APPDATA') or ''
+
+vsc_db = os_prefix + "/.config/Code/User/globalStorage/state.vscdb"
+vsc_storage = os_prefix +"/.config/Code/User/globalStorage/storage.json"
+vsc_workspace =os_prefix + "/.config/Code/User/workspaceStorage/"
+
 
 
 class Plugin(QueryHandler):
