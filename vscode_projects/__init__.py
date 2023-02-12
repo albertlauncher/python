@@ -3,11 +3,10 @@ This extension make it possible search VSCode Projects by albert
 """
 
 from albert import *
-import os
-
 import json
-import urllib.parse
+import os
 import platform
+import urllib.parse
 
 md_iid = "0.5"
 md_version = "1.0"
@@ -18,15 +17,14 @@ md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
 md_maintainers = "@cathaysia"
 md_credits = "Original idea by Longtao Zhang"
 
-os_prefix: str = '~'
+os_prefix: str = "~"
 plat = platform.system().lower()
-if plat == 'windows':
-   os_prefix = os.getenv('APPDATA') or ''
+if plat == "windows":
+    os_prefix = os.getenv("APPDATA") or ""
 
 vsc_db = os_prefix + "/.config/Code/User/globalStorage/state.vscdb"
-vsc_storage = os_prefix +"/.config/Code/User/globalStorage/storage.json"
-vsc_workspace =os_prefix + "/.config/Code/User/workspaceStorage/"
-
+vsc_storage = os_prefix + "/.config/Code/User/globalStorage/storage.json"
+vsc_workspace = os_prefix + "/.config/Code/User/workspaceStorage/"
 
 
 class Plugin(QueryHandler):
@@ -78,4 +76,3 @@ class Plugin(QueryHandler):
                         )
                     )
         query.add(results)
-
