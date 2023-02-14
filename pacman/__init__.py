@@ -9,12 +9,12 @@ import subprocess
 from time import sleep
 import pathlib
 
-from albert import Action, Item, QueryHandler, runTerminal
+from albert import Action, Item, QueryHandler, runTerminal, openUrl
 
 md_iid = "0.5"
 md_version = "1.6"
 md_name = "PacMan"
-md_description =  "Search, install and remove packages"
+md_description = "Search, install and remove packages"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/pacman"
 md_bin_dependencies = ["pacman", "expac"]
@@ -71,7 +71,7 @@ class Plugin(QueryHandler):
             if not query.isValid:
                 return
 
-        # Get data. Results are sorted so we can merge in O(n)
+        # Get data. Results are sorted, so we can merge in O(n)
         proc_s = subprocess.Popen(["expac", "-Ss", "%n\t%v\t%r\t%d\t%u\t%E", stripped],
                                   stdout=subprocess.PIPE, universal_newlines=True)
         proc_q = subprocess.Popen(["expac", "-Qs", "%n", stripped], stdout=subprocess.PIPE, universal_newlines=True)
@@ -90,15 +90,15 @@ class Plugin(QueryHandler):
             actions = []
             if pkg_installed:
                 actions.extend([
-                    Action("rem", "Remove", lambda: runTerminal("sudo pacman -Rs %s" % pkg_name)),
-                    Action("reinst", "Reinstall", lambda: runTerminal("sudo pacman -S %s" % pkg_name))
+                    Action("rem", "Remove", lambda n=pkg_name: runTerminal("sudo pacman -Rs %s" % n)),
+                    Action("reinst", "Reinstall", lambda n=pkg_name: runTerminal("sudo pacman -S %s" % n))
                 ])
             else:
-                actions.append(Action("inst", "Install", lambda: runTerminal("sudo pacman -S %s" % pkg_name)))
+                actions.append(Action("inst", "Install", lambda n=pkg_name: runTerminal("sudo pacman -S %s" % n)))
             actions.append(Action("pkg_url", "Show on packages.archlinux.org",
-                                  lambda: openUrl(f"{pkg_repo}/x86_64/{pkg_name}/")))
+                                  lambda r=pkg_repo, n=pkg_name: openUrl(f"{r}/x86_64/{n}/")))
             if pkg_purl:
-                actions.append(Action("proj_url", "Show project website", lambda: openUrl(pkg_purl)))
+                actions.append(Action("proj_url", "Show project website", lambda u=pkg_purl: openUrl(u)))
 
             item = Item(
                 id="%s_%s_%s" % (md_id, pkg_repo, pkg_name),
