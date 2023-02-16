@@ -6,6 +6,7 @@ from albert import *
 import json
 import os
 import platform
+import sqlite3
 import urllib.parse
 
 md_iid = "0.5"
@@ -17,18 +18,13 @@ md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
 md_maintainers = "@cathaysia"
 md_credits = "Original idea by Longtao Zhang"
 
-os_prefix: str = "~"
-plat = platform.system().lower()
-if plat == "windows":
-    os_prefix = os.getenv("APPDATA") or ""
-
-vsc_db = os_prefix + "/.config/Code/User/globalStorage/state.vscdb"
-vsc_storage = os_prefix + "/.config/Code/User/globalStorage/storage.json"
-vsc_workspace = os_prefix + "/.config/Code/User/workspaceStorage/"
-
 
 class Plugin(QueryHandler):
     icon_path = "xdg:code"
+    os_prefix = "~" if platform.system().lower() != "window" else os.getenv("APPDATA") or ""
+    db = os.path.expanduser(os_prefix + "/.config/Code/User/globalStorage/state.vscdb")
+    storage = os.path.expanduser(os_prefix + "/.config/Code/User/globalStorage/storage.json")
+    workspace = os.path.expanduser(os_prefix + "/.config/Code/User/workspaceStorage/")
 
     def id(self):
         return md_iid
@@ -45,34 +41,37 @@ class Plugin(QueryHandler):
     def handleQuery(self, query):
         if not query.isValid:
             return
-        query_str: str = query.string
         results = []
-        for dirpath, dirnames, filenames in os.walk(os.path.expanduser(vsc_workspace)):
-            for file_name in filenames:
-                if file_name != "workspace.json":
-                    continue
-                with open(os.path.join(dirpath, file_name), "r") as f:
-                    full_prj_path: str = urllib.parse.unquote(
-                        json.loads(f.read())["folder"]
+
+        con = sqlite3.connect(self.db)
+        cur = con.cursor()
+        cur.execute(
+            'SELECT value FROM ItemTable WHERE key = "history.recentlyOpenedPathsList"'
+        )
+
+        for row in cur:
+            j = json.loads(row[0])
+            for item in j["entries"]:
+                uri = ""
+                if "folderUri" in item:
+                    uri = item["folderUri"]
+                else:
+                    uri = item["fileUri"]
+                uri = uri.replace("file://", "")
+                uri = urllib.parse.unquote(uri)
+                results.append(
+                    Item(
+                        id="kill",
+                        icon=[self.icon_path],
+                        text=os.path.basename(uri),
+                        subtext=uri,
+                        actions=[
+                            Action(
+                                "Open",
+                                "Open project by VSCode",
+                                lambda pro=uri: runDetachedProcess(["code", pro]),
+                            ),
+                        ],
                     )
-                    full_prj_path = full_prj_path.replace("file://", "")
-                    if query_str != " " and not full_prj_path.__contains__(query_str):
-                        continue
-                    results.append(
-                        Item(
-                            id="kill",
-                            icon=[self.icon_path],
-                            text=os.path.basename(full_prj_path),
-                            subtext=full_prj_path,
-                            actions=[
-                                Action(
-                                    "Open",
-                                    "Open project by VSCode",
-                                    lambda pro=full_prj_path: runDetachedProcess(
-                                        ["code", pro]
-                                    ),
-                                ),
-                            ],
-                        )
-                    )
+                )
         query.add(results)
