@@ -27,7 +27,7 @@ class Plugin(QueryHandler):
     workspace = os.path.expanduser(os_prefix + "/.config/Code/User/workspaceStorage/")
 
     def id(self):
-        return md_iid
+        return md_id
 
     def name(self):
         return md_name
@@ -61,7 +61,7 @@ class Plugin(QueryHandler):
                 uri = urllib.parse.unquote(uri)
                 results.append(
                     Item(
-                        id="kill",
+                        id=md_id,
                         icon=[self.icon_path],
                         text=os.path.basename(uri),
                         subtext=uri,
