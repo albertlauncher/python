@@ -21,9 +21,13 @@ md_credits = "Original idea by Longtao Zhang"
 
 class Plugin(QueryHandler):
     icon_path = "xdg:code"
-    os_prefix = "~" if platform.system().lower() != "window" else os.getenv("APPDATA") or ""
+    os_prefix = (
+        "~" if platform.system().lower() != "window" else os.getenv("APPDATA") or ""
+    )
     db = os.path.expanduser(os_prefix + "/.config/Code/User/globalStorage/state.vscdb")
-    storage = os.path.expanduser(os_prefix + "/.config/Code/User/globalStorage/storage.json")
+    storage = os.path.expanduser(
+        os_prefix + "/.config/Code/User/globalStorage/storage.json"
+    )
     workspace = os.path.expanduser(os_prefix + "/.config/Code/User/workspaceStorage/")
 
     def id(self):
@@ -41,6 +45,8 @@ class Plugin(QueryHandler):
     def handleQuery(self, query):
         if not query.isValid:
             return
+
+        query_str: str = query.string.strip()
         results = []
 
         con = sqlite3.connect(self.db)
@@ -59,17 +65,23 @@ class Plugin(QueryHandler):
                     uri = item["fileUri"]
                 uri = uri.replace("file://", "")
                 uri = urllib.parse.unquote(uri)
+                project_name = os.path.basename(uri)
+                if query_str != "" and not project_name.__contains__(query_str):
+                    continue
+
                 results.append(
                     Item(
                         id="vscode_project",
                         icon=[self.icon_path],
-                        text=os.path.basename(uri),
+                        text=project_name,
                         subtext=uri,
                         actions=[
                             Action(
                                 "Open",
                                 "Open project by VSCode",
-                                lambda pro=uri: runDetachedProcess(["code", pro]),
+                                lambda project_path=uri: runDetachedProcess(
+                                    ["code", project_path]
+                                ),
                             ),
                         ],
                     )
