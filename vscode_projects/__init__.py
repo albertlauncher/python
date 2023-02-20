@@ -61,7 +61,7 @@ class Plugin(QueryHandler):
                 uri = urllib.parse.unquote(uri)
                 results.append(
                     Item(
-                        id=md_id,
+                        id="vscode_project",
                         icon=[self.icon_path],
                         text=os.path.basename(uri),
                         subtext=uri,
