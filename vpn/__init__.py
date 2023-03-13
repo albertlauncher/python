@@ -1,20 +1,17 @@
-"""connect or disconnect from a NetworkManager  VPN profiles (via nmcli)"""
-
 from albert import *
 from collections import namedtuple
 import subprocess
 
 md_iid = "0.5"
-md_version = "1.1"
+md_version = "1.2"
 md_id = "vpn"
 md_name = "VPN"
-md_description = "Manage VPN connection"
+md_description = "Manage NetworkManager VPN connections"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
 md_maintainers = ["@Bierchermuesli"]
 md_credits = ["@janeklb"]
 md_bin_dependencies = ["nmcli"]
-
 
 
 class Plugin(QueryHandler):
