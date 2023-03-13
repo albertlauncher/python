@@ -40,7 +40,7 @@ class Plugin(QueryHandler):
         )
         for conStr in consStr.splitlines():
             con = conStr.split(':')
-            if con[2] == 'vpn':
+            if con[2] in ['vpn', 'wireguard']:
                 yield self.VPNConnection(name=con[0], connected=con[3] != '')
 
 
