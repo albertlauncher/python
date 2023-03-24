@@ -1,22 +1,18 @@
 # -*- coding: utf-8 -*-
 
-#  Copyright (c) 2022 Manuel Schneider
-
-import fnmatch
 import os
 from subprocess import run, CalledProcessError
 
 from albert import *
 
 md_iid = "0.5"
-md_version = "0.5"
+md_version = "1.1"
 md_name = "Bitwarden"
-md_description = "'rbw' wrapper extensions"
-md_trigger = "bw "
-md_license = "copyleft"
-md_url = ""
-md_maintainers = "Vitor Carvalho"
-md_credits = "Asger Hautop Drewsen"
+md_description = "'rbw' wrapper extension"
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python"
+md_maintainers = "@ovitor"
+md_credits = "Original author: @tylio"
 md_bin_dependencies = ["rbw"]
 
 class Plugin(QueryHandler):
@@ -30,7 +26,7 @@ class Plugin(QueryHandler):
         return md_description
 
     def defaultTrigger(self):
-        return md_trigger
+        return "bw "
 
     def initialize(self):
         self.icon = [os.path.dirname(__file__) + "/bw.svg"]
@@ -92,7 +88,6 @@ class Plugin(QueryHandler):
             if all_matches:
                 filtered_passwords.append(p)
 
-        results = []
         for p in filtered_passwords:
             pw = run(
                 ["rbw", "get", p["id"]],
@@ -109,37 +104,34 @@ class Plugin(QueryHandler):
                 )
             except CalledProcessError as err:
                 code = run (["echo"], capture_output=True,encoding="utf-8", check=True)
-            results.append(
-                query.add(
-                    Item(
-                        id=p["id"],
-                        text=p["path"],
-                        subtext=p["user"],
-                        icon=self.icon,
-                        actions=[
-                            Action(
-                                id="copy",
-                                text="Copy password to clipboard",
-                                callable=lambda password=pw.stdout.strip(): setClipboardText(
-                                    text=password)
-                            ),
-                            Action(
-                                id="copy-auth",
-                                text="Copy auth code to clipboard",
-                                callable=lambda code=code.stdout.strip(): setClipboardText(
-                                    text=code)
-                            ),
-                            Action(
-                                id="edit",
-                                text="Edit entry in terminal",
-                                callable=lambda pid=p['id']: runTerminal(
-                                    script=f"rbw edit {pid}",
-                                    workdir="~",
-                                    close_on_exit=False
-                                )
+            query.add(
+                Item(
+                    id=p["id"],
+                    text=p["path"],
+                    subtext=p["user"],
+                    icon=self.icon,
+                    actions=[
+                        Action(
+                            id="copy",
+                            text="Copy password to clipboard",
+                            callable=lambda password=pw.stdout.strip(): setClipboardText(
+                                text=password)
+                        ),
+                        Action(
+                            id="copy-auth",
+                            text="Copy auth code to clipboard",
+                            callable=lambda code=code.stdout.strip(): setClipboardText(
+                                text=code)
+                        ),
+                        Action(
+                            id="edit",
+                            text="Edit entry in terminal",
+                            callable=lambda pid=p['id']: runTerminal(
+                                script=f"rbw edit {pid}",
+                                workdir="~",
+                                close_on_exit=False
                             )
-                        ]
-                    )
+                        )
+                    ]
                 )
             )
-        return results
