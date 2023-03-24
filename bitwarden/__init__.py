@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
 
-"""'rbw' wrapper extension."""
-
 #  Copyright (c) 2022 Manuel Schneider
 
 import fnmatch
 import os
-from subprocess import run
+from subprocess import run, CalledProcessError
 
 from albert import *
 
 md_iid = "0.5"
 md_version = "0.5"
 md_name = "Bitwarden"
-md_description = "rbw wrapper extensions"
+md_description = "'rbw' wrapper extensions"
 md_trigger = "bw "
-md_license = ""
+md_license = "copyleft"
 md_url = ""
-md_maintainers = "Asger Hautop Drewsen"
-md_bin_dependencies = ["rbw", "xclip"]
+md_maintainers = "Vitor Carvalho"
+md_credits = "Asger Hautop Drewsen"
+md_bin_dependencies = ["rbw"]
 
 class Plugin(QueryHandler):
     def id(self):
@@ -95,6 +94,21 @@ class Plugin(QueryHandler):
 
         results = []
         for p in filtered_passwords:
+            pw = run(
+                ["rbw", "get", p["id"]],
+                capture_output=True,
+                encoding="utf-8",
+                check=True
+            )
+            try:
+                code = run(
+                    ["rbw", "code", p["id"]],
+                    capture_output=True,
+                    encoding="utf-8",
+                    check=True
+                )
+            except CalledProcessError as err:
+                code = run (["echo"], capture_output=True,encoding="utf-8", check=True)
             results.append(
                 query.add(
                     Item(
@@ -106,22 +120,14 @@ class Plugin(QueryHandler):
                             Action(
                                 id="copy",
                                 text="Copy password to clipboard",
-                                callable=lambda pid=p['id']: runDetachedProcess(
-                                    cmdln=["sh",
-                                           "-c",
-                                           f"rbw get {pid} | tr -d '\\n' | xclip -selection clipboard -in"
-                                    ]
-                                )
+                                callable=lambda password=pw.stdout.strip(): setClipboardText(
+                                    text=password)
                             ),
                             Action(
                                 id="copy-auth",
                                 text="Copy auth code to clipboard",
-                                callable=lambda pid=p['id']: runDetachedProcess(
-                                    cmdln=["sh",
-                                           "-c",
-                                           f"rbw code {pid} | tr -d '\\n' | xclip -selection clipboard -in"
-                                    ]
-                                )
+                                callable=lambda code=code.stdout.strip(): setClipboardText(
+                                    text=code)
                             ),
                             Action(
                                 id="edit",
