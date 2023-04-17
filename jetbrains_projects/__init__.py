@@ -16,7 +16,7 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = "0.5"
-md_version = "1.1"
+md_version = "1.2"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
@@ -71,15 +71,11 @@ class Editor:
                 project_path = entry.attrib["key"].replace("$USER_HOME$", str(Path.home()))
 
                 tag_opened = entry.find(".//option[@name='projectOpenTimestamp']")
-                last_opened = int(
-                    tag_opened.attrib["value"]
-                    if tag_opened is not None and "value" in tag_opened.attrib
-                    else None
-                )
+                last_opened = tag_opened.attrib["value"] if tag_opened is not None and "value" in tag_opened.attrib else None
 
                 if project_path and last_opened:
                     projects.append(
-                        Project(name=Path(project_path).name, path=project_path, last_opened=last_opened)
+                        Project(name=Path(project_path).name, path=project_path, last_opened=int(last_opened))
                     )
             return projects
         except ElementTree.ParseError:
