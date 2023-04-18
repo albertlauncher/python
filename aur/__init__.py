@@ -106,7 +106,7 @@ class Plugin(QueryHandler):
 
                         actions = []
                         if self.install_cmdline:
-                            pacman = install_cmdline.split(" ", 1)[0]
+                            pacman = self.install_cmdline.split(" ", 1)[0]
                             actions.append(Action(
                                 id="inst",
                                 text="Install using %s" % pacman,
