@@ -15,7 +15,7 @@ import json
 import os
 
 md_iid = "0.5"
-md_version = "1.5"
+md_version = "1.6"
 md_name = "AUR"
 md_description = "Query and install AUR packages"
 md_license = "BSD-3"
@@ -106,7 +106,7 @@ class Plugin(QueryHandler):
 
                         actions = []
                         if self.install_cmdline:
-                            pacman = install_cmdline.split(" ", 1)[0]
+                            pacman = self.install_cmdline.split(" ", 1)[0]
                             actions.append(Action(
                                 id="inst",
                                 text="Install using %s" % pacman,
