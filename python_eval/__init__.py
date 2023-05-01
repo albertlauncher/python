@@ -7,7 +7,7 @@ from math import *
 import os
 
 md_iid = "0.5"
-md_version = "1.2"
+md_version = "1.3"
 md_name = "Python Eval"
 md_description = "Evaluate Python code"
 md_license = "BSD-3"
@@ -39,18 +39,20 @@ class Plugin(QueryHandler):
         stripped = query.string.strip()
         if stripped:
             try:
-                result = str(eval(stripped))
+                result = eval(stripped)
             except Exception as ex:
-                result = str(ex)
+                result = ex
+
+            result_str = str(result)
 
             query.add(Item(
                 id=md_id,
-                text=str(result),
+                text=result_str,
                 subtext=type(result).__name__,
-                completion=query.trigger + result,
+                completion=query.trigger + result_str,
                 icon=[self.iconPath],
                 actions = [
-                    Action("copy", "Copy result to clipboard", lambda r=str(result): setClipboardText(r)),
-                    Action("exec", "Execute python code", lambda r=str(result): exec(stripped)),
+                    Action("copy", "Copy result to clipboard", lambda r=result_str: setClipboardText(r)),
+                    Action("exec", "Execute python code", lambda r=result_str: exec(stripped)),
                 ]
             ))
