@@ -11,16 +11,16 @@ from albert import *
 import os
 import pathlib
 import shlex
-import re
 import subprocess
 
 md_iid = "0.5"
-md_version = "1.6"
+md_version = "1.7"
 md_name = "Locate"
-md_description =  "Find ond open files using locate"
+md_description = "Find and open files using locate"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/locate"
 md_bin_dependencies = "locate"
+
 
 class Plugin(QueryHandler):
 
@@ -57,9 +57,11 @@ class Plugin(QueryHandler):
                 return
 
             result = subprocess.run(['locate', *args], stdout=subprocess.PIPE, text=True)
-            if not query.isValid: return
+            if not query.isValid:
+                return
             lines = sorted(result.stdout.splitlines(), reverse=True)
-            if not query.isValid: return
+            if not query.isValid:
+                return
 
             for path in lines:
                 basename = os.path.basename(path)
@@ -70,7 +72,7 @@ class Plugin(QueryHandler):
                         subtext=path,
                         icon=self.icons,
                         actions=[
-                            Action("open", "Open", lambda: openUrl("file://%s" % path))
+                            Action("open", "Open", lambda p=path: openUrl("file://%s" % p))
                         ]
                     )
                 )
@@ -86,9 +88,3 @@ class Plugin(QueryHandler):
                     ]
                 )
             )
-
-
-
-
-
-
