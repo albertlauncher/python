@@ -14,8 +14,8 @@ Roll any number of dice using the format `_d_`.
 Example: "roll 2d6 3d8 1d20"
 """
 
-md_iid = "0.5"
-md_version = "1.0"
+md_iid = '1.0'
+md_version = "1.1"
 md_name = "Dice Roll"
 md_description = "Roll any number of dice"
 md_license = "MIT"
@@ -128,7 +128,7 @@ def get_items(query_string: str) -> list[albert.Item]:
     return results
 
 
-class Plugin(albert.QueryHandler):
+class Plugin(albert.TriggerQueryHandler):
     """A plugin to roll dice"""
 
     def id(self) -> str:
@@ -146,7 +146,7 @@ class Plugin(albert.QueryHandler):
     def defaultTrigger(self) -> str:
         return "roll "
 
-    def handleQuery(self, query: albert.Query) -> None:
+    def handleTriggerQuery(self, query: albert.TriggerQuery) -> None:
         query_string = query.string.strip()
         try:
             items = get_items(query_string)

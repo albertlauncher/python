@@ -9,8 +9,8 @@ import unicodedata
 from albert import *
 from pylatexenc.latex2text import LatexNodes2Text
 
-md_iid = "0.5"
-md_version = "1.0"
+md_iid = '1.0'
+md_version = "1.1"
 md_name = "TeX to Unicode"
 md_description = "Convert TeX mathmode commands to unicode characters"
 md_license = "GPL-3.0"
@@ -19,7 +19,7 @@ md_lib_dependencies = "pylatexenc"
 md_maintainers = "@DenverCoder1"
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
     def id(self) -> str:
         return md_id
 
@@ -57,7 +57,7 @@ class Plugin(QueryHandler):
             actions=actions,
         )
 
-    def handleQuery(self, query: Query) -> None:
+    def handleTriggerQuery(self, query: Query) -> None:
         stripped = query.string.strip()
 
         if not stripped:

@@ -5,8 +5,8 @@ import subprocess
 
 from albert import *
 
-md_iid = "0.5"
-md_version = "1.2"
+md_iid = '1.0'
+md_version = "1.3"
 md_name = "CopyQ"
 md_description = "Access CopyQ clipboard"
 md_license = "BSD-2-Clause"
@@ -45,7 +45,7 @@ JSON.stringify(result);
 """
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
     def id(self):
         return md_id
 
@@ -61,7 +61,7 @@ class Plugin(QueryHandler):
     def defaultTrigger(self):
         return "cq "
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         items = []
         q_string = query.string
 

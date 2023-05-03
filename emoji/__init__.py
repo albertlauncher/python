@@ -13,8 +13,8 @@ from pathlib import Path
 
 from albert import Action, Item, QueryHandler, cacheLocation, setClipboardText
 
-md_iid = "0.5"
-md_version = "1.0"
+md_iid = '1.0'
+md_version = "1.1"
 md_name = "Emoji Picker"
 md_description = "Find emojis by name"
 md_license = "GPL-3.0"
@@ -60,7 +60,7 @@ def schedule_create_missing_icons(emojis):
     return executor
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
     def id(self):
         return __name__
 
@@ -126,7 +126,7 @@ class Plugin(QueryHandler):
 
                 yield emoji
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         query_tokens = query.string.strip().lower().split()
         if not query_tokens:
             return

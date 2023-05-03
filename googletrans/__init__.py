@@ -10,8 +10,8 @@ from locale import getdefaultlocale
 from time import sleep
 import os
 
-md_iid = "0.5"
-md_version = "1.0"
+md_iid = '1.0'
+md_version = "1.1"
 md_name = "Google Translate"
 md_description = "Translate sentences using googletrans"
 md_license = "BSD-3"
@@ -19,7 +19,7 @@ md_url = "https://github.com/albertlauncher/python/"
 md_lib_dependencies = "googletrans==3.1.0a0"
 md_maintainers = "@manuelschneid3r"
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     def id(self):
         return md_id
@@ -41,7 +41,7 @@ class Plugin(QueryHandler):
         self.translator = Translator()
         self.lang = getdefaultlocale()[0][0:2]
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         stripped = query.string.strip()
         if stripped:
             for number in range(50):

@@ -9,10 +9,10 @@ import subprocess
 from time import sleep
 import pathlib
 
-from albert import Action, Item, QueryHandler, runTerminal, openUrl
+from albert import Action, Item, TriggerQueryHandler, runTerminal, openUrl
 
-md_iid = "0.5"
-md_version = "1.6"
+md_iid = '1.0'
+md_version = "1.7"
 md_name = "PacMan"
 md_description = "Search, install and remove packages"
 md_license = "BSD-3"
@@ -20,7 +20,7 @@ md_url = "https://github.com/albertlauncher/python/tree/master/pacman"
 md_bin_dependencies = ["pacman", "expac"]
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     pkgs_url = "https://www.archlinux.org/packages/"
 
@@ -46,7 +46,7 @@ class Plugin(QueryHandler):
             str(pathlib.Path(__file__).parent / "arch.svg")
         ]
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         stripped = query.string.strip()
 
         # Update item on empty queries

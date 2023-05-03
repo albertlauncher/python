@@ -29,8 +29,8 @@ import inflect
 import pint
 
 
-md_iid = "0.5"
-md_version = "1.2"
+md_iid = '1.0'
+md_version = "1.3"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
@@ -309,7 +309,7 @@ class CurrencyConverter(UnitConverter):
         )
 
 
-class Plugin(albert.QueryHandler):
+class Plugin(albert.TriggerQueryHandler):
     """The plugin class"""
 
     unit_convert_regex = re.compile(
@@ -370,7 +370,7 @@ class Plugin(albert.QueryHandler):
     def defaultTrigger(self) -> str:
         return "convert "
 
-    def handleQuery(self, query: albert.Query) -> None:
+    def handleTriggerQuery(self, query: albert.TriggerQuery) -> None:
         query_string = query.string.strip()
         match = self.unit_convert_regex.fullmatch(query_string)
         if match:

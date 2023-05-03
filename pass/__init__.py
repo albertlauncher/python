@@ -4,8 +4,8 @@ import fnmatch
 import os
 from albert import *
 
-md_iid = "0.5"
-md_version = "1.2"
+md_iid = '1.0'
+md_version = "1.3"
 md_name = "Pass"
 md_description = "Manage passwords in pass"
 md_bin_dependencies = ["pass"]
@@ -16,7 +16,7 @@ HOME_DIR = os.environ["HOME"]
 PASS_DIR = os.environ.get("PASSWORD_STORE_DIR", os.path.join(HOME_DIR, ".password-store/"))
 ICON = ["xdg:dialog-password"]
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     def id(self):
         return md_id
@@ -33,7 +33,7 @@ class Plugin(QueryHandler):
     def defaultTrigger(self):
         return "pass "
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         if query.string.strip().startswith("generate"):
             self.generatePassword(query)
         else: 

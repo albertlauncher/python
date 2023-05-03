@@ -14,8 +14,8 @@ from time import sleep
 import json
 import os
 
-md_iid = "0.5"
-md_version = "1.6"
+md_iid = '1.0'
+md_version = "1.7"
 md_name = "AUR"
 md_description = "Query and install AUR packages"
 md_license = "BSD-3"
@@ -23,7 +23,7 @@ md_url = "https://github.com/albertlauncher/python/tree/master/aur"
 md_maintainers = "@manuelschneid3r"
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     aur_url = "https://aur.archlinux.org/packages/"
     baseurl = 'https://aur.archlinux.org/rpc/'
@@ -55,7 +55,7 @@ class Plugin(QueryHandler):
             info("No supported AUR helper found.")
             self.install_cmdline = None
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         for number in range(50):
             sleep(0.01)
             if not query.isValid:

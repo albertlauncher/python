@@ -8,11 +8,11 @@ from typing import Any
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albert import Action, Item, Query, QueryHandler, critical, info, openUrl  # pylint: disable=import-error
+from albert import Action, Item, TriggerQuery, TriggerQueryHandler, critical, info, openUrl  # pylint: disable=import-error
 
 
-md_iid = '0.5'
-md_version = '1.3'
+md_iid = '1.0'
+md_version = '1.4'
 md_name = 'YouTube'
 md_description = 'Query and open YouTube videos and channels'
 md_url = 'https://github.com/albertlauncher/python/'
@@ -111,7 +111,7 @@ def results_to_items(results: dict) -> list[Item]:
     return items
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
     temp_dir = None
 
     def id(self) -> str:
@@ -137,7 +137,7 @@ class Plugin(QueryHandler):
     def synopsis(self) -> str:
         return 'query'
 
-    def handleQuery(self, query: Query) -> None:
+    def handleTriggerQuery(self, query: TriggerQuery) -> None:
         query_str = query.string.strip()
         if not query_str:
             return
