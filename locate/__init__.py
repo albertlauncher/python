@@ -13,8 +13,8 @@ import pathlib
 import shlex
 import subprocess
 
-md_iid = "0.5"
-md_version = "1.7"
+md_iid = '1.0'
+md_version = "1.8"
 md_name = "Locate"
 md_description = "Find and open files using locate"
 md_license = "BSD-3"
@@ -22,7 +22,7 @@ md_url = "https://github.com/albertlauncher/python/tree/master/locate"
 md_bin_dependencies = "locate"
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     def id(self):
         return md_id
@@ -48,7 +48,7 @@ class Plugin(QueryHandler):
             str(pathlib.Path(__file__).parent / "locate.svg")
         ]
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         if len(query.string) > 2:
 
             try:

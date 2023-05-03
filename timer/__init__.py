@@ -18,8 +18,8 @@ from sys import platform
 import os
 import subprocess
 
-md_iid = "0.5"
-md_version = "1.4"
+md_iid = '1.0'
+md_version = "1.5"
 md_name = "Timer"
 md_description = "Set up timers"
 md_license = "BSD-2"
@@ -37,7 +37,7 @@ class Timer(threading.Timer):
         self.start()
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     def initialize(self):
         self.icons = [os.path.dirname(__file__)+"/time.svg"]
@@ -83,7 +83,7 @@ class Plugin(QueryHandler):
     def synopsis(self):
         return '[[hrs:]mins:]secs [name]'
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         if not query.isValid:
             return
 

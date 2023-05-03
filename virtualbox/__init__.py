@@ -5,8 +5,8 @@ from virtualbox.library import LockType, MachineState
 
 from albert import *
 
-md_iid = "0.5"
-md_version = "1.3"
+md_iid = '1.0'
+md_version = "1.4"
 md_name = "VirtualBox"
 md_description = "Manage your VirtualBox machines"
 md_license = "BSD-3"
@@ -47,7 +47,7 @@ def pauseVm(vm):
     with vm.create_session(LockType.shared) as session:
         session.console.pause()
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
     iconUrls = ["xdg:virtualbox", ":unknown"]
 
     def id(self):
@@ -65,7 +65,7 @@ class Plugin(QueryHandler):
     def defaultTrigger(self):
         return "vbox "
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         items = []
         pattern = query.string.strip().lower()
         try:

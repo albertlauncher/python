@@ -7,8 +7,8 @@ from urllib import request, parse
 import json
 import os
 
-md_iid = "0.5"
-md_version = "1.2"
+md_iid = '1.0'
+md_version = "1.3"
 md_name = "ArchLinux Wiki"
 md_description = "Search ArchLinux Wiki articles"
 md_license = "BSD-3"
@@ -16,7 +16,7 @@ md_url = "https://github.com/albertlauncher/python/tree/master/awiki"
 md_maintainers = "@manuelschneid3r"
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     icon = [os.path.dirname(__file__) + "/ArchWiki.svg"]
     baseurl = 'https://wiki.archlinux.org/api.php'
@@ -35,7 +35,7 @@ class Plugin(QueryHandler):
     def defaultTrigger(self):
         return "awiki "
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         stripped = query.string.strip()
         if stripped:
 

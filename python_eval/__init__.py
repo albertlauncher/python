@@ -6,8 +6,8 @@ from builtins import pow
 from math import *
 import os
 
-md_iid = "0.5"
-md_version = "1.3"
+md_iid = '1.0'
+md_version = "1.4"
 md_name = "Python Eval"
 md_description = "Evaluate Python code"
 md_license = "BSD-3"
@@ -15,7 +15,7 @@ md_url = "https://github.com/albertlauncher/python/tree/master/python_eval"
 md_maintainers = "@manuelschneid3r"
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     def id(self):
         return md_id
@@ -35,7 +35,7 @@ class Plugin(QueryHandler):
     def initialize(self):
         self.iconPath = os.path.dirname(__file__)+"/python.svg"
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         stripped = query.string.strip()
         if stripped:
             try:

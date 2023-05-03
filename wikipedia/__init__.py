@@ -10,8 +10,8 @@ from urllib import request, parse
 import json
 import os
 
-md_iid = "0.5"
-md_version = "1.5"
+md_iid = '1.0'
+md_version = "1.6"
 md_name = "Wikipedia"
 md_description = "Search Wikipedia articles."
 md_license = "BSD-3"
@@ -19,7 +19,7 @@ md_url = "https://github.com/albertlauncher/python/tree/master/wikipedia"
 md_maintainers = "@manuelschneid3r"
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     iconPath = ":wikipedia"
     baseurl = 'https://en.wikipedia.org/w/api.php'
@@ -63,7 +63,7 @@ class Plugin(QueryHandler):
             critical('Error getting languages (%s). Defaulting to EN.' % error)
 
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         stripped = query.string.strip()
         if stripped:
             # avoid rate limiting

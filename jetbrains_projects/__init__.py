@@ -15,8 +15,8 @@ from sys import platform
 from xml.etree import ElementTree
 from albert import *
 
-md_iid = "0.5"
-md_version = "1.2"
+md_iid = '1.0'
+md_version = "1.3"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
@@ -82,7 +82,7 @@ class Editor:
             return []
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
     executables = []
 
     def id(self):
@@ -161,7 +161,7 @@ class Plugin(QueryHandler):
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
-    def handleQuery(self, query: Query):
+    def handleTriggerQuery(self, query: TriggerQuery):
         editor_project_pairs = []
         for editor in self.editors:
             projects = editor.list_projects()
@@ -174,7 +174,7 @@ class Plugin(QueryHandler):
 
         query.add([self._make_item(editor, project, query) for editor, project in editor_project_pairs])
 
-    def _make_item(self, editor: Editor, project: Project, query: Query) -> Item:
+    def _make_item(self, editor: Editor, project: Project, query: TriggerQuery) -> Item:
         return Item(
             id="%s-%s-%s" % (editor.binary, project.path, project.last_opened),
             text=project.name,

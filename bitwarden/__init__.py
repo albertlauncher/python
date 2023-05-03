@@ -5,8 +5,8 @@ from subprocess import run, CalledProcessError
 
 from albert import *
 
-md_iid = "0.5"
-md_version = "1.1"
+md_iid = '1.0'
+md_version = "1.2"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
 md_license = "BSD-3"
@@ -15,7 +15,7 @@ md_maintainers = "@ovitor"
 md_credits = "Original author: @tylio"
 md_bin_dependencies = ["rbw"]
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
     def id(self):
         return md_id
 
@@ -51,7 +51,7 @@ class Plugin(QueryHandler):
 
         return passwords
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         if query.string.strip().lower() == "unlock":
             query.add(
                 Item(

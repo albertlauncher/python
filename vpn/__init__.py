@@ -2,8 +2,8 @@ from albert import *
 from collections import namedtuple
 import subprocess
 
-md_iid = "0.5"
-md_version = "1.2"
+md_iid = '1.0'
+md_version = "1.3"
 md_id = "vpn"
 md_name = "VPN"
 md_description = "Manage NetworkManager VPN connections"
@@ -14,7 +14,7 @@ md_credits = ["@janeklb"]
 md_bin_dependencies = ["nmcli"]
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     iconPath = ['xdg:network-wired']
 
@@ -56,7 +56,7 @@ class Plugin(QueryHandler):
         )
 
 
-    def handleQuery(self,query):
+    def handleTriggerQuery(self,query):
         if query.isValid:
             connections = self.getVPNConnections()
             if query.string:

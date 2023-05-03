@@ -11,8 +11,8 @@ import threading
 import time
 import os
 
-md_iid = "0.5"
-md_version = "1.1"
+md_iid = '1.0'
+md_version = "1.2"
 md_name = "Pomodoro"
 md_description = "Set up a Pomodoro timer"
 md_license = "BSD-3"
@@ -66,7 +66,7 @@ class PomodoroTimer:
         return self.timer is not None
 
 
-class Plugin(QueryHandler):
+class Plugin(TriggerQueryHandler):
 
     icon = [os.path.dirname(__file__) + "/pomodoro.svg"]
     default_pomodoro_duration = 25
@@ -92,7 +92,7 @@ class Plugin(QueryHandler):
     def synopsis(self):
         return "[duration [break duration [long break duration [count]]]]"
 
-    def handleQuery(self, query):
+    def handleTriggerQuery(self, query):
         item = Item(
             id=md_id,
             icon=self.icon,
