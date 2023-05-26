@@ -10,11 +10,10 @@ import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from itertools import islice
 from pathlib import Path
-
-from albert import Action, Item, QueryHandler, cacheLocation, setClipboardText
+from albert import *
 
 md_iid = '1.0'
-md_version = "1.1"
+md_version = "1.2"
 md_name = "Emoji Picker"
 md_description = "Find emojis by name"
 md_license = "GPL-3.0"
