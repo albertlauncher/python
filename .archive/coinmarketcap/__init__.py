@@ -19,7 +19,7 @@ import json
 __title__ = "CoinMarketCap"
 __version__ = "0.4.4"
 __triggers__ = "cmc "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 iconPath = os.path.dirname(__file__)+"/emblem-money.svg"
 thread = None

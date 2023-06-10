@@ -1,62 +1,87 @@
 # -*- coding: utf-8 -*-
 
-'''Convert TeX mathmode commands to unicode characters.
+#  Copyright (c) 2022 Manuel Schneider
 
-Synopsis: <trigger> <tex input>'''
-
+import os
 import re
 import unicodedata
 
+from albert import *
 from pylatexenc.latex2text import LatexNodes2Text
 
-from albert import *
+md_iid = '1.0'
+md_version = "1.1"
+md_name = "TeX to Unicode"
+md_description = "Convert TeX mathmode commands to unicode characters"
+md_license = "GPL-3.0"
+md_url = "https://github.com/albertlauncher/python/"
+md_lib_dependencies = "pylatexenc"
+md_maintainers = "@DenverCoder1"
 
-__title__ = 'TeX to unicode'
-__version__ = '0.4.0'
-__triggers__ = 'tex '
-__authors__ = 'Asger Hautop Drewsen'
-__py_deps__ = ['pylatexenc']
 
-COMBINING_LONG_SOLIDUS_OVERLAY = '\u0338'
+class Plugin(TriggerQueryHandler):
+    def id(self) -> str:
+        return md_id
 
+    def name(self) -> str:
+        return md_name
 
-def handleQuery(query):
-    if not query.isTriggered:
-        return
+    def description(self) -> str:
+        return md_description
 
-    item = Item()
-    stripped = query.string.strip()
+    def defaultTrigger(self) -> str:
+        return "tex "
 
-    success = False
-    if stripped:
-        if not stripped.startswith('\\'):
-            stripped = '\\' + stripped
+    def synopsis(self) -> str:
+        return "<tex input>"
+
+    def initialize(self) -> None:
+        self.COMBINING_LONG_SOLIDUS_OVERLAY = "\u0338"
+        self.icon = [os.path.dirname(__file__) + "/tex.png"]
+
+    def _create_item(self, text: str, subtext: str, can_copy: bool) -> Item:
+        actions = []
+        if can_copy:
+            actions.append(
+                Action(
+                    "copy",
+                    "Copy result to clipboard",
+                    lambda t=text: setClipboardText(t),
+                )
+            )
+        return Item(
+            id=md_id,
+            icon=self.icon,
+            text=text,
+            subtext=subtext,
+            actions=actions,
+        )
+
+    def handleTriggerQuery(self, query: Query) -> None:
+        stripped = query.string.strip()
+
+        if not stripped:
+            return
+
+        if not stripped.startswith("\\"):
+            stripped = "\\" + stripped
 
         # Remove double backslashes (newlines)
-        stripped = stripped.replace('\\\\', ' ')
+        stripped = stripped.replace("\\\\", " ")
 
         # pylatexenc doesn't support \not
-        stripped = stripped.replace('\\not', '@NOT@')
+        stripped = stripped.replace("\\not", "@NOT@")
 
-        # pylatexenc doesn't like backslashes at end of string
-        if not stripped.endswith('\\'):
-            n = LatexNodes2Text()
-            result = n.latex_to_text(stripped)
-            if result:
-                result = unicodedata.normalize('NFC', result)
-                result = re.sub(r'@NOT@\s*(\S)', '\\1' + COMBINING_LONG_SOLIDUS_OVERLAY, result)
-                result = result.replace('@NOT@', '')
-                result = unicodedata.normalize('NFC', result)
-                item.text = result
-                item.subtext = 'Result'
-                success = True
+        n = LatexNodes2Text()
+        result = n.latex_to_text(stripped)
 
-    if not success:
-        item.text = stripped
-        item.subtext = 'Type some TeX math'
-        success = False
+        if not result:
+            query.add(self._create_item(stripped, "Type some TeX math", False))
+            return
 
-    if success:
-        item.addAction(ClipAction('Copy result to clipboard', result))
-
-    return item
+        # success
+        result = unicodedata.normalize("NFC", result)
+        result = re.sub(r"@NOT@\s*(\S)", "\\1" + self.COMBINING_LONG_SOLIDUS_OVERLAY, result)
+        result = result.replace("@NOT@", "")
+        result = unicodedata.normalize("NFC", result)
+        query.add(self._create_item(result, "Result", True))

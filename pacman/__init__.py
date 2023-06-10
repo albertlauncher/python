@@ -1,107 +1,122 @@
 # -*- coding: utf-8 -*-
 
-"""Arch Linux Package Manager (pacman) extension.
+"""
+This plugin is a `pacman` (Arch Linux Package Manager) wrapper. You can update, search, install and remove \
+packages.
+"""
 
-The extension provides a way to install, remove and search for packages in the archlinux.org \
-database. If no search query is supplied, you have the option to do a system update. \
-Otherwise albert will try to find for packages matching the filter. For more information about \
-`pacman` please have a look at: https://wiki.archlinux.org/index.php/pacman
-
-Synopsis: <trigger> [filter]"""
-
-import re
 import subprocess
-import time
+from time import sleep
+import pathlib
 
-from albert import TermAction, iconLookup, Item, UrlAction
+from albert import Action, Item, TriggerQueryHandler, runTerminal, openUrl
 
-__title__ = "PacMan"
-__version__ = "0.4.4"
-__triggers__ = "pacman "
-__authors__ = ["Manuel Schneider", "Benedict Dudel"]
-__exec_deps__ = ["pacman", "expac"]
+md_iid = '1.0'
+md_version = "1.7"
+md_name = "PacMan"
+md_description = "Search, install and remove packages"
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/pacman"
+md_bin_dependencies = ["pacman", "expac"]
 
-iconPath = iconLookup(["archlinux-logo", "system-software-install"])
 
+class Plugin(TriggerQueryHandler):
 
-def handleQuery(query):
-    if query.isTriggered:
-        if not query.string.strip():
-            return Item(
-                id="%s-update" % __name__,
-                icon=iconPath,
+    pkgs_url = "https://www.archlinux.org/packages/"
+
+    def id(self):
+        return md_id
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def synopsis(self):
+        return "<package name>"
+
+    def defaultTrigger(self):
+        return "pac "
+
+    def initialize(self):
+        self.icons = [
+            "xdg:archlinux-logo",
+            "xdg:system-software-install",
+            str(pathlib.Path(__file__).parent / "arch.svg")
+        ]
+
+    def handleTriggerQuery(self, query):
+        stripped = query.string.strip()
+
+        # Update item on empty queries
+        if not stripped:
+            query.add(Item(
+                id="%s-update" % md_id,
                 text="Pacman package manager",
                 subtext="Enter the package you are looking for or hit enter to update.",
-                completion=__triggers__,
+                icon=self.icons,
                 actions=[
-                    TermAction("Update the system (no confirm)", "sudo pacman -Syu --noconfirm"),
-                    TermAction("Update the system", "sudo pacman -Syu")
+                    Action("up-nc", "Update packages (no confirm)",
+                           lambda: runTerminal("sudo pacman -Syu --noconfirm")),
+                    Action("up", "Update packages", lambda: runTerminal("sudo pacman -Syu")),
+                    Action("up-cache", "Update pacman cache", lambda: runTerminal("sudo pacman -Sy"))
                 ]
-            )
-
-        time.sleep(0.1)
-        if not query.isValid:
+            ))
             return
 
-        # Get data. Results are sorted so we can merge in O(n)
-        proc_s = subprocess.Popen(["expac", "-Ss", "%n\t%v\t%r\t%d\t%u\t%E", query.string],
+        # avoid rate limiting
+        for number in range(50):
+            sleep(0.01)
+            if not query.isValid:
+                return
+
+        # Get data. Results are sorted, so we can merge in O(n)
+        proc_s = subprocess.Popen(["expac", "-Ss", "%n\t%v\t%r\t%d\t%u\t%E", stripped],
                                   stdout=subprocess.PIPE, universal_newlines=True)
-        proc_q = subprocess.Popen(["expac", "-Qs", "%n", query.string], stdout=subprocess.PIPE, universal_newlines=True)
+        proc_q = subprocess.Popen(["expac", "-Qs", "%n", stripped], stdout=subprocess.PIPE, universal_newlines=True)
         proc_q.wait()
 
         items = []
-        pattern = re.compile(query.string, re.IGNORECASE)
         local_pkgs = set(proc_q.stdout.read().split('\n'))
         remote_pkgs = [tuple(line.split('\t')) for line in proc_s.stdout.read().split('\n')[:-1]]  # newline at end
 
         for pkg_name, pkg_vers, pkg_repo, pkg_desc, pkg_purl, pkg_deps in remote_pkgs:
-            if not pattern.search(pkg_name):
+            if stripped not in pkg_name :
                 continue
 
             pkg_installed = True if pkg_name in local_pkgs else False
 
+            actions = []
+            if pkg_installed:
+                actions.extend([
+                    Action("rem", "Remove", lambda n=pkg_name: runTerminal("sudo pacman -Rs %s" % n)),
+                    Action("reinst", "Reinstall", lambda n=pkg_name: runTerminal("sudo pacman -S %s" % n))
+                ])
+            else:
+                actions.append(Action("inst", "Install", lambda n=pkg_name: runTerminal("sudo pacman -S %s" % n)))
+            actions.append(Action("pkg_url", "Show on packages.archlinux.org",
+                                  lambda r=pkg_repo, n=pkg_name: openUrl(f"{r}/x86_64/{n}/")))
+            if pkg_purl:
+                actions.append(Action("proj_url", "Show project website", lambda u=pkg_purl: openUrl(u)))
+
             item = Item(
-                id="%s:%s:%s" % (__name__, pkg_repo, pkg_name),
-                icon=iconPath,
-                text="%s <i>%s</i> [%s]"
-                     % (pattern.sub(lambda m: "<u>%s</u>" % m.group(0), pkg_name), pkg_vers, pkg_repo),
-                subtext=("<b>[Installed]</b> %s%s" if pkg_installed else "%s%s")
-                        % (pkg_desc, (" <i>(%s)</i>" % pkg_deps) if pkg_deps else ""),
-                completion="%s%s" % (query.trigger, pkg_name)
+                id="%s_%s_%s" % (md_id, pkg_repo, pkg_name),
+                icon=self.icons,
+                text="%s %s [%s]" % (pkg_name, pkg_vers, pkg_repo),
+                subtext=f"{pkg_desc} [Installed]" if pkg_installed else f"{pkg_desc}",
+                completion="%s%s" % (query.trigger, pkg_name),
+                actions=actions
             )
             items.append(item)
 
-            if pkg_installed:
-                item.addAction(TermAction("Remove", "sudo pacman -Rs %s" % pkg_name))
-                item.addAction(TermAction("Reinstall", "sudo pacman -S %s" % pkg_name))
-            else:
-                item.addAction(TermAction("Install", "sudo pacman -S %s" % pkg_name))
-            item.addAction(UrlAction("Show on packages.archlinux.org", "https://www.archlinux.org/packages/%s/x86_64/%s/" % (pkg_repo, pkg_name)))
-            if pkg_purl:
-                item.addAction(UrlAction("Show project website", pkg_purl))
-
         if items:
-            return items
+            query.add(items)
         else:
-            return Item(
-                id="%s-empty" % __name__,
-                icon=iconPath,
+            query.add(Item(
+                id="%s-empty" % md_id,
                 text="Search on archlinux.org",
                 subtext="No results found in the local database",
-                actions=[
-                    UrlAction("Search on archlinux.org",
-                              "https://www.archlinux.org/packages/?q=%s" % query.string.strip())
-                ]
-            )
-
-    elif len(query.string.strip()) > 0 and ("pacman".startswith(query.string.lower()) or "update".startswith(query.string.lower())):
-        return Item(
-            id="%s-update" % __name__,
-            icon=iconPath,
-            text="Update all packages on the system",
-            subtext="Synchronizes the repository databases and updates the system's packages",
-            actions=[
-                TermAction("Update the system (no confirm)", "sudo pacman -Syu --noconfirm"),
-                TermAction("Update the system", "sudo pacman -Syu")
-            ]
-        )
+                icon=self.icons,
+                actions=[Action("search", "Search on archlinux.org", lambda: openUrl(f"{self.pkgs_url}?q={stripped}"))]
+            ))

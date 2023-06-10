@@ -1,6 +1,0 @@
-[submodule "xkcd"]
-	path = xkcd
-	url = https://github.com/bergercookie/xkcd-albert-plugin
-[submodule "jetbrains_projects"]
-	path = jetbrains_projects
-	url = https://github.com/mqus/jetbrains-albert-plugin.git

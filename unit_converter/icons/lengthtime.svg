@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg fill="#ff3bf8" stroke-width="0" viewBox="0 0 576 576" height="576px" width="576px" version="1.1" id="svg4" sodipodi:docname="lengthtime.svg" inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+   <defs id="defs8" />
+   <sodipodi:namedview id="namedview6" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" showgrid="false" inkscape:zoom="1.21875" inkscape:cx="285.94872" inkscape:cy="378.66667" inkscape:window-width="1600" inkscape:window-height="844" inkscape:window-x="0" inkscape:window-y="32" inkscape:window-maximized="1" inkscape:current-layer="svg4" />
+   <path d="M 288,64 C 128.94,64 0,192.94 0,352 c 0,52.8 14.25,102.26 39.06,144.8 5.61,9.62 16.3,15.2 27.44,15.2 h 443 c 11.14,0 21.83,-5.58 27.44,-15.2 C 561.75,454.26 576,404.8 576,352 576,192.94 447.06,64 288,64 Z m 0,64 c 14.71,0 26.58,10.13 30.32,23.65 -1.11,2.26 -2.64,4.23 -3.45,6.67 l -9.22,27.67 c -5.13,3.49 -10.97,6.01 -17.64,6.01 -17.67,0 -32,-14.33 -32,-32 0,-17.67 14.32,-32 31.99,-32 z M 96,416 c -17.67,0 -32,-14.33 -32,-32 0,-17.67 14.33,-32 32,-32 17.67,0 32,14.33 32,32 0,17.67 -14.33,32 -32,32 z m 48,-160 c -17.67,0 -32,-14.33 -32,-32 0,-17.67 14.33,-32 32,-32 17.67,0 32,14.33 32,32 0,17.67 -14.33,32 -32,32 z m 246.77,-72.41 -61.33,184 C 343.13,379.33 352,396.54 352,416 c 0,11.72 -3.38,22.55 -8.88,32 H 232.88 c -5.5,-9.45 -8.88,-20.28 -8.88,-32 0,-33.94 26.5,-61.43 59.9,-63.59 L 345.24,168.4 c 4.17,-12.56 17.73,-19.45 30.36,-15.17 12.57,4.19 19.35,17.79 15.17,30.36 z m 14.66,57.2 15.52,-46.55 c 3.47,-1.29 7.13,-2.23 11.05,-2.23 17.67,0 32,14.33 32,32 0,17.67 -14.33,32 -32,32 -11.38,-0.01 -20.89,-6.28 -26.57,-15.22 z M 480,416 c -17.67,0 -32,-14.33 -32,-32 0,-17.67 14.33,-32 32,-32 17.67,0 32,14.33 32,32 0,17.67 -14.33,32 -32,32 z" id="path2" />
+</svg>

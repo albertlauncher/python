@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+import asyncio
+import json
+import re
+
+from requests_html import AsyncHTMLSession
+from rich.progress import track
+
+LINE_RE = re.compile(
+    r"""
+    ^
+    (?P<codepoints> .*\S)
+    \s*;\s*
+    (?P<status> \S+)
+    \s*\#\s*
+    (?P<emoji> \S+)
+    \s*
+    (?P<version> E\d+.\d+)
+    \s*
+    (?P<name> .+)
+    $
+""",
+    re.VERBOSE,
+)
+
+
+async def get_aliases(session, name):
+    emojipedia_name = name.replace(" ", "-")
+    url = f"https://emojipedia.org/{emojipedia_name}/"
+    r = await session.get(url)
+    if r.status_code != 200:
+        return (name, [])
+
+    aliases = r.html.find(".aliases li")
+    res = []
+    for alias in aliases:
+        alias = alias.text.split(maxsplit=1)[1]
+        alias = alias.replace("\N{NO-BREAK SPACE}", " ")  # Replace nbsp
+        res.append(alias)
+    return (name, res)
+
+
+async def main():
+    session = AsyncHTMLSession()
+    aliases = {}
+
+    aws = []
+    with open("emoji-test.txt") as f:
+        for l in f:
+            if m := LINE_RE.match(l):
+                d = m.groupdict()
+                if d["status"] != "fully-qualified":
+                    continue
+
+                aws.append(get_aliases(session, d["name"]))
+
+    for aw in track(asyncio.as_completed(aws), total=len(aws)):
+        name, res = await aw
+        if res:
+            aliases[name] = res
+
+        print(name, res)
+
+    with open("aliases.json", "w") as f:
+        json.dump(aliases, f)
+
+
+asyncio.run(main())

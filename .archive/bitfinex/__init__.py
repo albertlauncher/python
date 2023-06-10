@@ -18,7 +18,7 @@ from threading import Thread, Event
 __title__ = "BitFinex"
 __version__ = "0.4.0"
 __triggers__ = "bfx "
-__authors__ = "manuelschneid3r"
+__authors__ = "Manuel S."
 
 iconPath = os.path.dirname(__file__) + "/Bitfinex.svg"
 symbolsEndpoint = "https://api.bitfinex.com/v1/symbols"
@@ -76,7 +76,7 @@ def makeItem(market):
         icon=iconPath,
         text="%s/%s" % (market.base, market.quote),
         subtext="Open the %s/%s market on bitfinex.com" % (market.base, market.quote),
-        completion="%s%s%s" % (__trigger_s_, market.base, market.quote),
+        completion="%s%s%s" % (__triggers__, market.base, market.quote),
         actions=[
             UrlAction("Show market in browser", url),
             ClipAction('Copy URL to clipboard', url)

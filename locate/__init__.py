@@ -1,55 +1,90 @@
 # -*- coding: utf-8 -*-
+#  Copyright (c) 2022 Manuel Schneider
 
-"""Find and open files.
+"""
+`locate` wrapper. Note that it is up to you to ensure that the locate database is \
+up to date. Pass params as necessary. The input is split using a shell lexer.
+"""
 
-Unix 'locate' wrapper extension. Note that it is up to you to ensure that the locate database is \
-up to date.
 
-This extensions is intended as secondary way to find files. Use the files extension for often used \
-files and fast lookups and this extension for everything else.
-
-Synopsis: <trigger> [filter]
-
-where ' searches basenames and '' searches the full path  """
-
+from albert import *
 import os
-import re
+import pathlib
+import shlex
 import subprocess
 
-from albert import Item, TermAction, UrlAction, iconLookup
+md_iid = '1.0'
+md_version = "1.8"
+md_name = "Locate"
+md_description = "Find and open files using locate"
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/locate"
+md_bin_dependencies = "locate"
 
-__title__ = "Locate"
-__version__ = "0.4.1"
-__triggers__ = ["''", "'"]  # Order matters since 2 is prefix of 1
-__authors__ = "manuelschneid3r"
-__exec_deps__ = ['locate']
 
-iconPath = iconLookup(["preferences-system-search", "system-search" "search", "text-x-generic"])
+class Plugin(TriggerQueryHandler):
 
-def handleQuery(query):
-    results = []
-    if query.isTriggered:
+    def id(self):
+        return md_id
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def defaultTrigger(self):
+        return "'"
+
+    def synopsis(self):
+        return "<locate params>"
+
+    def initialize(self):
+        self.icons = [
+            "xdg:preferences-system-search",
+            "xdg:system-search",
+            "xdg:search",
+            "xdg:text-x-generic",
+            str(pathlib.Path(__file__).parent / "locate.svg")
+        ]
+
+    def handleTriggerQuery(self, query):
         if len(query.string) > 2:
-            pattern = re.compile(query.string, re.IGNORECASE)
-            proc = subprocess.Popen(['locate', '-i' if query.trigger == "''" else "-bi", query.string], stdout=subprocess.PIPE)
-            for line in proc.stdout:
-                path = line.decode().strip()
+
+            try:
+                args = shlex.split(query.string)
+            except ValueError:
+                return
+
+            result = subprocess.run(['locate', *args], stdout=subprocess.PIPE, text=True)
+            if not query.isValid:
+                return
+            lines = sorted(result.stdout.splitlines(), reverse=True)
+            if not query.isValid:
+                return
+
+            for path in lines:
                 basename = os.path.basename(path)
-                results.append(
+                query.add(
                     Item(
                         id=path,
-                        icon=iconPath,
-                        text=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), basename),
+                        text=basename,
                         subtext=path,
-                        completion="%s%s" % (__triggers__, basename),
-                        actions=[UrlAction("Open", "file://%s" % path)]))
+                        icon=self.icons,
+                        actions=[
+                            Action("open", "Open", lambda p=path: openUrl("file://%s" % p))
+                        ]
+                    )
+                )
         else:
-            results.append(
+            query.add(
                 Item(
-                    id=__title__,
-                    icon=iconPath,
+                    id="updatedb",
                     text="Update locate database",
-                    subtext="Type at least three chars for a seach",
-                    actions=[TermAction("Update database", ["sudo", "updatedb"])]))
-
-    return results
+                    subtext="Type at least three chars for a search",
+                    icon=self.icons,
+                    actions=[
+                        Action("update", "Update", lambda: runTerminal("sudo updatedb"))
+                    ]
+                )
+            )

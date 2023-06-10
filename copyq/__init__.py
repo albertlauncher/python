@@ -1,24 +1,19 @@
 # -*- coding: utf-8 -*-
 
-"""Access CopyQ clipboard.
-
-Synopsis: <trigger> [filter]"""
-
-import html
 import json
-import re
 import subprocess
 
 from albert import *
 
-__title__ = "CopyQ"
-__version__ = "0.4.1"
-__triggers__ = "cq "
-__authors__ = "manuelschneid3r"
-__exec_deps__ = ["copyq"]
+md_iid = '1.0'
+md_version = "1.3"
+md_name = "CopyQ"
+md_description = "Access CopyQ clipboard"
+md_license = "BSD-2-Clause"
+md_url = "https://github.com/albertlauncher/python"
+md_bin_dependencies = ["copyq"]
+md_maintainers = "@BarrensZeppelin"
 
-
-iconPath = iconLookup('copyq')
 
 copyq_script_getAll = r"""
 var result=[];
@@ -49,44 +44,54 @@ for ( var i = 0; i < size(); ++i ) {
 JSON.stringify(result);
 """
 
-def copyq_get_matches(substring):
-    script = copyq_script_getMatches % substring
-    proc = subprocess.run(['copyq', '-'], input=script.encode(), stdout=subprocess.PIPE)
-    return json.loads(proc.stdout.decode())
 
+class Plugin(TriggerQueryHandler):
+    def id(self):
+        return md_id
 
-def copyq_get_all():
-    proc = subprocess.run(['copyq', '-'], input=copyq_script_getAll.encode(), stdout=subprocess.PIPE)
-    return json.loads(proc.stdout.decode())
+    def name(self):
+        return md_name
 
+    def description(self):
+        return md_description
 
-def handleQuery(query):
-    if query.isTriggered:
-        query.disableSort()
+    def synopsis(self):
+        return "<filter>"
 
+    def defaultTrigger(self):
+        return "cq "
+
+    def handleTriggerQuery(self, query):
         items = []
-        pattern = re.compile(query.string, re.IGNORECASE)
-        json_arr = copyq_get_matches(query.string) if query.string else copyq_get_all()
+        q_string = query.string
+
+        script = copyq_script_getMatches % q_string if q_string else copyq_script_getAll
+        proc = subprocess.run(["copyq", "-"], input=script.encode(), stdout=subprocess.PIPE)
+        json_arr = json.loads(proc.stdout.decode())
+
         for json_obj in json_arr:
-            row = json_obj['row']
-            text = json_obj['text']
+            row = json_obj["row"]
+            text = json_obj["text"]
             if not text:
-                text = "<i>No text</i>"
+                text = "No text"
             else:
-                text = html.escape(" ".join(filter(None, text.replace("\n", " ").split(" "))))
-                if query.string:
-                    text = pattern.sub(lambda m: "<u>%s</u>" % m.group(0), text)
+                text = " ".join(filter(None, text.replace("\n", " ").split(" ")))
+
+            act = lambda script, row=row: (
+                lambda: runDetachedProcess(["copyq", script % row])
+            )
             items.append(
                 Item(
-                    id=__title__,
-                    icon=iconPath,
+                    id=md_id,
+                    icon=["xdg:copyq"],
                     text=text,
-                    subtext="%s: %s" % (row, ", ".join(json_obj['mimetypes'])),
+                    subtext="%s: %s" % (row, ", ".join(json_obj["mimetypes"])),
                     actions=[
-                        ProcAction("Paste", ["copyq", "select(%s); sleep(60); paste();" % row]),
-                        ProcAction("Copy", ["copyq", "select(%s);" % row]),
-                        ProcAction("Remove", ["copyq", "remove(%s);" % row]),
-                    ]
+                        Action("paste", "Paste", act("select(%s); sleep(60); paste();")),
+                        Action("copy", "Copy", act("select(%s);")),
+                        Action("remove", "Remove", act("remove(%s);")),
+                    ],
                 )
             )
-        return items
+
+        query.add(items)

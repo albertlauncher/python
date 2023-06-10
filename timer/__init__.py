@@ -1,69 +1,91 @@
 # -*- coding: utf-8 -*-
 
-"""Set up timers.
+"""
+Takes arguments in the form of '`[[hrs:]mins:]secs [name]`'. Empty fields resolve to `0`. \
+Fields exceeding the maximum amount of the time interval are automatically refactorized.
 
-Lists all timers when triggered. Additional arguments in the form of "[[hours:]minutes:]seconds
-[name]" let you set triggers. Empty field resolve to 0, e.g. "96::" starts a 96 hours timer.
-Fields exceeding the maximum amount of the time interval are automatically refactorized, e.g.
-"9:120:3600" resolves to 12 hours.
+Examples:
+- `5:` starts a 5 minutes timer
+- `1:: ` starts a 1 hour timer
+- `120:` starts a 2 hours timer
+"""
 
-Synopsis: <trigger> [[[hours]:][minutes]:]seconds [name]"""
-
-from albert import warning, Item, FuncAction
-from threading import Timer
+from albert import *
 from time import strftime, time, localtime
-import dbus
-import os
 from datetime import timedelta
+import threading
+from sys import platform
+import os
 import subprocess
 
-__title__ = "Timer"
-__version__ = "0.4.3"
-__triggers__ = "timer "
-__authors__ = ["manuelschneid3r", "googol42"]
-__py_deps__ = ["dbus"]
+md_iid = '1.0'
+md_version = "1.5"
+md_name = "Timer"
+md_description = "Set up timers"
+md_license = "BSD-2"
+md_url = "https://github.com/albertlauncher/python/tree/master/timer"
+md_maintainers = ["@manuelschneid3r", "@googol42", "@uztnus"]
 
-iconPath = os.path.dirname(__file__)+"/time.svg"
-soundPath = os.path.dirname(__file__)+"/bing.wav"
-timers = []
+class Timer(threading.Timer):
 
-bus_name = "org.freedesktop.Notifications"
-object_path = "/org/freedesktop/Notifications"
-interface = bus_name
-
-class AlbertTimer(Timer):
-
-    def __init__(self, interval, name):
-
-        def timeout():
-            subprocess.Popen(["aplay", soundPath])
-            global timers
-            timers.remove(self)
-            title = 'Timer "%s"' % self.name if self.name else 'Timer'
-            text = "Timed out at %s" % strftime("%X", localtime(self.end))
-            notify = dbus.Interface(dbus.SessionBus().get_object(bus_name, object_path), interface)
-            notify.Notify(__title__, 0, iconPath, title, text, [], {"urgency":2}, 0)
-
-        super().__init__(interval=interval, function=timeout)
-        self.interval = interval
+    def __init__(self, interval, name, callback):
+        super().__init__(interval=interval,
+                         function=lambda: callback(self))
         self.name = name
         self.begin = int(time())
         self.end = self.begin + interval
         self.start()
 
 
-def startTimer(interval, name):
-    global timers
-    timers.append(AlbertTimer(interval, name))
+class Plugin(TriggerQueryHandler):
 
+    def initialize(self):
+        self.icons = [os.path.dirname(__file__)+"/time.svg"]
+        self.soundPath = os.path.dirname(__file__)+"/bing.wav"
+        self.timers = []
 
-def deleteTimer(timer):
-    global timers
-    timers.remove(timer)
-    timer.cancel()
+    def finalize(self):
+        for timer in self.timers:
+            timer.cancel()
+        self.timers.clear()
 
-def handleQuery(query):
-    if query.isTriggered:
+    def startTimer(self, interval, name):
+        self.timers.append(Timer(interval, name, self.onTimerTimeout))
+
+    def deleteTimer(self, timer):
+        self.timers.remove(timer)
+        timer.cancel()
+
+    def onTimerTimeout(self, timer):
+        title = 'Timer "%s"' % timer.name if timer.name else 'Timer'
+        text = "Timed out at %s" % strftime("%X", localtime(timer.end))
+        sendTrayNotification(title, text)
+
+        if platform == "linux":
+            subprocess.Popen(["aplay", self.soundPath])
+        elif platform == "darwin":
+            subprocess.Popen(["afplay", self.soundPath])
+
+        self.deleteTimer(timer)
+
+    def id(self):
+        return md_id
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def defaultTrigger(self):
+        return 'timer '
+
+    def synopsis(self):
+        return '[[hrs:]mins:]secs [name]'
+
+    def handleTriggerQuery(self, query):
+        if not query.isValid:
+            return
 
         if query.string.strip():
             args = query.string.strip().split(maxsplit=1)
@@ -71,10 +93,10 @@ def handleQuery(query):
             name = args[1] if 1 < len(args) else ''
             if not all(field.isdigit() or field == '' for field in fields):
                 return Item(
-                    id=__title__,
+                    id=self.name(),
                     text="Invalid input",
-                    subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __triggers__,
-                    icon=iconPath
+                    subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % self.defaultTrigger(),
+                    icon=self.icons
                 )
 
             seconds = 0
@@ -82,37 +104,30 @@ def handleQuery(query):
             for i in range(len(fields)):
                 seconds += int(fields[i] if fields[i] else 0)*(60**i)
 
-            return Item(
-                id=__title__,
+            query.add(Item(
+                id=self.name(),
                 text=str(timedelta(seconds=seconds)),
                 subtext='Set a timer with name "%s"' % name if name else 'Set a timer',
-                icon=iconPath,
-                actions=[FuncAction("Set timer", lambda sec=seconds: startTimer(sec, name))]
-            )
+                icon=self.icons,
+                actions=[Action("set-timer", "Set timer", lambda sec=seconds: self.startTimer(sec, name))]
+            ))
+            return
 
-        else:
-            # List timers
-            items = []
-            for timer in timers:
+        # List timers
+        items = []
+        for timer in self.timers:
+            m, s = divmod(timer.interval, 60)
+            h, m = divmod(m, 60)
+            identifier = "%d:%02d:%02d" % (h, m, s)
 
-                m, s = divmod(timer.interval, 60)
-                h, m = divmod(m, 60)
-                identifier = "%d:%02d:%02d" % (h, m, s)
+            timer_name_with_quotes = '"%s"' % timer.name if timer.name else ''
+            items.append(Item(
+                id=self.name(),
+                text='Delete timer %s [%s]' % (timer_name_with_quotes, identifier),
+                subtext="Times out %s" % strftime("%X", localtime(timer.end)),
+                icon=self.icons,
+                actions=[Action("delete-timer", "Delete timer", lambda timer=timer: self.deleteTimer(timer))]
+            ))
 
-                timer_name_with_quotes = '"%s"' % timer.name if timer.name else ''
-                items.append(Item(
-                    id=__title__,
-                    text='Delete timer <i>%s [%s]</i>' % (timer_name_with_quotes, identifier),
-                    subtext="Times out %s" % strftime("%X", localtime(timer.end)),
-                    icon=iconPath,
-                    actions=[FuncAction("Delete timer", lambda timer=timer: deleteTimer(timer))]
-                ))
-            if items:
-                return items
-            # Display hint item
-            return Item(
-                id=__title__,
-                text="Add timer",
-                subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % __triggers__,
-                icon=iconPath
-            )
+        if items:
+            query.add(items)

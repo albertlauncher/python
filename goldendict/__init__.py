@@ -1,26 +1,44 @@
-# -*- coding: utf-8 -*-
+from albert import Action, Item, TriggerQuery, TriggerQueryHandler, runDetachedProcess  # pylint: disable=import-error
 
-"""Fire up an external search in GoldenDict.
+md_iid = '1.0'
+md_version = '1.2'
+md_name = 'GoldenDict'
+md_description = 'Searches in GoldenDict'
+md_url = 'https://github.com/albertlauncher/python/'
+md_maintainers = '@stevenxxiu'
+md_bin_dependencies = ['goldendict']
 
-Synopsis: <trigger> <query>"""
-
-from subprocess import run
-from albert import Item, ProcAction, iconLookup
-
-__title__ = "GoldenDict"
-__version__ = "0.4.0"
-__triggers__ = "gd "
-__authors__ = "manuelschneid3r"
-__exec_deps__ = ["goldendict"]
-
-iconPath = iconLookup('goldendict')
+TRIGGER = 'gd'
+ICON_PATH = '/usr/share/pixmaps/goldendict.png'
 
 
-def handleQuery(query):
-    if query.isTriggered:
-        return Item(id=__title__,
-                    icon=iconPath,
-                    text=__title__,
-                    subtext="Look up '%s' using %s" % (query.string, __title__),
-                    actions=[ProcAction("Start query in %s" % __title__,
-                                        ["goldendict", query.string])])
+class Plugin(TriggerQueryHandler):
+    def id(self) -> str:
+        return __name__
+
+    def name(self) -> str:
+        return md_name
+
+    def description(self) -> str:
+        return md_description
+
+    def defaultTrigger(self) -> str:
+        return f'{TRIGGER} '
+
+    def synopsis(self) -> str:
+        return 'query'
+
+    def handleTriggerQuery(self, query: TriggerQuery) -> None:
+        query_str = query.string.strip()
+        if not query_str:
+            return
+
+        query.add(
+            Item(
+                id=md_name,
+                text=md_name,
+                subtext=f'Look up {query_str} using <i>GoldenDict</i>',
+                icon=[ICON_PATH],
+                actions=[Action(md_name, md_name, lambda: runDetachedProcess(['goldendict', query_str]))],
+            )
+        )

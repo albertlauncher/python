@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
+#  Copyright (c) 2022 Manuel Schneider
 
-"""Set up your personal Pomodoro timer.
-
-See https://en.wikipedia.org/wiki/Pomodoro_Technique
-
-Synopsis: <trigger> [duration [break duration [long break duration [count]]]]"""
+"""
+https://en.wikipedia.org/wiki/Pomodoro_Technique
+"""
 
 from albert import *
 import subprocess
 import threading
-import re
 import time
 import os
 
-__title__ = "Pomodoro"
-__version__ = "0.4.0"
-__authors__ = "manuelschneid3r"
+md_iid = '1.0'
+md_version = "1.2"
+md_name = "Pomodoro"
+md_description = "Set up a Pomodoro timer"
+md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/pomodoro"
+md_maintainers = "@manuelschneid3r"
 
 
 class PomodoroTimer:
@@ -29,20 +31,17 @@ class PomodoroTimer:
             duration = self.pomodoroDuration * 60
             self.timer = threading.Timer(duration, self.timeout)
             self.endTime = time.time() + duration
-            debug("Pomodoro start (%s min)" % self.pomodoroDuration)
-            playSound(1)
+            sendTrayNotification("PomodoroTimer", "Let's go to work!")
             self.timer.start()
         else:
             self.remainingTillLongBreak -= 1
             if self.remainingTillLongBreak == 0:
                 self.remainingTillLongBreak = self.count
+                sendTrayNotification("PomodoroTimer", "Take a long break (%s min)" % self.longBreakDuration)
                 duration = self.longBreakDuration * 60
-                playSound(3)
-                debug("Pomodoro long break (%s min)" % self.breakDuration)
             else:
+                sendTrayNotification("PomodoroTimer", "Take a short break (%s min)" % self.breakDuration)
                 duration = self.breakDuration * 60
-                playSound(2)
-                debug("Pomodoro break (%s min)" % self.breakDuration)
             self.endTime = time.time() + duration
             self.timer = threading.Timer(duration, self.timeout)
             self.timer.start()
@@ -67,71 +66,60 @@ class PomodoroTimer:
         return self.timer is not None
 
 
-iconPath = os.path.dirname(__file__)+"/pomodoro.svg"
-soundPath = os.path.dirname(__file__)+"/bing.wav"
-pomodoro = PomodoroTimer()
+class Plugin(TriggerQueryHandler):
 
+    icon = [os.path.dirname(__file__) + "/pomodoro.svg"]
+    default_pomodoro_duration = 25
+    default_break_duration = 5
+    default_longbreak_duration = 15
+    default_pomodoro_count = 4
 
-def playSound(num):
-    for x in range(num):
-        t = threading.Timer(0.5*x, lambda: subprocess.Popen(["aplay", soundPath]))
-        t.start()
+    def id(self):
+        return md_id
 
+    def name(self):
+        return md_name
 
-def handleQuery(query):
-    tokens = query.string.split()
-    if tokens and "pomodoro".startswith(tokens[0].lower()):
+    def description(self):
+        return md_description
 
-        global pomodoro
-        pattern = re.compile(query.string, re.IGNORECASE)
+    def defaultTrigger(self):
+        return "pomo "
+
+    def initialize(self):
+        self.pomodoro = PomodoroTimer()
+
+    def synopsis(self):
+        return "[duration [break duration [long break duration [count]]]]"
+
+    def handleTriggerQuery(self, query):
         item = Item(
-            id=__title__,
-            icon=iconPath,
-            text=pattern.sub(lambda m: "<u>%s</u>" % m.group(0), "Pomodoro Timer")
+            id=md_id,
+            icon=self.icon,
+            text=md_name
         )
 
-        if len(tokens) == 1 and pomodoro.isActive():
-            item.addAction(FuncAction("Stop", lambda p=pomodoro: p.stop()))
-            if pomodoro.isBreak:
+        if self.pomodoro.isActive():
+            item.actions = [Action("stop", "Stop", lambda p=self.pomodoro: p.stop())]
+            if self.pomodoro.isBreak:
                 whatsNext = "Pomodoro"
             else:
-                whatsNext = "Long break" if pomodoro.remainingTillLongBreak == 1 else "Short break"
-            item.subtext = "Stop pomodoro (Next: %s at %s)" % (whatsNext, time.strftime("%X",
-                                                                                time.localtime(pomodoro.endTime)))
-            return item
+                whatsNext = "Long break" if self.pomodoro.remainingTillLongBreak == 1 else "Short break"
+            item.subtext = "Stop pomodoro (Next: %s at %s)" \
+                           % (whatsNext, time.strftime("%X", time.localtime(self.pomodoro.endTime)))
+            query.add(item)
 
-        p_duration = 25
-        b_duration = 5
-        lb_duration = 15
-        count = 4
-
-        item.subtext = "Invalid parameters. Use <i> pomodoro [duration [break duration [long break duration [count]]]]</i>"
-        if len(tokens) > 1:
-            if not tokens[1].isdigit():
-                return item
-            p_duration = int(tokens[1])
-
-        if len(tokens) > 2:
-            if not tokens[2].isdigit():
-                return item
-            b_duration = int(tokens[2])
-
-        if len(tokens) > 3:
-            if not tokens[3].isdigit():
-                return item
-            lb_duration = int(tokens[3])
-
-        if len(tokens) > 4:
-            if not tokens[4].isdigit():
-                return item
-            count = int(tokens[4])
-
-        if len(tokens) > 5:
-            return item
-
-        item.subtext = "Start new pomodoro timer (%s min/Break %s min/Long break %s min/Count %s)" % (p_duration, b_duration, lb_duration, count)
-        item.addAction(FuncAction("Start",
-                                  lambda p=p_duration, b=b_duration, lb=lb_duration, c=count:
-                                  pomodoro.start(p, b, lb, c)))
-
-        return item
+        else:
+            tokens = query.string.split()
+            if len(tokens) > 4 or not all([t.isdigit() for t in tokens]):
+                item.subtext = "Invalid parameters. Use %s" % self.synopsis()
+                query.add(item)
+            else:
+                p = int(tokens[0]) if len(tokens) > 0 else self.default_pomodoro_duration
+                b = int(tokens[1]) if len(tokens) > 1 else self.default_break_duration
+                lb = int(tokens[2]) if len(tokens) > 2 else self.default_longbreak_duration
+                c = int(tokens[3]) if len(tokens) > 3 else self.default_pomodoro_count
+                item.subtext = "Start new pomodoro timer (%s min, break %s min, long break %s min, count %s)"\
+                               % (p, b, lb, c)
+                item.actions = [Action("start", "Start", lambda p=p, b=b, lb=lb, c=c: self.pomodoro.start(p, b, lb, c))]
+                query.add(item)

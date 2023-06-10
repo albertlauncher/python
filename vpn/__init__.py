@@ -1,54 +1,64 @@
-"""VPN Extension
-
-Connect or disconnect from a network manager VPN profile"""
-
-
-import subprocess
-from collections import namedtuple
 from albert import *
+from collections import namedtuple
+import subprocess
 
-__title__ = "VPN"
-__version__ = "0.4.0"
-__triggers__ = "vpn "
-__authors__ = "janeklb"
-__exec_deps__ = ['nmcli']
-
-iconPath = iconLookup('network-wireless') or ":python_module"
-
-VPNConnection = namedtuple('VPNConnection', ['name', 'connected'])
-
-
-def getVPNConnections():
-    consStr = subprocess.check_output(
-        'nmcli -t connection show',
-        shell=True,
-        encoding='UTF-8'
-    )
-    for conStr in consStr.splitlines():
-        con = conStr.split(':')
-        if con[2] == 'vpn':
-            yield VPNConnection(name=con[0], connected=con[3] != '')
+md_iid = '1.0'
+md_version = "1.3"
+md_id = "vpn"
+md_name = "VPN"
+md_description = "Manage NetworkManager VPN connections"
+md_license = "MIT"
+md_url = "https://github.com/albertlauncher/python"
+md_maintainers = ["@Bierchermuesli"]
+md_credits = ["@janeklb"]
+md_bin_dependencies = ["nmcli"]
 
 
-def buildItem(con):
-    name = con.name
-    command = 'down' if con.connected else 'up'
-    text = f'Connect to {name}' if command == 'up' else f'Disconnect from {name}'
-    commandline = ['nmcli', 'connection', command, 'id', name]
-    return Item(
-        id=f'vpn-{command}-{name}',
-        text=name,
-        subtext=text,
-        icon=iconPath,
-        completion=name,
-        actions=[ ProcAction(text=text, commandline=commandline) ]
-    )
+class Plugin(TriggerQueryHandler):
+
+    iconPath = ['xdg:network-wired']
+
+    VPNConnection = namedtuple('VPNConnection', ['name', 'connected'])
+
+    def id(self):
+        return md_id
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def getVPNConnections(self):
+        consStr = subprocess.check_output(
+            'nmcli -t connection show',
+            shell=True,
+            encoding='UTF-8'
+        )
+        for conStr in consStr.splitlines():
+            con = conStr.split(':')
+            if con[2] in ['vpn', 'wireguard']:
+                yield self.VPNConnection(name=con[0], connected=con[3] != '')
 
 
-def handleQuery(query):
-    if query.isValid and query.isTriggered:
-        connections = getVPNConnections()
-        if query.string:
-            connections = [ con for con in connections if query.string.lower() in con.name.lower() ]
-        return [ buildItem(con) for con in connections ]
-    return []
+    def buildItem(self,con):
+        name = con.name
+        command = 'down' if con.connected else 'up'
+        text = f'Connect to {name}' if command == 'up' else f'Disconnect from {name}'
+        commandline = ['nmcli', 'connection', command, 'id', name]
+        return Item(
+            id=f'vpn-{command}-{name}',
+            text=name,
+            subtext=text,
+            icon=self.iconPath,
+            completion=name,
+            actions=[ Action("run",text=text, callable=lambda: runDetachedProcess(commandline)) ]
+        )
+
+
+    def handleTriggerQuery(self,query):
+        if query.isValid:
+            connections = self.getVPNConnections()
+            if query.string:
+                connections = [ con for con in connections if query.string.lower() in con.name.lower() ]
+            query.add([ self.buildItem(con) for con in connections ])
