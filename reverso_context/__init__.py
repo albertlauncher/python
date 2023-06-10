@@ -7,8 +7,9 @@ More infos about Reverso API for Python at https://pypi.org/project/Reverso-API/
 
 Synopsis: <trigger> <src_lang> <dest_lang> <text>
 Languages: ar(Arabic), de(German), en(English), es(Spanish), fr(French),
-he(Hebrew), it(Italian), ja(Japanese), nl(Dutch), pl(Polish), po(Portuguese),
-ro(Romanian), ru(Russian), tr(Turkish), zh(Chinese)"""
+he(Hebrew), it(Italian), ja(Japanese), ko(Korean), nl(Dutch), pl(Polish),
+po(Portuguese), ro(Romanian), ru(Russian), tr(Turkish), uk(Ukrainian),
+zh(Chinese)"""
 
 import reverso_api.context
 from albert import *
