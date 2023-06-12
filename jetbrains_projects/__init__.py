@@ -130,7 +130,7 @@ class Plugin(TriggerQueryHandler):
                 name="IntelliJ IDEA",
                 icon=plugin_dir / "idea.svg",
                 config_dir_prefix="JetBrains/IntelliJIdea",
-                binaries=["idea", "idea-ultimate", "idea-ce-eap", "idea-ue-eap", "intellij-idea-ce",
+                binaries=["idea", "idea.sh", "idea-ultimate", "idea-ce-eap", "idea-ue-eap", "intellij-idea-ce",
                           "intellij-idea-ce-eap", "intellij-idea-ue-bundled-jre", "intellij-idea-ultimate-edition",
                           "intellij-idea-community-edition-jre", "intellij-idea-community-edition-no-jre"]),
             Editor(
