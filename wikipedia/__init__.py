@@ -11,18 +11,18 @@ import json
 import os
 
 md_iid = '1.0'
-md_version = "1.6"
+md_version = "1.7"
 md_name = "Wikipedia"
 md_description = "Search Wikipedia articles."
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/wikipedia"
-md_maintainers = "@manuelschneid3r"
 
 
 class Plugin(TriggerQueryHandler):
 
-    iconPath = ":wikipedia"
+    iconPath = os.path.dirname(__file__) + "/wikipedia.png"
     baseurl = 'https://en.wikipedia.org/w/api.php'
+    searchUrl = 'https://%s.wikipedia.org/wiki/Special:Search/%s'
     user_agent = "org.albert.wikipedia"
     limit = 20
 
@@ -38,7 +38,6 @@ class Plugin(TriggerQueryHandler):
     def defaultTrigger(self):
         return "wiki "
 
-
     def initialize(self):
         params = {
             'action': 'query',
@@ -48,20 +47,20 @@ class Plugin(TriggerQueryHandler):
             'format': 'json'
         }
 
+        self.local_lang_code = getdefaultlocale()[0][0:2]
+
         get_url = "%s?%s" % (self.baseurl, parse.urlencode(params))
         req = request.Request(get_url, headers={'User-Agent': self.user_agent})
         try:
             with request.urlopen(req, timeout=5) as response:
                 data = json.loads(response.read().decode('utf-8'))
                 languages = [lang['code'] for lang in data['query']['languages']]
-                local_lang_code = getdefaultlocale()[0][0:2]
-                if local_lang_code in languages:
-                    self.baseurl = self.baseurl.replace("en", local_lang_code)
+                if self.local_lang_code in languages:
+                    self.baseurl = self.baseurl.replace("en", self.local_lang_code)
         except timeout:
             critical('Error getting languages - socket timed out. Defaulting to EN.')
         except Exception as error:
             critical('Error getting languages (%s). Defaulting to EN.' % error)
-
 
     def handleTriggerQuery(self, query):
         stripped = query.string.strip()
@@ -100,10 +99,23 @@ class Plugin(TriggerQueryHandler):
                                             Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
                                             Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
                                         ]))
-
+            if not results:
+                results.append(self._createFallbackItem(stripped))
             query.add(results)
         else:
             query.add(Item(id=md_id,
                            text=md_name,
                            subtext="Enter a query to search on Wikipedia",
                            icon=[self.iconPath]))
+
+    def _createFallbackItem(self, query_string):
+        return Item(
+            id=md_id,
+            text=md_name,
+            subtext="Search '%s' on Wiki" % query_string,
+            icon=[self.iconPath],
+            actions=[
+                Action("wiki_search", "Search on Wikipedia",
+                       lambda url=Plugin.searchUrl % (self.local_lang_code, query_string): openUrl(url))
+            ]
+        )
