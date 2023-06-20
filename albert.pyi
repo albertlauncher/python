@@ -155,7 +155,7 @@ class TriggerQuery:
 
 
 class TriggerQueryHandler(Extension):
-    """Abstract class to be subclassed to implement such an extension."""
+    """Base class for a triggered query handling extensions."""
 
     @abstractmethod
     def synopsis(self) -> str:
@@ -200,7 +200,7 @@ class RankItem:
 
 
 class GlobalQueryHandler(Extension):
-    """Abstract class to be subclassed to implement such an extension."""
+    """Base class for a global query handling extensions."""
 
     @abstractmethod
     def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
@@ -209,9 +209,8 @@ class GlobalQueryHandler(Extension):
 
 class QueryHandler(TriggerQueryHandler, GlobalQueryHandler):
     """
-    Abstract convenience class to be subclassed to implement such an extension.
-    Combines Trigger- and GlobalQueryHandler. Implements `handleTriggerQuery` by
-    getting, sorting and adding the results of the handleGlobalQuery to the query.
+    Convenience base class that combines Trigger- and GlobalQueryHandler. Implements `handleTriggerQuery`
+    by getting, sorting and adding the results of the handleGlobalQuery to the query.
     """
 
     def handleTriggerQuery(self, query: TriggerQuery) -> None:
@@ -233,8 +232,7 @@ class IndexItem:
 
 class IndexQueryHandler(QueryHandler):
     """
-    Abstract convenience class to be subclassed to implement such an extension.
-    Maintains an index and does matching and scoring for you.
+    Convenience base class that combines maintains an index and does matching and scoring for you.
     """
 
     def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
