@@ -123,6 +123,13 @@ class Extension:
         """Brief description of the service provided."""
 
 
+class FallbackHandler(Extension):
+    """Base class for a fallback providing extensions."""
+    @abstractmethod
+    def fallbacks(self, query: str) -> List[AbstractItem]:
+        """Implement to handle the fallback query."""
+
+
 class TriggerQuery:
     """Represents a triggered, exclusive query execution."""
 
