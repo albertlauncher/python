@@ -11,11 +11,27 @@ import json
 import os
 
 md_iid = '1.0'
-md_version = "1.7"
+md_version = "1.8"
 md_name = "Wikipedia"
 md_description = "Search Wikipedia articles."
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/wikipedia"
+
+
+class FallbackProvider(FallbackHandler):
+
+    def id(self):
+        return f"{md_id}_fb"
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
+    def fallbacks(self, query_string):
+        stripped = query_string.strip()
+        return [Plugin.createFallbackItem(query_string)] if stripped else []
 
 
 class Plugin(TriggerQueryHandler):
@@ -25,6 +41,9 @@ class Plugin(TriggerQueryHandler):
     searchUrl = 'https://%s.wikipedia.org/wiki/Special:Search/%s'
     user_agent = "org.albert.wikipedia"
     limit = 20
+
+    def extensions(self):
+        return [self, FallbackProvider()]
 
     def id(self):
         return md_id
@@ -47,7 +66,7 @@ class Plugin(TriggerQueryHandler):
             'format': 'json'
         }
 
-        self.local_lang_code = getdefaultlocale()[0][0:2]
+        Plugin.local_lang_code = getdefaultlocale()[0][0:2]
 
         get_url = "%s?%s" % (self.baseurl, parse.urlencode(params))
         req = request.Request(get_url, headers={'User-Agent': self.user_agent})
@@ -100,7 +119,7 @@ class Plugin(TriggerQueryHandler):
                                             Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
                                         ]))
             if not results:
-                results.append(self._createFallbackItem(stripped))
+                results.append(Plugin.createFallbackItem(stripped))
             query.add(results)
         else:
             query.add(Item(id=md_id,
@@ -108,14 +127,15 @@ class Plugin(TriggerQueryHandler):
                            subtext="Enter a query to search on Wikipedia",
                            icon=[self.iconPath]))
 
-    def _createFallbackItem(self, query_string):
+    @staticmethod
+    def createFallbackItem(query_string):
         return Item(
             id=md_id,
             text=md_name,
             subtext="Search '%s' on Wiki" % query_string,
-            icon=[self.iconPath],
+            icon=[Plugin.iconPath],
             actions=[
                 Action("wiki_search", "Search on Wikipedia",
-                       lambda url=Plugin.searchUrl % (self.local_lang_code, query_string): openUrl(url))
+                       lambda url=Plugin.searchUrl % (Plugin.local_lang_code, query_string): openUrl(url))
             ]
         )
