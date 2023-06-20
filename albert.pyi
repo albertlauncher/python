@@ -1,0 +1,302 @@
+#!/usr/bin/env python3
+
+"""Albert Python module interface v1.0"""
+
+from enum import Enum
+from typing import Any
+from typing import Callable
+from typing import List
+from typing import Optional
+from typing import Union
+
+class Action:
+    """Action object for items."""
+    def __init__(self,
+                 id: str,
+                 text: str,
+                 callable: Callable):
+        """
+        Args:
+            id: The identifier of the action
+            text: The title of the action
+            callable: The callable invoked on activation
+        """
+
+
+class AbstractItem:
+    """The abstract item base class. Serves as result item. Represents albert::Item interface class."""
+
+
+class Item(AbstractItem):
+    """Standard result item. Represents albert::StandardItem."""
+
+    def __init__(self,
+                 id: str = '',
+                 text: str = '',
+                 subtext: str = '',
+                 completion: Optional[str] = '',
+                 icon: List[str] = [],
+                 actions: List[Action] = []):
+        ...
+
+    id: str
+    """Per extension unique identifier. Must not be empty."""
+
+    text: str
+    """The primary text of the item."""
+
+    subtext: str
+    """The secondary text of the item. This text should have informative character."""
+
+    completion: str
+    """
+    The completion string of the item. This string will be used to replace the
+    input line when the user hits the Tab key on an item. Note that the
+    semantics may vary depending on the context.
+    """
+
+    icon: List[str]
+    """
+    Icon urls used for the icon lookup. Supported url schemes:
+    * 'xdg:<icon-name>' performs freedesktop icon theme specification lookup (linux only).
+    * 'qfip:<path>' uses QFileIconProvider to get the icon for the file.
+    * ':<path>' is a QResource path.
+    * '<path>' is interpreted as path to a local image file.
+    """
+
+    actions: List[Action]
+    """The actions of the item."""
+
+
+class Extension:
+    """Abstract bae class for all extensions."""
+
+    @abstractmethod
+    def id(self) -> str:
+        """The unique identifier of the extension."""
+
+    @abstractmethod
+    def name(self) -> str:
+        """The human readable name of the extension."""
+
+    @abstractmethod
+    def description(self) -> str:
+        """Brief description of the service provided."""
+
+
+class TriggerQuery:
+    """Represents a triggered, exclusive query execution."""
+
+    @property
+    def trigger(self) -> str:
+        """The trigger that has been used to start this extension."""
+
+    @property
+    def string(self) -> str:
+        """The actual query string (without the trigger)."""
+
+    @property
+    def isValid(self) -> bool:
+        """This flag indicates that this the query is still valid. Cancel query processing if it is not."""
+
+    @overload
+    def add(self, item: AbstractItem):
+        """Add a single result item."""
+
+    @overload
+    def add(self, item: List[AbstractItem]):
+        """Add a list of result items."""
+
+
+class TriggerQueryHandler(Extension):
+    """Abstract class to be subclassed to implement such an extension."""
+
+    @abstractmethod
+    def synopsis(self) -> str:
+        """Implement to return a synopsis, displayed on empty query. Defaults to empty."""
+
+    @abstractmethod
+    def defaultTrigger(self) -> str:
+        """Implement to set a default trigger. Defaults to Extension::id()."""
+
+    @abstractmethod
+    def allowTriggerRemap(self) -> bool:
+        """Implement to set trigger remapping permissions. Defaults to false."""
+
+    @abstractmethod
+    def handleTriggerQuery(self, query: TriggerQuery) -> None:
+        """Implement to handle the triggered query."""
+
+
+class GlobalQuery:
+    """Represents a triggered, exclusive query execution."""
+
+    @property
+    def string(self) -> str:
+        """The actual query string (without the trigger)."""
+
+    @property
+    def isValid(self) -> bool:
+        """This flag indicates that this the query is still valid. Cancel query processing if it is not."""
+
+
+class RankItem:
+    """Result item with score for use in GlobalQueryHandler."""
+
+    def __init__(self, item: AbstractItem, score: float):
+        ...
+
+    item: AbstractItem
+    """The result item."""
+
+    score: float
+    """The score of the item. From 0 to 1. Modulus applied"""
+
+
+class GlobalQueryHandler(Extension):
+    """Abstract class to be subclassed to implement such an extension."""
+
+    @abstractmethod
+    def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
+        """Implement to handle the global query."""
+
+
+class QueryHandler(TriggerQueryHandler, GlobalQueryHandler):
+    """
+    Abstract convenience class to be subclassed to implement such an extension.
+    Combines Trigger- and GlobalQueryHandler. Implements `handleTriggerQuery` by
+    getting, sorting and adding the results of the handleGlobalQuery to the query.
+    """
+
+    def handleTriggerQuery(self, query: TriggerQuery) -> None:
+        """Calls `handleGlobalQuery` and sorts and adds the results to the query."""
+
+
+class IndexItem:
+    """Index item with index string for use in IndexQueryHandler."""
+
+    def __init__(self, item: AbstractItem, string: str):
+        ...
+
+    item: AbstractItem
+    """The indexed item."""
+
+    string: str
+    """The index string used to look up this item."""
+
+
+class IndexQueryHandler(QueryHandler):
+    """
+    Abstract convenience class to be subclassed to implement such an extension.
+    Maintains an index and does matching and scoring for you.
+    """
+
+    def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
+        """Handles a global query by using the internal index."""
+
+    def setIndexItems(self, indexItems: List[RankItem]) -> None:
+        """Handles a global query by using the internal index."""
+
+    @abstractmethod
+    def updateIndexItems(self) -> None:
+        """Implement to populate the index. Use `setIndexItems`."""
+
+
+def debug(arg: Any) -> None:
+    """
+    Log a message to stdout at the "debug" log level. Note that debug is
+    effectively a NOP in release builds
+    Args:
+        arg: The object to be logged.
+    """
+
+
+def info(arg: Any) -> None:
+    """
+    Log a message to stdout at the "info" log level.
+    Args:
+        arg: The object to be logged.
+    """
+
+
+def warning(arg: Any) -> None:
+    """
+    Log a message to stdout at the "warning" log level.
+    Args:
+        arg: The object to be logged.
+    """
+
+
+def critical(arg: Any) -> None:
+    """
+    Log a message to stdout at the "critical" log level.
+    Args:
+        arg: The object to be logged.
+    """
+
+
+def cacheLocation() -> str:
+    """
+    Returns:
+        The writable cache location of the app.
+    """
+
+
+def configLocation() -> str:
+    """
+    Returns:
+        The writable config location of the app.
+    """
+
+
+def dataLocation() -> str:
+    """
+    Returns:
+        The writable data location of the app.
+    """
+
+
+def setClipboardText(text: str='') -> None:
+    """
+    Set the system clipboard text.
+    Args:
+        text: The text used to set the clipboard
+    """
+
+
+def openUrl(url:str='') -> None:
+    """
+    Open an URL using QDesktopServices::openUrl.
+    Args:
+        url: The URL to open
+    """
+
+
+def runDetachedProcess(cmdln: List[str] = [], workdir: str = '') -> None:
+    """
+    Run a detached process.
+    Args:
+        cmdln: The commandline to run in the terminal (argv)
+        workdir: The working directory used to run the terminal
+    """
+
+
+def runTerminal(script: str='', workdir: str = '', close_on_exit: bool = False) -> None:
+    """
+    Run a script the user shell in the user specified terminal.
+    Args:
+        script: The script to be executed.
+        workdir: The working directory used to run the process
+        close_on_exit: Close the terminal on exit. Otherwise exec $SHELL.
+    """
+
+
+def sendTrayNotification(title: str='', msg: str = '', ms: int = 10000) -> None:
+    """
+    Send a tray notification.
+    Args:
+        title: The notification title
+        msg: The notification body
+        ms: The display time (if supported by the system)
+    """
+
