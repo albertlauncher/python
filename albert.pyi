@@ -1,6 +1,45 @@
 #!/usr/bin/env python3
 
-"""Albert Python module interface v1.0"""
+"""
+Albert Python interface specification v1.0
+
+A Python plugin module is required to have the metadata described below and contain a
+class named `Plugin` which will be instantiated when the plugin is loaded.
+
+
+# Metadata
+
+Mandatory metadata variables:
+
+md_iid: str             Interface version (<major>.<minor>)
+md_version: str         Plugin version (<major>.<minor>)
+md_name: str            Human readable name
+md_description: str     A brief, imperative description. (Like "Launch apps" or "Open files")
+
+Optional metadata variables:
+
+md_id                                   Identifier overwrite. [a-zA-Z0-9_]. Defaults to module name.
+                                        Note `__name__` gets `albert.` prepended to avoid conflicts.
+__doc__                                 The docstring of the module is used as long description/readme of the extension.
+md_license: str                         Short form e.g. BSD-2-Clause or GPL-3.0
+md_url: str                             Browsable source, issues etc
+md_maintainers: [str|List(str)]         Active maintainer(s). Preferrably using mentionable Github usernames.
+md_bin_dependencies: [str|List(str)]    Required executable(s). Have to match the name of the executable in $PATH.
+md_lib_dependencies: [str|List(str)]    Required Python package(s). Have to match the PyPI package name.
+md_credits: [str|List(str)]             Third party credit(s) and license notes
+
+
+# The Plugin class
+
+* The plugin class is the entry point for a plugin and instantiated on plugin initialization.
+* Implement extensions by subclassing (one!) extension class provided by the built-in `albert` module.
+  Due to the differences in type systems multiple inheritance of extensions is not supported.
+  If the Plugin class inherits an extension it will be automatically registered.
+* Define an "extensions() -> List[Extension]" instance function if you want to provide multiple extensions.
+* Define initialize() and/or finalize() instance functions if needed.
+  Do not use the constructor, since PyBind11 imposes some inconvenient boilerplate on them.
+"""
+
 
 from enum import Enum
 from typing import Any
