@@ -196,7 +196,7 @@ class RankItem:
     """The result item."""
 
     score: float
-    """The score of the item. From 0 to 1. Modulus applied"""
+    """The score of the item (0,1]. No checks applied for performance."""
 
 
 class GlobalQueryHandler(Extension):
