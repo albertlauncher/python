@@ -122,6 +122,33 @@ class Extension:
     def description(self) -> str:
         """Brief description of the service provided."""
 
+    def cacheDir(self) -> str:
+        """
+        The recommended cache location for this extension.
+        Creates the directory if necessary.
+        Since iid v1.0.
+        Returns:
+            The writable cache location of the extension.
+        """
+
+    def configDir(self) -> str:
+        """
+        The recommended config location for this extension.
+        Creates the directory if necessary.
+        Since iid v1.0.
+        Returns:
+            The writable config location of the extension.
+        """
+
+    def dataDir(self) -> str:
+        """
+        The recommended data location for this extension.
+        Creates the directory if necessary.
+        Since iid v1.0.
+        Returns:
+            The writable data location of the extension.
+        """
+
 
 class FallbackHandler(Extension):
     """Base class for a fallback providing extensions."""
@@ -281,22 +308,31 @@ def critical(arg: Any) -> None:
 
 def cacheLocation() -> str:
     """
+    Deprecated: Use Extension.cacheLocation instead
+
+    Note that this is the _app_ cache location.
     Returns:
-        The writable cache location of the app.
+        The writable app cache location.
     """
 
 
 def configLocation() -> str:
     """
+    Deprecated: Use Extension.configLocation instead
+
+    Note that this is the _app_ config location.
     Returns:
-        The writable config location of the app.
+        The writable app config location.
     """
 
 
 def dataLocation() -> str:
     """
+    Deprecated: Use Extension.dataLocation instead
+
+    Note that this is the _app_ data location.
     Returns:
-        The writable data location of the app.
+        The writable app data location.
     """
 
 
