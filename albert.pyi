@@ -184,15 +184,12 @@ class TriggerQuery:
 class TriggerQueryHandler(Extension):
     """Base class for a triggered query handling extensions."""
 
-    @abstractmethod
     def synopsis(self) -> str:
         """Implement to return a synopsis, displayed on empty query. Defaults to empty."""
 
-    @abstractmethod
     def defaultTrigger(self) -> str:
         """Implement to set a default trigger. Defaults to Extension::id()."""
 
-    @abstractmethod
     def allowTriggerRemap(self) -> bool:
         """Implement to set trigger remapping permissions. Defaults to false."""
 
