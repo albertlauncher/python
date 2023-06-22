@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""Find emojis by name.
-
-Synopsis: <trigger> <emoji name>"""
-
 import json
 import re
 import subprocess
@@ -13,7 +9,7 @@ from pathlib import Path
 from albert import *
 
 md_iid = '1.0'
-md_version = "1.2"
+md_version = "1.3"
 md_name = "Emoji Picker"
 md_description = "Find emojis by name"
 md_license = "GPL-3.0"
@@ -25,14 +21,6 @@ md_bin_dependencies = ["convert"]
 EXTENSION_DIR = Path(__file__).parent
 ALIASES_PATH = EXTENSION_DIR / "aliases.json"
 EMOJI_PATH = EXTENSION_DIR / "emoji-test.txt"
-ICON_DIR = Path(cacheLocation()) / "emojis"
-
-
-ICON_DIR.mkdir(exist_ok=True, parents=True)
-
-
-def icon_path(emoji):
-    return ICON_DIR / f"{emoji}.png"
 
 
 def convert_to_png(emoji, output_path):
@@ -49,10 +37,10 @@ def convert_to_png(emoji, output_path):
     )
 
 
-def schedule_create_missing_icons(emojis):
+def schedule_create_missing_icons(emojis, icon_dir_path: str):
     executor = ThreadPoolExecutor()
     for emoji in emojis:
-        path = icon_path(emoji["emoji"])
+        path = icon_dir_path / f"{emoji['emoji']}.png"
         if not path.exists():
             executor.submit(convert_to_png, emoji["emoji"], path)
 
@@ -76,6 +64,8 @@ class Plugin(TriggerQueryHandler):
         return "<emoji name>"
 
     def initialize(self):
+        self.icon_dir_path = Path(cacheLocation())
+
         line_re = re.compile(
             r"""
             ^
@@ -112,7 +102,7 @@ class Plugin(TriggerQueryHandler):
                         e["search_tokens"] = search_tokens
                         self.emojis.append(e)
 
-        self.icon_executor = schedule_create_missing_icons(self.emojis)
+        self.icon_executor = schedule_create_missing_icons(self.emojis, self.icon_dir_path)
 
     def finalize(self):
         self.icon_executor.shutdown(wait=True, cancel_futures=True)
@@ -136,7 +126,7 @@ class Plugin(TriggerQueryHandler):
                     id=f"emoji_{emoji['emoji']}",
                     text=f"{emoji['emoji']} {emoji['name']}",
                     subtext=emoji["modifiers"] or "",
-                    icon=[str(icon_path(emoji["emoji"]))],
+                    icon=[str(self.icon_dir_path / f"{emoji['emoji']}.png")],
                     actions=[
                         Action(
                             "copy",
