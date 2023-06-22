@@ -18,10 +18,11 @@ md_url = "https://github.com/albertlauncher/python/tree/master/coingecko"
 
 
 class CoinFetcherThread(Thread):
-    def __init__(self, callback):
+    def __init__(self, callback, path: Path):
         super().__init__()
         self._stop_event = Event()
         self.callback = callback
+        self.path = path
 
     def _fetchCoins(self):
         url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250"
@@ -30,17 +31,17 @@ class CoinFetcherThread(Thread):
             response = request.urlopen(url, timeout=5)
             if response.getcode() == 200:
                 json_data = loads(response.read().decode('utf-8'))
-                with open(Plugin.coinCacheFilePath, 'w') as f:
+                with open(self.path, 'w') as f:
                     f.write(dumps(json_data))
             else:
-                warning("Request failed with status code:", response.getcode())
+                warning(f"Request failed with status code: {response.getcode()}")
         except Exception as e:
-            warning("Request failed:", str(e))
+            warning(f"Request failed: {str(e)}")
 
     def run(self):
         while True:
             # update if older than 1h
-            if not Plugin.coinCacheFilePath.is_file() or (time() - Plugin.coinCacheFilePath.lstat().st_mtime) > 3600:
+            if not self.path.is_file() or (time() - self.path.lstat().st_mtime) > 3600:
                 self._fetchCoins()
                 self.callback()
             self._stop_event.wait(300)  # Check every 5 mins, wakeup on stop event
@@ -98,12 +99,12 @@ class CoinItem(AbstractItem):
 class Plugin(IndexQueryHandler):
     iconPath = str(Path(__file__).parents[0] / "coingecko.png")
     coinsUrl = "https://www.coingecko.com/en/coins/"
-    coinCacheFilePath = Path(cacheLocation()) / md_id / "coins.json"
 
     def initialize(self):
         self.items = []
         self.mtime = 0
-        self.thread = CoinFetcherThread(self.updateIndexItems)
+        self.coinCacheFilePath = Path(self.cacheLocation()) / "coins.json"
+        self.thread = CoinFetcherThread(self.updateIndexItems, self.coinCacheFilePath)
         self.thread.start()
 
     def finalize(self):
@@ -123,7 +124,7 @@ class Plugin(IndexQueryHandler):
         return "cg "
 
     def updateIndexItems(self):
-        mtime = Plugin.coinCacheFilePath.lstat().st_mtime
+        mtime = self.coinCacheFilePath.lstat().st_mtime
         if self.coinCacheFilePath.is_file() and mtime > self.mtime:
             self.mtime = mtime
             with open(self.coinCacheFilePath) as f:
