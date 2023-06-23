@@ -20,7 +20,7 @@ md_version = "1.4"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
-md_url = "https://github.com/tomsquest/albert-jetbrains-projects-plugin"
+md_url = "https://github.com/albertlauncher/python/"
 md_maintainers = ["@mqus", "@tomsquest"]
 
 
