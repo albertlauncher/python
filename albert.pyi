@@ -65,9 +65,50 @@ class Action:
 class AbstractItem:
     """The abstract item base class. Serves as result item. Represents albert::Item interface class."""
 
+    @property
+    @abstractmethod
+    def id(self) -> str:
+        """Per extension unique identifier. Must not be empty."""
+
+    @property
+    @abstractmethod
+    def text(self) -> str:
+        """The primary text of the item."""
+
+    @property
+    @abstractmethod
+    def subtext(self) -> str:
+        """The secondary text of the item. This text should have informative character."""
+
+    @property
+    @abstractmethod
+    def icon(self) -> List[str]:
+        """
+        Icon urls used for the icon lookup. Supported url schemes:
+        * 'xdg:<icon-name>' performs freedesktop icon theme specification lookup (linux only).
+        * 'qfip:<path>' uses QFileIconProvider to get the icon for the file.
+        * ':<path>' is a QResource path.
+        * '<path>' is interpreted as path to a local image file.
+        """
+
+    @property
+    def completion(self) -> str:
+        """
+        The completion string of the item. This string will be used to replace the
+        input line when the user hits the Tab key on an item. Note that the
+        semantics may vary depending on the context. Default empty.
+        """
+
+    @property
+    def actions(self) -> List[Action]:
+        """The actions of the item. Default empty."""
 
 class Item(AbstractItem):
-    """Standard result item. Represents albert::StandardItem."""
+    """
+    Standard result item.
+    Represents albert::StandardItem.
+    See AbstractItem for more information
+    """
 
     def __init__(self,
                  id: str = '',
@@ -108,7 +149,7 @@ class Item(AbstractItem):
 
 
 class Extension:
-    """Abstract bae class for all extensions."""
+    """Abstract base class for all extensions."""
 
     @abstractmethod
     def id(self) -> str:
