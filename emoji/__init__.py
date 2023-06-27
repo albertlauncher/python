@@ -37,7 +37,7 @@ def convert_to_png(emoji, output_path):
     )
 
 
-def schedule_create_missing_icons(emojis, icon_dir_path: str):
+def schedule_create_missing_icons(emojis, icon_dir_path: Path):
     executor = ThreadPoolExecutor()
     for emoji in emojis:
         path = icon_dir_path / f"{emoji['emoji']}.png"
