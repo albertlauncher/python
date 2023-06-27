@@ -57,7 +57,7 @@ class Plugin(TriggerQueryHandler):
             actions=actions,
         )
 
-    def handleTriggerQuery(self, query: Query) -> None:
+    def handleTriggerQuery(self, query: TriggerQuery) -> None:
         stripped = query.string.strip()
 
         if not stripped:
