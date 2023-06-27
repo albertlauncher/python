@@ -64,7 +64,7 @@ class Plugin(TriggerQueryHandler):
         return "<emoji name>"
 
     def initialize(self):
-        self.icon_dir_path = Path(cacheLocation())
+        self.icon_dir_path = Path(self.cacheLocation())
 
         line_re = re.compile(
             r"""
