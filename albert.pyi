@@ -36,6 +36,7 @@ md_credits: [str|List(str)]             Third party credit(s) and license notes
   Due to the differences in type systems multiple inheritance of extensions is not supported.
   If the Plugin class inherits an extension it will be automatically registered.
 * Define an "extensions() -> List[Extension]" instance function if you want to provide multiple extensions.
+  Note: Do not return temporary objects. No ownership taken/refcount increased.
 * Define initialize() and/or finalize() instance functions if needed.
   Do not use the constructor, since PyBind11 imposes some inconvenient boilerplate on them.
 """
