@@ -43,7 +43,7 @@ class Plugin(TriggerQueryHandler):
     limit = 20
 
     def extensions(self):
-        return [self, FallbackProvider()]
+        return [self, self.fb]
 
     def id(self):
         return md_id
@@ -58,6 +58,8 @@ class Plugin(TriggerQueryHandler):
         return "wiki "
 
     def initialize(self):
+        self.fb = FallbackProvider()
+
         params = {
             'action': 'query',
             'meta': 'siteinfo',
