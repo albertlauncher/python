@@ -1,47 +1,46 @@
-#!/usr/bin/env python3
-
-"""
-Albert Python interface specification v1.0
-
-A Python plugin module is required to have the metadata described below and contain a
-class named `Plugin` which will be instantiated when the plugin is loaded.
-
-
-# Metadata
-
-Mandatory metadata variables:
-
-md_iid: str             Interface version (<major>.<minor>)
-md_version: str         Plugin version (<major>.<minor>)
-md_name: str            Human readable name
-md_description: str     A brief, imperative description. (Like "Launch apps" or "Open files")
-
-Optional metadata variables:
-
-md_id                                   Identifier overwrite. [a-zA-Z0-9_]. Defaults to module name.
-                                        Note `__name__` gets `albert.` prepended to avoid conflicts.
-__doc__                                 The docstring of the module is used as long description/readme of the extension.
-md_license: str                         Short form e.g. BSD-2-Clause or GPL-3.0
-md_url: str                             Browsable source, issues etc
-md_maintainers: [str|List(str)]         Active maintainer(s). Preferrably using mentionable Github usernames.
-md_bin_dependencies: [str|List(str)]    Required executable(s). Have to match the name of the executable in $PATH.
-md_lib_dependencies: [str|List(str)]    Required Python package(s). Have to match the PyPI package name.
-md_credits: [str|List(str)]             Third party credit(s) and license notes
-
-
-# The Plugin class
-
-* The plugin class is the entry point for a plugin and instantiated on plugin initialization.
-* Implement extensions by subclassing (one!) extension class provided by the built-in `albert` module.
-  Due to the differences in type systems multiple inheritance of extensions is not supported.
-  If the Plugin class inherits an extension it will be automatically registered.
-* Define an "extensions() -> List[Extension]" instance function if you want to provide multiple extensions.
-* Define initialize() and/or finalize() instance functions if needed.
-  Do not use the constructor, since PyBind11 imposes some inconvenient boilerplate on them.
 """
 
+# Albert Python interface v2.0
 
-from abc import abstractmethod
+
+The Python interface is a subset of the internal C++ interface exposed to Python with some minor adjustments. A Python
+plugin is required to contain the mandatory metadata and a plugin class, both described below. To get started read the
+top level classes and function names in this file. Most of them are self explanatory. In case of questions see the C++
+documentation at https://albertlauncher.github.io/reference/namespacealbert.html
+
+
+## Mandatory metadata variables
+
+md_iid: str         | Interface version (<major>.<minor>)
+md_version: str     | Plugin version (<major>.<minor>)
+md_name: str        | Human readable name
+md_description: str | A brief, imperative description. (Like "Launch apps" or "Open files")
+
+
+## Optional metadata variables:
+
+md_id                                | Identifier overwrite. [a-zA-Z0-9_]. Defaults to module name.
+__doc__                              | The docstring of the module is used as long description/readme of the extension.
+md_license: str                      | Short form e.g. BSD-2-Clause or GPL-3.0
+md_url: str                          | Browsable source, issues etc
+md_maintainers: [str|List(str)]      | Active maintainer(s). Preferrably using mentionable Github usernames.
+md_bin_dependencies: [str|List(str)] | Required executable(s). Have to match the name of the executable in $PATH.
+md_lib_dependencies: [str|List(str)] | Required Python package(s). Have to match the PyPI package name.
+md_credits: [str|List(str)]          | Third party credit(s) and license notes
+
+
+## The Plugin class
+
+The plugin class is the entry point for a Python plugin. It is instantiated on plugin initialization and has to subclass
+PluginInstance. Implement extension(s) by subclassing _one_ extension class (TriggerQueryHandler etc…) provided by the
+built-in `albert` module and pass the list of your extensions to the PluginInstance init function. Due to the
+differences in type systems multiple inheritance of extensions is not supported. (Python does not support virtual
+inheritance, which is used in the C++ space to inherit from 'Extension'). For more details see
+
+"""
+
+
+from abc import abstractmethod, ABC
 from enum import Enum
 from typing import Any
 from typing import Callable
@@ -50,303 +49,267 @@ from typing import Optional
 from typing import Union
 from typing import overload
 
+
+class PluginInstance(ABC):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_plugin_instance.html"""
+
+    def __init__(self, extensions: List[Extension] = []):
+        ...
+
+    @property
+    def id(self) -> str:
+        ...
+
+    @property
+    def name(self) -> str:
+        ...
+
+    @property
+    def description(self) -> str:
+        ...
+
+    @property
+    def cacheLocation(self) -> pathlib.Path:
+        ...
+
+    @property
+    def configLocation(self) -> pathlib.Path:
+        ...
+
+    @property
+    def dataLocation(self) -> pathlib.Path:
+        ...
+
+    @property
+    def extensions(self) -> List[Extension]:
+        ...
+
+    def initialize(self):
+        ...
+
+    def finalize(self):
+        ...
+
+
 class Action:
-    """Action object for items."""
+    """https://albertlauncher.github.io/reference/classalbert_1_1_action.html"""
+
     def __init__(self,
                  id: str,
                  text: str,
                  callable: Callable):
-        """
-        Args:
-            id: The identifier of the action
-            text: The title of the action
-            callable: The callable invoked on activation
-        """
+        ...
 
 
-class AbstractItem:
-    """The abstract item base class. Serves as result item. Represents albert::Item interface class."""
+class Item(ABC):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_item.html"""
 
-    @property
     @abstractmethod
     def id(self) -> str:
-        """Per extension unique identifier. Must not be empty."""
+        ...
 
-    @property
     @abstractmethod
     def text(self) -> str:
-        """The primary text of the item."""
+        ...
 
-    @property
     @abstractmethod
     def subtext(self) -> str:
-        """The secondary text of the item. This text should have informative character."""
+        ...
 
-    @property
     @abstractmethod
-    def icon(self) -> List[str]:
-        """
-        Icon urls used for the icon lookup. Supported url schemes:
-        * 'xdg:<icon-name>' performs freedesktop icon theme specification lookup (linux only).
-        * 'qfip:<path>' uses QFileIconProvider to get the icon for the file.
-        * ':<path>' is a QResource path.
-        * '<path>' is interpreted as path to a local image file.
-        """
+    def inputActionText(self) -> str:
+        ...
 
-    @property
-    def completion(self) -> str:
-        """
-        The completion string of the item. This string will be used to replace the
-        input line when the user hits the Tab key on an item. Note that the
-        semantics may vary depending on the context. Default empty.
-        """
+    @abstractmethod
+    def iconUrls(self) -> List[str]:
+        """See https://albertlauncher.github.io/reference/classalbert_1_1_icon_provider.html"""
 
-    @property
+    @abstractmethod
     def actions(self) -> List[Action]:
-        """The actions of the item. Default empty."""
+        ...
 
-class Item(AbstractItem):
-    """
-    Standard result item.
-    Represents albert::StandardItem.
-    See AbstractItem for more information
-    """
+
+class StandardItem(Item):
+    """https://albertlauncher.github.io/reference/structalbert_1_1_standard_item.html"""
 
     def __init__(self,
                  id: str = '',
                  text: str = '',
                  subtext: str = '',
-                 completion: Optional[str] = '',
-                 icon: List[str] = [],
-                 actions: List[Action] = []):
+                 iconUrls: List[str] = [],
+                 actions: List[Action] = [],
+                 inputActionText: Optional[str] = ''):
         ...
 
     id: str
-    """Per extension unique identifier. Must not be empty."""
-
     text: str
-    """The primary text of the item."""
-
     subtext: str
-    """The secondary text of the item. This text should have informative character."""
-
-    completion: str
-    """
-    The completion string of the item. This string will be used to replace the
-    input line when the user hits the Tab key on an item. Note that the
-    semantics may vary depending on the context.
-    """
-
-    icon: List[str]
-    """
-    Icon urls used for the icon lookup. Supported url schemes:
-    * 'xdg:<icon-name>' performs freedesktop icon theme specification lookup (linux only).
-    * 'qfip:<path>' uses QFileIconProvider to get the icon for the file.
-    * ':<path>' is a QResource path.
-    * '<path>' is interpreted as path to a local image file.
-    """
-
+    iconUrls: List[str]
     actions: List[Action]
-    """The actions of the item."""
+    inputActionText: str
 
 
-class Extension:
-    """Abstract base class for all extensions."""
+class Extension(ABC):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_extension.html"""
 
-    @abstractmethod
+    @property
     def id(self) -> str:
-        """The unique identifier of the extension."""
+        ...
 
-    @abstractmethod
+    @property
     def name(self) -> str:
-        """The human readable name of the extension."""
+        ...
 
-    @abstractmethod
+    @property
     def description(self) -> str:
-        """Brief description of the service provided."""
-
-    def cacheLocation(self) -> str:
-        """
-        The recommended cache location for this extension.
-        Creates the directory if necessary.
-        Since iid v1.0.
-        Returns:
-            The writable cache location of the extension.
-        """
-
-    def configLocation(self) -> str:
-        """
-        The recommended config location for this extension.
-        Creates the directory if necessary.
-        Since iid v1.0.
-        Returns:
-            The writable config location of the extension.
-        """
-
-    def dataLocation(self) -> str:
-        """
-        The recommended data location for this extension.
-        Creates the directory if necessary.
-        Since iid v1.0.
-        Returns:
-            The writable data location of the extension.
-        """
+        ...
 
 
-class FallbackHandler(Extension):
-    """Base class for a fallback providing extensions."""
+class FallbackHandler(ABC):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_fallback_handler.html"""
+
     @abstractmethod
-    def fallbacks(self, query: str) -> List[AbstractItem]:
-        """Implement to handle the fallback query."""
+    def fallbacks(self, query: str ) ->List[Item]:
+        ...
 
 
-class TriggerQuery:
-    """Represents a triggered, exclusive query execution."""
+class TriggerQuery(ABC):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_trigger_query_handler_1_1_trigger_query.html"""
 
     @property
     def trigger(self) -> str:
-        """The trigger that has been used to start this extension."""
+        ...
 
     @property
     def string(self) -> str:
-        """The actual query string (without the trigger)."""
+        ...
 
     @property
     def isValid(self) -> bool:
-        """This flag indicates that this the query is still valid. Cancel query processing if it is not."""
+        ...
 
     @overload
-    def add(self, item: AbstractItem):
-        """Add a single result item."""
+    def add(self, item: Item):
+        ...
 
     @overload
-    def add(self, item: List[AbstractItem]):
-        """Add a list of result items."""
+    def add(self, item: List[Item]):
+        ...
 
 
 class TriggerQueryHandler(Extension):
-    """Base class for a triggered query handling extensions."""
+    """https://albertlauncher.github.io/reference/classalbert_1_1_trigger_query_handler.html"""
 
+    def __init__(self,
+                 id: str,
+                 name: str,
+                 description: str,
+                 synopsis: str = '',
+                 defaultTrigger: str = f'{id} ',
+                 allowTriggerRemap: str = true,
+                 supportsFuzzyMatching: bool = False):
+        ...
+
+    @property
     def synopsis(self) -> str:
-        """Implement to return a synopsis, displayed on empty query. Defaults to empty."""
+        ...
 
+    @property
+    def trigger(self) -> str:
+        ...
+
+    @property
     def defaultTrigger(self) -> str:
-        """Implement to set a default trigger. Defaults to Extension::id()."""
+        ...
 
+    @property
     def allowTriggerRemap(self) -> bool:
-        """Implement to set trigger remapping permissions. Defaults to false."""
+        ...
+
+    @property
+    def supportsFuzzyMatching(self) -> bool:
+        ...
+
+    @property
+    def fuzzyMatching(self) -> bool:
+        ...
+
+    @fuzzyMatching.setter
+    def setFuzzyMatching(self, enabled: bool):
+        ...
 
     @abstractmethod
-    def handleTriggerQuery(self, query: TriggerQuery) -> None:
-        """Implement to handle the triggered query."""
-
-
-class GlobalQuery:
-    """Represents a triggered, exclusive query execution."""
-
-    @property
-    def string(self) -> str:
-        """The actual query string (without the trigger)."""
-
-    @property
-    def isValid(self) -> bool:
-        """This flag indicates that this the query is still valid. Cancel query processing if it is not."""
+    def handleTriggerQuery(self, query: TriggerQuery):
+        ...
 
 
 class RankItem:
-    """Result item with score for use in GlobalQueryHandler."""
+    """https://albertlauncher.github.io/reference/classalbert_1_1_rank_item.html"""
 
-    def __init__(self, item: AbstractItem, score: float):
+    def __init__(self, item: Item, score: float):
         ...
 
-    item: AbstractItem
-    """The result item."""
-
+    item: Item
     score: float
-    """The score of the item (0,1]. No checks applied for performance."""
 
 
-class GlobalQueryHandler(Extension):
-    """Base class for a global query handling extensions."""
+class GlobalQuery(ABC):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_global_query_handler_1_1_global_query.html"""
+
+    @property
+    def string(self) -> str:
+        ...
+
+    @property
+    def isValid(self) -> bool:
+        ...
+
+
+class GlobalQueryHandler(TriggerQueryHandler):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_global_query_handler.html"""
 
     @abstractmethod
     def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
-        """Implement to handle the global query."""
+        ...
 
+    def applyUsageScore(self, rank_items:  List[RankItem]):
+        ...
 
-class QueryHandler(TriggerQueryHandler, GlobalQueryHandler):
-    """
-    Convenience base class that combines Trigger- and GlobalQueryHandler. Implements `handleTriggerQuery`
-    by getting, sorting and adding the results of the handleGlobalQuery to the query.
-    """
-
-    def handleTriggerQuery(self, query: TriggerQuery) -> None:
-        """Calls `handleGlobalQuery` and sorts and adds the results to the query."""
+    def handleTriggerQuery(self, query: TriggerQuery):
+        ...
 
 
 class IndexItem:
-    """Index item with index string for use in IndexQueryHandler."""
+    """https://albertlauncher.github.io/reference/classalbert_1_1_index_item.html"""
 
     def __init__(self, item: AbstractItem, string: str):
         ...
 
     item: AbstractItem
-    """The indexed item."""
-
     string: str
-    """The index string used to look up this item."""
 
 
-class IndexQueryHandler(QueryHandler):
-    """
-    Convenience base class that combines maintains an index and does matching and scoring for you.
-    """
-
-    def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
-        """Handles a global query by using the internal index."""
-
-    def setIndexItems(self, indexItems: List[RankItem]) -> None:
-        """Handles a global query by using the internal index."""
+class IndexQueryHandler(GlobalQueryHandler):
+    """https://albertlauncher.github.io/reference/classalbert_1_1_index_query_handler.html"""
 
     @abstractmethod
-    def updateIndexItems(self) -> None:
-        """Implement to populate the index. Use `setIndexItems`."""
+    def updateIndexItems(self):
+        ...
+
+    def setIndexItems(self, indexItems: List[RankItem]):
+        ...
+
+    def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
+        ...
 
 
-def debug(arg: Any) -> None:
-    """
-    Log a message to stdout at the "debug" log level. Note that debug is
-    effectively a NOP in release builds
-    Args:
-        arg: The object to be logged.
-    """
+def debug(arg: Any):...
+def info(arg: Any):...
+def warning(arg: Any):...
+def critical(arg: Any):...
 
 
-def info(arg: Any) -> None:
-    """
-    Log a message to stdout at the "info" log level.
-    Args:
-        arg: The object to be logged.
-    """
-
-
-def warning(arg: Any) -> None:
-    """
-    Log a message to stdout at the "warning" log level.
-    Args:
-        arg: The object to be logged.
-    """
-
-
-def critical(arg: Any) -> None:
-    """
-    Log a message to stdout at the "critical" log level.
-    Args:
-        arg: The object to be logged.
-    """
-
-
-def setClipboardText(text: str='') -> None:
+def setClipboardText(text: str=''):
     """
     Set the system clipboard text.
     Args:
@@ -354,7 +317,7 @@ def setClipboardText(text: str='') -> None:
     """
 
 
-def openUrl(url:str='') -> None:
+def openUrl(url: str = ''):
     """
     Open an URL using QDesktopServices::openUrl.
     Args:
@@ -362,7 +325,7 @@ def openUrl(url:str='') -> None:
     """
 
 
-def runDetachedProcess(cmdln: List[str] = [], workdir: str = '') -> None:
+def runDetachedProcess(cmdln: List[str] = [], workdir: str = ''):
     """
     Run a detached process.
     Args:
@@ -371,7 +334,7 @@ def runDetachedProcess(cmdln: List[str] = [], workdir: str = '') -> None:
     """
 
 
-def runTerminal(script: str='', workdir: str = '', close_on_exit: bool = False) -> None:
+def runTerminal(script: str = '', workdir: str = '', close_on_exit: bool = False):
     """
     Run a script in the users shell and terminal.
     Args:
@@ -381,7 +344,7 @@ def runTerminal(script: str='', workdir: str = '', close_on_exit: bool = False) 
     """
 
 
-def sendTrayNotification(title: str='', msg: str = '', ms: int = 10000) -> None:
+def sendTrayNotification(title: str = '', msg: str = '', ms: int = 10000):
     """
     Send a tray notification.
     Args:
