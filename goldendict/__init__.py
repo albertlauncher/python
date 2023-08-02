@@ -1,32 +1,25 @@
 from albert import Action, Item, TriggerQuery, TriggerQueryHandler, runDetachedProcess  # pylint: disable=import-error
 
-md_iid = '1.0'
-md_version = '1.2'
+md_iid = '2.0'
+md_version = '1.3'
 md_name = 'GoldenDict'
 md_description = 'Searches in GoldenDict'
 md_url = 'https://github.com/albertlauncher/python/'
 md_maintainers = '@stevenxxiu'
 md_bin_dependencies = ['goldendict']
 
-TRIGGER = 'gd'
-ICON_PATH = '/usr/share/pixmaps/goldendict.png'
 
+class Plugin(PluginInstance, TriggerQueryHandler):
 
-class Plugin(TriggerQueryHandler):
-    def id(self) -> str:
-        return __name__
-
-    def name(self) -> str:
-        return md_name
-
-    def description(self) -> str:
-        return md_description
-
-    def defaultTrigger(self) -> str:
-        return f'{TRIGGER} '
-
-    def synopsis(self) -> str:
-        return 'query'
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='query',
+                                     defaultTrigger='gd ')
+        PluginInstance.__init__(self, extensions=[self])
+        self.iconUrls = ["xdg:goldendict"]
 
     def handleTriggerQuery(self, query: TriggerQuery) -> None:
         query_str = query.string.strip()
@@ -34,11 +27,11 @@ class Plugin(TriggerQueryHandler):
             return
 
         query.add(
-            Item(
+            StandardItem(
                 id=md_name,
                 text=md_name,
                 subtext=f'Look up {query_str} using <i>GoldenDict</i>',
-                icon=[ICON_PATH],
+                iconUrls=self.iconUrls,
                 actions=[Action(md_name, md_name, lambda: runDetachedProcess(['goldendict', query_str]))],
             )
         )
