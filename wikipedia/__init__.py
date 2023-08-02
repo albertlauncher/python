@@ -8,56 +8,46 @@ from socket import timeout
 from time import sleep
 from urllib import request, parse
 import json
-import os
+from pathlib import Path
 
-md_iid = '1.0'
-md_version = "1.8"
+md_iid = '2.0'
+md_version = "1.9"
 md_name = "Wikipedia"
-md_description = "Search Wikipedia articles."
+md_description = "Search Wikipedia articles"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/wikipedia"
 
 
-class FallbackProvider(FallbackHandler):
-
-    def id(self):
-        return f"{md_id}_fb"
-
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
+class WikiFallbackHandler(FallbackHandler):
+    def __init__(self):
+        FallbackHandler.__init__(self,
+                                 id=f"{md_id}_fb",
+                                 name=f"{md_name} fallback",
+                                 description="Wikipedia fallback search")
 
     def fallbacks(self, query_string):
         stripped = query_string.strip()
         return [Plugin.createFallbackItem(query_string)] if stripped else []
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
 
-    iconPath = os.path.dirname(__file__) + "/wikipedia.png"
     baseurl = 'https://en.wikipedia.org/w/api.php'
     searchUrl = 'https://%s.wikipedia.org/wiki/Special:Search/%s'
     user_agent = "org.albert.wikipedia"
     limit = 20
+    iconUrls = [f"file:{Path(__file__).parent}/wikipedia.png"]
 
-    def extensions(self):
-        return [self, FallbackProvider()]
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     defaultTrigger='wiki ')
+        self.wiki_fb = WikiFallbackHandler()
+        PluginInstance.__init__(self, extensions=[self, self.wiki_fb])
 
-    def id(self):
-        return md_id
 
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return "wiki "
-
-    def initialize(self):
         params = {
             'action': 'query',
             'meta': 'siteinfo',
@@ -110,30 +100,34 @@ class Plugin(TriggerQueryHandler):
                     summary = data[2][i]
                     url = data[3][i]
 
-                    results.append(Item(id=md_id,
-                                        text=title,
-                                        subtext=summary if summary else url,
-                                        icon=[self.iconPath],
-                                        actions=[
-                                            Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
-                                            Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
-                                        ]))
+                    results.append(StandardItem(id=md_id,
+                                                text=title,
+                                                subtext=summary if summary else url,
+                                                iconUrls=self.iconUrls,
+                                                actions=[
+                                                    Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
+                                                    Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
+                                                ]))
             if not results:
                 results.append(Plugin.createFallbackItem(stripped))
             query.add(results)
         else:
-            query.add(Item(id=md_id,
-                           text=md_name,
-                           subtext="Enter a query to search on Wikipedia",
-                           icon=[self.iconPath]))
+            query.add(
+                StandardItem(
+                    id=md_id,
+                    text=md_name,
+                    subtext="Enter a query to search on Wikipedia",
+                    iconUrls=self.iconUrls
+                )
+            )
 
     @staticmethod
     def createFallbackItem(query_string):
-        return Item(
+        return StandardItem(
             id=md_id,
             text=md_name,
             subtext="Search '%s' on Wiki" % query_string,
-            icon=[Plugin.iconPath],
+            iconUrls=Plugin.iconUrls,
             actions=[
                 Action("wiki_search", "Search on Wikipedia",
                        lambda url=Plugin.searchUrl % (Plugin.local_lang_code, query_string): openUrl(url))
