@@ -5,8 +5,8 @@ from signal import SIGKILL, SIGTERM
 
 from albert import *
 
-md_iid = '1.0'
-md_version = "1.2"
+md_iid = '2.0'
+md_version = "1.3"
 md_name = "Kill Process"
 md_description = "Kill processes"
 md_license = "BSD-3"
@@ -15,23 +15,14 @@ md_maintainers = "@Pete-Hamlin"
 md_credits = "Original idea by Benedict Dudel & Manuel Schneider"
 
 
-class Plugin(TriggerQueryHandler):
-    icon_path = "xdg:process-stop"
-
-    def id(self):
-        return md_id
-
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def initialize(self):
-        pass
-
-    def defaultTrigger(self):
-        return "kill "
+class Plugin(PluginInstance, TriggerQueryHandler):
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     defaultTrigger='kill ')
+        PluginInstance.__init__(self, extensions=[self])
 
     def handleTriggerQuery(self, query):
         if not query.isValid:
@@ -53,9 +44,9 @@ class Plugin(TriggerQueryHandler):
                             .replace("\0", " ")
                         )
                         results.append(
-                            Item(
+                            StandardItem(
                                 id="kill",
-                                icon=[self.icon_path],
+                                iconUrls=["xdg:process-stop"],
                                 text=proc_command,
                                 subtext=proc_cmdline,
                                 actions=[
