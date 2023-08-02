@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import os
+from pathlib import Path
 from subprocess import run, CalledProcessError
 
 from albert import *
 
-md_iid = '1.0'
-md_version = "1.2"
+md_iid = '2.0'
+md_version = "1.3"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
 md_license = "BSD-3"
@@ -15,21 +15,17 @@ md_maintainers = "@ovitor"
 md_credits = "Original author: @tylio"
 md_bin_dependencies = ["rbw"]
 
-class Plugin(TriggerQueryHandler):
-    def id(self):
-        return md_id
 
-    def name(self):
-        return md_name
+class Plugin(PluginInstance, TriggerQueryHandler):
 
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return "bw "
-
-    def initialize(self):
-        self.icon = [os.path.dirname(__file__) + "/bw.svg"]
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     defaultTrigger='bw ')
+        PluginInstance.__init__(self, extensions=[self])
+        self.iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
 
     def _get_passwords(self):
         field_names = ["id", "name", "user", "folder"]
@@ -54,17 +50,17 @@ class Plugin(TriggerQueryHandler):
     def handleTriggerQuery(self, query):
         if query.string.strip().lower() == "unlock":
             query.add(
-                Item(
+                StandardItem(
                     id="unlock",
                     text="Unlock Bitwarden Vault",
-                    icon=self.icon,
+                    iconUrls=self.iconUrls,
                     actions=[
                         Action(
                             id="unlock",
                             text="Unlocking Bitwarden Vault",
                             callable=lambda: runTerminal(
-                                    script="rbw stop-agent && rbw unlock",
-                                    close_on_exit=True
+                                script="rbw stop-agent && rbw unlock",
+                                close_on_exit=True
                             )
                         )
                     ]
@@ -105,11 +101,11 @@ class Plugin(TriggerQueryHandler):
             except CalledProcessError as err:
                 code = run (["echo"], capture_output=True,encoding="utf-8", check=True)
             query.add(
-                Item(
+                StandardItem(
                     id=p["id"],
                     text=p["path"],
                     subtext=p["user"],
-                    icon=self.icon,
+                    iconUrls=self.iconUrls,
                     actions=[
                         Action(
                             id="copy",
