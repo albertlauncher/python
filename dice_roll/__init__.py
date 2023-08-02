@@ -14,8 +14,8 @@ Roll any number of dice using the format `_d_`.
 Example: "roll 2d6 3d8 1d20"
 """
 
-md_iid = '1.0'
-md_version = "1.1"
+md_iid = '2.0'
+md_version = "1.2"
 md_name = "Dice Roll"
 md_description = "Roll any number of dice"
 md_license = "MIT"
@@ -39,7 +39,7 @@ def get_icon_path(num_sides: int | None) -> str:
     if num_sides is None:
         icon = "dice"
     # return the path to the icon
-    return str(icons_path / f"{icon}.svg")
+    return str("file:" + icons_path / f"{icon}.svg")
 
 
 def roll_dice(num_dice: int, num_sides: int) -> tuple[int, list[int]]:
@@ -57,10 +57,9 @@ def roll_dice(num_dice: int, num_sides: int) -> tuple[int, list[int]]:
 
 
 def get_item_from_rolls(
-    rolls: list[int],
-    sum_rolls: int,
-    num_sides: int | None = None,
-) -> albert.Item:
+        rolls: list[int],
+        sum_rolls: int,
+        num_sides: int | None = None) -> albert.Item:
     """Creates an Albert Item from a list of rolls, the total, and the number of sides.
     If num_sides is not provided, an "Overall Total" summary item is created.
 
@@ -72,9 +71,9 @@ def get_item_from_rolls(
     Returns:
         albert.Item: The item to be added to the list of results.
     """
-    return albert.Item(
+    return albert.StandardItem(
         id=get_icon_path(num_sides),
-        icon=[get_icon_path(num_sides)],
+        iconUrls=[get_icon_path(num_sides)],
         text=(
             f"Rolled {len(rolls)}d{num_sides} - Total: {sum_rolls}"
             if num_sides
@@ -132,7 +131,7 @@ class Plugin(albert.TriggerQueryHandler):
     """A plugin to roll dice"""
 
     def id(self) -> str:
-        return __name__
+        return md_id
 
     def name(self) -> str:
         return md_name
