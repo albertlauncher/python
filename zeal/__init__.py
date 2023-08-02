@@ -1,40 +1,33 @@
 """Search in Zeal offline docs."""
 
-from subprocess import run
 from albert import *
 
-md_iid = '1.0'
-md_version = '1.1'
+md_iid = '2.0'
+md_version = '1.2'
 md_name = 'Zeal'
 md_description = 'Search in Zeal docs'
 md_url = 'https://github.com/albertlauncher/python/zeal'
 md_bin_dependencies = ['zeal']
 
 
-class Plugin(TriggerQueryHandler):
-    iconUrl = "xdg:zeal"
-
-    def id(self):
-        return md_id
-
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return 'z '
+class Plugin(PluginInstance, TriggerQueryHandler):
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     defaultTrigger='z ')
+        PluginInstance.__init__(self, extensions=[self])
 
     def handleTriggerQuery(self, query):
         stripped = query.string.strip()
         if stripped:
             query.add(
-                Item(
+                StandardItem(
                     id=md_name,
                     text=md_name,
                     subtext=f"Search '{stripped}' in Zeal",
-                    icon=[Plugin.iconUrl],
+                    iconUrls=["xdg:zeal"],
                     actions=[Action("zeal", "Search in Zeal", lambda s=stripped: runDetachedProcess(['zeal', s]))]
                 )
             )
