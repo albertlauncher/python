@@ -15,8 +15,8 @@ from sys import platform
 from xml.etree import ElementTree
 from albert import *
 
-md_iid = '1.0'
-md_version = "1.4"
+md_iid = '2.0'
+md_version = "1.5"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
@@ -82,22 +82,19 @@ class Editor:
             return []
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
+
     executables = []
 
-    def id(self):
-        return md_id
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='project name',
+                                     defaultTrigger='jb ')
+        PluginInstance.__init__(self, extensions=[self])
 
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return "jb "
-
-    def initialize(self):
         plugin_dir = Path(__file__).parent
         editors = [
             Editor(
@@ -175,12 +172,12 @@ class Plugin(TriggerQueryHandler):
         query.add([self._make_item(editor, project, query) for editor, project in editor_project_pairs])
 
     def _make_item(self, editor: Editor, project: Project, query: TriggerQuery) -> Item:
-        return Item(
+        return StandardItem(
             id="%s-%s-%s" % (editor.binary, project.path, project.last_opened),
             text=project.name,
             subtext=project.path,
-            completion=query.trigger + project.name,
-            icon=[str(editor.icon)],
+            inputActionText=query.trigger + project.name,
+            iconUrls=["file:" + str(editor.icon)],
             actions=[
                 Action(
                     "Open",
