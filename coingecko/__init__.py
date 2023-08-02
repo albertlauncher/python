@@ -9,8 +9,8 @@ from json import load, loads, dumps
 from pathlib import Path
 from threading import Thread, Event
 
-md_iid = "1.0"
-md_version = "1.0"
+md_iid = "2.0"
+md_version = "1.1"
 md_name = "CoinGecko"
 md_description = "Access CoinGecko"
 md_license = "BSD-3"
@@ -52,7 +52,7 @@ class CoinFetcherThread(Thread):
         self._stop_event.set()
 
 
-class CoinItem(AbstractItem):
+class NameItem(StandardItem):
     def __init__(self,
                  identifier: str,
                  name: str,
@@ -62,66 +62,46 @@ class CoinItem(AbstractItem):
                  cap: float,
                  vol: float,
                  change24h: float):
-        AbstractItem.__init__(self)
-        self.identifier = identifier
+        StandardItem.__init__(
+            self,
+            id=identifier,
+            text=f"{name} {price} {symbol}/$",
+            subtext=f"#{rank}, 24h: {change24h}%, Cap: {cap:n} $, Vol: {vol:n} $",
+            inputActionText=str(price),
+            iconUrls=Plugin.iconUrls,
+            actions=[
+                Action("show", f"Show {name} on CoinGecko",
+                       lambda id=identifier: openUrl(Plugin.coinsUrl + id)),
+                Action("url", "Copy URL to clipboard",
+                       lambda id=identifier: setClipboardText(Plugin.coinsUrl + id))
+            ]
+        )
         self.name = name
         self.symbol = symbol
-        self.rank = rank
-        self.price = price
-        self.cap = cap
-        self.vol = vol
-        self.change24h = change24h
-
-    def id(self):
-        return self.identifier
-
-    def text(self):
-        return f"{self.name} {self.price} {self.symbol}/$"
-
-    def subtext(self):
-        return f"#{self.rank}, 24h: {self.change24h}%, Cap: {self.cap:n} $, Vol: {self.vol:n} $"
-
-    def completion(self):
-        return str(self.price)
-
-    def icon(self):
-        return [Plugin.iconPath]
-
-    def actions(self):
-        return [
-            Action("show", f"Show {self.name} on CoinGecko",
-                   lambda id=self.identifier: openUrl(Plugin.coinsUrl + id)),
-            Action("url", "Copy URL to clipboard",
-                   lambda id=self.identifier: setClipboardText(Plugin.coinsUrl + id))
-        ]
 
 
-class Plugin(IndexQueryHandler):
-    iconPath = str(Path(__file__).parents[0] / "coingecko.png")
+class Plugin(PluginInstance, IndexQueryHandler):
+
     coinsUrl = "https://www.coingecko.com/en/coins/"
+    iconUrls = [f"file:{Path(__file__).parent}/coingecko.png"]
 
-    def initialize(self):
+    def __init__(self):
+        IndexQueryHandler.__init__(
+            self, md_id, md_name, md_description,
+            defaultTrigger='cg ',
+            synopsis='< symbol | name >'
+        )
+        PluginInstance.__init__(self, extensions=[self])
+
         self.items = []
         self.mtime = 0
-        self.coinCacheFilePath = Path(self.cacheLocation()) / "coins.json"
+        self.coinCacheFilePath = self.cacheLocation / "coins.json"
         self.thread = CoinFetcherThread(self.updateIndexItems, self.coinCacheFilePath)
         self.thread.start()
 
     def finalize(self):
         self.thread.stop()
         self.thread.join()
-
-    def id(self):
-        return md_id
-
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return "cg "
 
     def updateIndexItems(self):
         mtime = self.coinCacheFilePath.lstat().st_mtime
@@ -130,15 +110,15 @@ class Plugin(IndexQueryHandler):
             with open(self.coinCacheFilePath) as f:
                 self.items.clear()
                 for json_object in load(f):
-                    self.items.append(CoinItem(
-                        identifier = json_object['id'],
-                        name       = json_object['name'],
-                        symbol     = json_object['symbol'].upper(),
-                        rank       = json_object['market_cap_rank'],
-                        price      = json_object['current_price'],
-                        cap        = json_object['market_cap'],
-                        vol        = json_object['total_volume'],
-                        change24h  = json_object['price_change_percentage_24h']
+                    self.items.append(NameItem(
+                        identifier=json_object['id'],
+                        name=json_object['name'],
+                        symbol=json_object['symbol'].upper(),
+                        rank=json_object['market_cap_rank'],
+                        price=json_object['current_price'],
+                        cap=json_object['market_cap'],
+                        vol=json_object['total_volume'],
+                        change24h=json_object['price_change_percentage_24h']
                     ))
 
             index_items = []
