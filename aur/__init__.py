@@ -6,42 +6,38 @@ Search for packages and open their URLs. This extension is also intended to be u
 quickly install the packages. If you are missing your favorite AUR helper tool send a PR.
 """
 
-from albert import *
-from shutil import which
-from datetime import datetime
-from urllib import request, parse
-from time import sleep
 import json
-import os
+from datetime import datetime
+from pathlib import Path
+from shutil import which
+from time import sleep
+from urllib import request, parse
 
-md_iid = '1.0'
-md_version = "1.7"
+from albert import *
+
+md_iid = '2.0'
+md_version = "1.8"
 md_name = "AUR"
 md_description = "Query and install AUR packages"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/aur"
-md_maintainers = "@manuelschneid3r"
+# md_platforms = ["Linux"]
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
 
     aur_url = "https://aur.archlinux.org/packages/"
     baseurl = 'https://aur.archlinux.org/rpc/'
 
-    def id(self):
-        return md_id
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     defaultTrigger='aur ')
+        PluginInstance.__init__(self, extensions=[self])
 
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return "aur "
-
-    def initialize(self):
-        self.icon = [os.path.dirname(__file__)+"/arch.svg"]
+        self.iconUrls = [f"file:{Path(__file__).parent}/arch.svg"]
 
         if which("yaourt"):
             self.install_cmdline = "yaourt -S aur/%s"
@@ -56,7 +52,7 @@ class Plugin(TriggerQueryHandler):
             self.install_cmdline = None
 
     def handleTriggerQuery(self, query):
-        for number in range(50):
+        for _ in range(50):
             sleep(0.01)
             if not query.isValid:
                 return
@@ -75,11 +71,11 @@ class Plugin(TriggerQueryHandler):
             with request.urlopen(req) as response:
                 data = json.loads(response.read().decode())
                 if data['type'] == "error":
-                    query.add(Item(
+                    query.add(StandardItem(
                         id=md_id,
                         text="Error",
                         subtext=data['error'],
-                        icon=self.icon
+                        iconUrls=self.iconUrls
                     ))
                 else:
                     results = []
@@ -89,13 +85,13 @@ class Plugin(TriggerQueryHandler):
 
                     for entry in results_json:
                         name = entry['Name']
-                        item = Item(
-                            id = md_id,
-                            icon = self.icon,
-                            text = f"{entry['Name']} {entry['Version']}"
+                        item = StandardItem(
+                            id=md_id,
+                            iconUrls=self.iconUrls,
+                            text=f"{entry['Name']} {entry['Version']}"
                         )
 
-                        subtext = f"☆{entry['NumVotes']}"
+                        subtext = f"⭐{entry['NumVotes']}"
                         if entry['Maintainer'] is None:
                             subtext += ', Unmaintained!'
                         if entry['OutOfDate']:
@@ -136,10 +132,10 @@ class Plugin(TriggerQueryHandler):
 
                     query.add(results)
         else:
-            query.add(Item(
+            query.add(StandardItem(
                 id=md_id,
                 text=md_name,
                 subtext="Enter a query to search the AUR",
-                icon=self.icon,
+                iconUrls=self.iconUrls,
                 actions=[Action("open-aur", "Open AUR packages website", lambda: openUrl(self.aur_url))]
             ))
