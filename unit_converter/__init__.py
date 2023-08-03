@@ -29,8 +29,8 @@ import inflect
 import pint
 
 
-md_iid = '1.0'
-md_version = "1.3"
+md_iid = '2.0'
+md_version = "1.4"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
@@ -356,7 +356,7 @@ class Plugin(albert.TriggerQueryHandler):
         self.currency_converter = CurrencyConverter()
 
     def id(self) -> str:
-        return __name__
+        return md_id
 
     def name(self) -> str:
         return md_name
@@ -405,9 +405,9 @@ class Plugin(albert.TriggerQueryHandler):
         if not icon or not icon_path.exists():
             albert.warning(f"Icon {icon} does not exist")
             icon_path = Path(__file__).parent / "icons" / "unit_converter.svg"
-        return albert.Item(
+        return albert.StandardItem(
             id=str(icon_path),
-            icon=[str(icon_path)],
+            iconUrls=["file:" + str(icon_path)],
             text=text,
             subtext=subtext,
             actions=[
