@@ -8,17 +8,16 @@ from typing import Any
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albert import Action, Item, TriggerQuery, TriggerQueryHandler, critical, info, openUrl  # pylint: disable=import-error
+from albert import Action, StandardItem, TriggerQuery, PluginInstance, TriggerQueryHandler, critical, info, openUrl  # pylint: disable=import-error
 
 
-md_iid = '1.0'
-md_version = '1.4'
+md_iid = '2.0'
+md_version = '1.5'
 md_name = 'YouTube'
 md_description = 'Query and open YouTube videos and channels'
 md_url = 'https://github.com/albertlauncher/python/'
 md_maintainers = '@stevenxxiu'
 
-ICON_PATH = str(Path(__file__).parent / 'youtube.svg')
 DATA_REGEX = re.compile(r'\b(var\s|window\[")ytInitialData("\])?\s*=\s*(.*)\s*;</script>', re.MULTILINE)
 
 HEADERS = {
@@ -52,17 +51,17 @@ def text_from(val: dict[str, Any]) -> str:
     return text.strip()
 
 
-def download_item_icon(item: Item, temp_dir: Path) -> None:
+def download_item_icon(item: StandardItem, temp_dir: Path) -> None:
     url = item.icon[0]
     video_id = url.split('/')[-2]
     path = temp_dir / f'{video_id}.png'
     with urlopen_with_headers(url) as response, path.open('wb') as sr:
         sr.write(response.read())
-    item.icon = [str(path)]
+    item.icon = ["file:" + str(path)]
 
 
-def entry_to_item(type_, data) -> Item | None:
-    icon = ICON_PATH
+def entry_to_item(type_, data) -> StandardItem | None:
+    icon = Plugin.iconUrls[0]
     match type_:
         case 'videoRenderer':
             subtext = ['Video']
@@ -87,16 +86,16 @@ def entry_to_item(type_, data) -> Item | None:
         case _:
             return None
 
-    return Item(
+    return StandardItem(
         id=f'{md_name}/{url_path}',
         text=text_from(data['title']),
         subtext=' | '.join(subtext),
-        icon=[icon],
+        iconUrls=[icon],
         actions=[Action(f'{md_name}/{url_path}', action, lambda: openUrl(f'https://www.youtube.com/{url_path}'))],
     )
 
 
-def results_to_items(results: dict) -> list[Item]:
+def results_to_items(results: dict) -> list[StandardItem]:
     items: list[Item] = []
     for result in results:
         for type_, data in result.items():
@@ -111,31 +110,24 @@ def results_to_items(results: dict) -> list[Item]:
     return items
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
     temp_dir = None
+    iconUrls = [f"file:{Path(__file__).parent}/youtube.svg"]
 
-    def id(self) -> str:
-        return __name__
-
-    def name(self) -> str:
-        return md_name
-
-    def description(self) -> str:
-        return md_description
-
-    def initialize(self) -> None:
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='query',
+                                     defaultTrigger='yt ')
+        PluginInstance.__init__(self, extensions=[self])
         self.temp_dir = Path(tempfile.mkdtemp(prefix='albert_yt_'))
 
     def finalize(self) -> None:
         for child in self.temp_dir.iterdir():
             child.unlink()
         self.temp_dir.rmdir()
-
-    def defaultTrigger(self) -> str:
-        return 'yt '
-
-    def synopsis(self) -> str:
-        return 'query'
 
     def handleTriggerQuery(self, query: TriggerQuery) -> None:
         query_str = query.string.strip()
@@ -182,10 +174,10 @@ class Plugin(TriggerQueryHandler):
                 query.add(item)
 
             # Add a link to the *YouTube* page, in case there's more results, including results we didn't include
-            item = Item(
+            item = StandardItem(
                 id=f'{md_name}/show_more',
                 text='Show more in browser',
-                icon=[ICON_PATH],
+                iconUrls=self.iconUrls,
                 actions=[
                     Action(
                         f'{md_name}/show_more',
