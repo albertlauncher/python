@@ -5,14 +5,15 @@
 https://en.wikipedia.org/wiki/Pomodoro_Technique
 """
 
-from albert import *
 import subprocess
 import threading
 import time
-import os
+from pathlib import Path
 
-md_iid = '1.0'
-md_version = "1.2"
+from albert import *
+
+md_iid = '2.0'
+md_version = "1.3"
 md_name = "Pomodoro"
 md_description = "Set up a Pomodoro timer"
 md_license = "BSD-3"
@@ -66,36 +67,28 @@ class PomodoroTimer:
         return self.timer is not None
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
 
-    icon = [os.path.dirname(__file__) + "/pomodoro.svg"]
     default_pomodoro_duration = 25
     default_break_duration = 5
     default_longbreak_duration = 15
     default_pomodoro_count = 4
 
-    def id(self):
-        return md_id
-
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return "pomo "
-
-    def initialize(self):
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='[duration [break duration [long break duration [count]]]]',
+                                     defaultTrigger='pomo ')
+        PluginInstance.__init__(self, extensions=[self])
         self.pomodoro = PomodoroTimer()
-
-    def synopsis(self):
-        return "[duration [break duration [long break duration [count]]]]"
+        self.iconUrls = [f"file:{Path(__file__).parent}/pomodoro.svg"]
 
     def handleTriggerQuery(self, query):
-        item = Item(
+        item = StandardItem(
             id=md_id,
-            icon=self.icon,
+            iconUrls=self.iconUrls,
             text=md_name
         )
 
