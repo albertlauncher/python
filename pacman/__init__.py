@@ -11,8 +11,8 @@ import pathlib
 
 from albert import Action, Item, TriggerQueryHandler, runTerminal, openUrl
 
-md_iid = '1.0'
-md_version = "1.7"
+md_iid = '2.0'
+md_version = "1.8"
 md_name = "PacMan"
 md_description = "Search, install and remove packages"
 md_license = "BSD-3"
@@ -20,30 +20,22 @@ md_url = "https://github.com/albertlauncher/python/tree/master/pacman"
 md_bin_dependencies = ["pacman", "expac"]
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
 
     pkgs_url = "https://www.archlinux.org/packages/"
 
-    def id(self):
-        return md_id
-
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def synopsis(self):
-        return "<package name>"
-
-    def defaultTrigger(self):
-        return "pac "
-
-    def initialize(self):
-        self.icons = [
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='<package name>',
+                                     defaultTrigger='pac ')
+        PluginInstance.__init__(self, extensions=[self])
+        self.iconUrls = [
             "xdg:archlinux-logo",
             "xdg:system-software-install",
-            str(pathlib.Path(__file__).parent / "arch.svg")
+            f"file:{pathlib.Path(__file__).parent}/arch.svg"
         ]
 
     def handleTriggerQuery(self, query):
@@ -51,11 +43,11 @@ class Plugin(TriggerQueryHandler):
 
         # Update item on empty queries
         if not stripped:
-            query.add(Item(
+            query.add(StandardItem(
                 id="%s-update" % md_id,
                 text="Pacman package manager",
                 subtext="Enter the package you are looking for or hit enter to update.",
-                icon=self.icons,
+                iconUrls=self.iconUrls,
                 actions=[
                     Action("up-nc", "Update packages (no confirm)",
                            lambda: runTerminal("sudo pacman -Syu --noconfirm")),
@@ -82,7 +74,7 @@ class Plugin(TriggerQueryHandler):
         remote_pkgs = [tuple(line.split('\t')) for line in proc_s.stdout.read().split('\n')[:-1]]  # newline at end
 
         for pkg_name, pkg_vers, pkg_repo, pkg_desc, pkg_purl, pkg_deps in remote_pkgs:
-            if stripped not in pkg_name :
+            if stripped not in pkg_name:
                 continue
 
             pkg_installed = True if pkg_name in local_pkgs else False
@@ -100,12 +92,12 @@ class Plugin(TriggerQueryHandler):
             if pkg_purl:
                 actions.append(Action("proj_url", "Show project website", lambda u=pkg_purl: openUrl(u)))
 
-            item = Item(
+            item = StandardItem(
                 id="%s_%s_%s" % (md_id, pkg_repo, pkg_name),
-                icon=self.icons,
+                iconUrls=self.iconUrls,
                 text="%s %s [%s]" % (pkg_name, pkg_vers, pkg_repo),
                 subtext=f"{pkg_desc} [Installed]" if pkg_installed else f"{pkg_desc}",
-                completion="%s%s" % (query.trigger, pkg_name),
+                inputActionText="%s%s" % (query.trigger, pkg_name),
                 actions=actions
             )
             items.append(item)
@@ -113,10 +105,10 @@ class Plugin(TriggerQueryHandler):
         if items:
             query.add(items)
         else:
-            query.add(Item(
+            query.add(StandardItem(
                 id="%s-empty" % md_id,
                 text="Search on archlinux.org",
                 subtext="No results found in the local database",
-                icon=self.icons,
+                iconUrls=self.iconUrls,
                 actions=[Action("search", "Search on archlinux.org", lambda: openUrl(f"{self.pkgs_url}?q={stripped}"))]
             ))
