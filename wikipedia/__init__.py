@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 
 md_iid = '2.0'
-md_version = "1.9"
+md_version = "1.10"
 md_name = "Wikipedia"
 md_description = "Search Wikipedia articles"
 md_license = "BSD-3"
@@ -47,7 +47,6 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         self.wiki_fb = WikiFallbackHandler()
         PluginInstance.__init__(self, extensions=[self, self.wiki_fb])
 
-
         params = {
             'action': 'query',
             'meta': 'siteinfo',
@@ -56,7 +55,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             'format': 'json'
         }
 
-        Plugin.local_lang_code = getdefaultlocale()[0][0:2]
+        Plugin.local_lang_code = getdefaultlocale()[0]
+        if Plugin.local_lang_code:
+            Plugin.local_lang_code = Plugin.local_lang_code[0:2]
+        else:
+            Plugin.local_lang_code = 'en'
+            warning("Failed getting language code. Using 'en'.")
 
         get_url = "%s?%s" % (self.baseurl, parse.urlencode(params))
         req = request.Request(get_url, headers={'User-Agent': self.user_agent})
@@ -67,15 +71,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 if self.local_lang_code in languages:
                     self.baseurl = self.baseurl.replace("en", self.local_lang_code)
         except timeout:
-            critical('Error getting languages - socket timed out. Defaulting to EN.')
+            warning('Error getting languages - socket timed out. Defaulting to EN.')
         except Exception as error:
-            critical('Error getting languages (%s). Defaulting to EN.' % error)
+            warning('Error getting languages (%s). Defaulting to EN.' % error)
 
     def handleTriggerQuery(self, query):
         stripped = query.string.strip()
         if stripped:
             # avoid rate limiting
-            for number in range(50):
+            for _ in range(50):
                 sleep(0.01)
                 if not query.isValid:
                     return
@@ -99,17 +103,22 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     title = data[1][i]
                     summary = data[2][i]
                     url = data[3][i]
+                    results.append(
+                        StandardItem(
+                            id=md_id,
+                            text=title,
+                            subtext=summary if summary else url,
+                            iconUrls=self.iconUrls,
+                            actions=[
+                                Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
+                                Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
+                            ]
+                        )
+                    )
 
-                    results.append(StandardItem(id=md_id,
-                                                text=title,
-                                                subtext=summary if summary else url,
-                                                iconUrls=self.iconUrls,
-                                                actions=[
-                                                    Action("open", "Open article on Wikipedia", lambda u=url: openUrl(u)),
-                                                    Action("copy", "Copy URL to clipboard", lambda u=url: setClipboardText(u))
-                                                ]))
             if not results:
                 results.append(Plugin.createFallbackItem(stripped))
+
             query.add(results)
         else:
             query.add(
