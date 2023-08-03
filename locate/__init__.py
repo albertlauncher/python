@@ -7,14 +7,14 @@ up to date. Pass params as necessary. The input is split using a shell lexer.
 """
 
 
-from albert import *
-import os
-import pathlib
 import shlex
 import subprocess
+from pathlib import Path
 
-md_iid = '1.0'
-md_version = "1.8"
+from albert import *
+
+md_iid = '2.0'
+md_version = "1.9"
 md_name = "Locate"
 md_description = "Find and open files using locate"
 md_license = "BSD-3"
@@ -24,28 +24,21 @@ md_bin_dependencies = "locate"
 
 class Plugin(TriggerQueryHandler):
 
-    def id(self):
-        return md_id
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='<locate params>',
+                                     defaultTrigger="'")
+        PluginInstance.__init__(self, extensions=[self])
 
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return "'"
-
-    def synopsis(self):
-        return "<locate params>"
-
-    def initialize(self):
-        self.icons = [
+        self.iconUrls = [
             "xdg:preferences-system-search",
             "xdg:system-search",
             "xdg:search",
             "xdg:text-x-generic",
-            str(pathlib.Path(__file__).parent / "locate.svg")
+            f"file:{Path(__file__).parent}/locate.svg"
         ]
 
     def handleTriggerQuery(self, query):
@@ -64,13 +57,12 @@ class Plugin(TriggerQueryHandler):
                 return
 
             for path in lines:
-                basename = os.path.basename(path)
                 query.add(
-                    Item(
+                    StandardItem(
                         id=path,
-                        text=basename,
+                        text=Path(path).name,
                         subtext=path,
-                        icon=self.icons,
+                        iconUrls=self.iconUrls,
                         actions=[
                             Action("open", "Open", lambda p=path: openUrl("file://%s" % p))
                         ]
@@ -78,11 +70,11 @@ class Plugin(TriggerQueryHandler):
                 )
         else:
             query.add(
-                Item(
+                StandardItem(
                     id="updatedb",
                     text="Update locate database",
                     subtext="Type at least three chars for a search",
-                    icon=self.icons,
+                    iconUrls=self.iconUrls,
                     actions=[
                         Action("update", "Update", lambda: runTerminal("sudo updatedb"))
                     ]
