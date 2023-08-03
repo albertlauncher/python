@@ -10,16 +10,17 @@ Examples:
 - `120:` starts a 2 hours timer
 """
 
-from albert import *
-from time import strftime, time, localtime
-from datetime import timedelta
-import threading
-from sys import platform
-import os
 import subprocess
+import threading
+from datetime import timedelta
+from pathlib import Path
+from sys import platform
+from time import strftime, time, localtime
 
-md_iid = '1.0'
-md_version = "1.5"
+from albert import *
+
+md_iid = '2.0'
+md_version = "1.6"
 md_name = "Timer"
 md_description = "Set up timers"
 md_license = "BSD-2"
@@ -37,11 +38,18 @@ class Timer(threading.Timer):
         self.start()
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
 
-    def initialize(self):
-        self.icons = [os.path.dirname(__file__)+"/time.svg"]
-        self.soundPath = os.path.dirname(__file__)+"/bing.wav"
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='[[hrs:]mins:]secs [name]',
+                                     defaultTrigger='timer ')
+        PluginInstance.__init__(self, extensions=[self])
+        self.iconUrls = [f"file:{Path(__file__).parent}/time.svg"]
+        self.soundPath = Path(__file__).parent / "bing.wav"
         self.timers = []
 
     def finalize(self):
@@ -68,21 +76,6 @@ class Plugin(TriggerQueryHandler):
 
         self.deleteTimer(timer)
 
-    def id(self):
-        return md_id
-
-    def name(self):
-        return md_name
-
-    def description(self):
-        return md_description
-
-    def defaultTrigger(self):
-        return 'timer '
-
-    def synopsis(self):
-        return '[[hrs:]mins:]secs [name]'
-
     def handleTriggerQuery(self, query):
         if not query.isValid:
             return
@@ -92,11 +85,11 @@ class Plugin(TriggerQueryHandler):
             fields = args[0].split(":")
             name = args[1] if 1 < len(args) else ''
             if not all(field.isdigit() or field == '' for field in fields):
-                return Item(
+                return StandardItem(
                     id=self.name(),
                     text="Invalid input",
                     subtext="Enter a query in the form of '%s[[hours:]minutes:]seconds [name]'" % self.defaultTrigger(),
-                    icon=self.icons
+                    iconUrls=self.iconUrls,
                 )
 
             seconds = 0
@@ -104,11 +97,11 @@ class Plugin(TriggerQueryHandler):
             for i in range(len(fields)):
                 seconds += int(fields[i] if fields[i] else 0)*(60**i)
 
-            query.add(Item(
+            query.add(StandardItem(
                 id=self.name(),
                 text=str(timedelta(seconds=seconds)),
                 subtext='Set a timer with name "%s"' % name if name else 'Set a timer',
-                icon=self.icons,
+                iconUrls=self.iconUrls,
                 actions=[Action("set-timer", "Set timer", lambda sec=seconds: self.startTimer(sec, name))]
             ))
             return
@@ -121,11 +114,11 @@ class Plugin(TriggerQueryHandler):
             identifier = "%d:%02d:%02d" % (h, m, s)
 
             timer_name_with_quotes = '"%s"' % timer.name if timer.name else ''
-            items.append(Item(
+            items.append(StandardItem(
                 id=self.name(),
                 text='Delete timer %s [%s]' % (timer_name_with_quotes, identifier),
                 subtext="Times out %s" % strftime("%X", localtime(timer.end)),
-                icon=self.icons,
+                iconUrls=self.iconUrls,
                 actions=[Action("delete-timer", "Delete timer", lambda timer=timer: self.deleteTimer(timer))]
             ))
 
