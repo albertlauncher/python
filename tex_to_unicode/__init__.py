@@ -2,15 +2,15 @@
 
 #  Copyright (c) 2022 Manuel Schneider
 
-import os
 import re
 import unicodedata
-
-from albert import *
+from pathlib import Path
 from pylatexenc.latex2text import LatexNodes2Text
 
-md_iid = '1.0'
-md_version = "1.1"
+from albert import *
+
+md_iid = '2.0'
+md_version = "1.2"
 md_name = "TeX to Unicode"
 md_description = "Convert TeX mathmode commands to unicode characters"
 md_license = "GPL-3.0"
@@ -19,25 +19,18 @@ md_lib_dependencies = "pylatexenc"
 md_maintainers = "@DenverCoder1"
 
 
-class Plugin(TriggerQueryHandler):
-    def id(self) -> str:
-        return md_id
+class Plugin(PluginInstance, TriggerQueryHandler):
 
-    def name(self) -> str:
-        return md_name
-
-    def description(self) -> str:
-        return md_description
-
-    def defaultTrigger(self) -> str:
-        return "tex "
-
-    def synopsis(self) -> str:
-        return "<tex input>"
-
-    def initialize(self) -> None:
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='<tex input>',
+                                     defaultTrigger='tex ')
+        PluginInstance.__init__(self, extensions=[self])
         self.COMBINING_LONG_SOLIDUS_OVERLAY = "\u0338"
-        self.icon = [os.path.dirname(__file__) + "/tex.png"]
+        self.iconUrls = [f"file:{Path(__file__).parent}/tex.png"]
 
     def _create_item(self, text: str, subtext: str, can_copy: bool) -> Item:
         actions = []
@@ -49,11 +42,11 @@ class Plugin(TriggerQueryHandler):
                     lambda t=text: setClipboardText(t),
                 )
             )
-        return Item(
+        return StandardItem(
             id=md_id,
-            icon=self.icon,
             text=text,
             subtext=subtext,
+            iconUrls=self.iconUrls,
             actions=actions,
         )
 
