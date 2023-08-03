@@ -7,8 +7,8 @@ from threading import Lock
 from albert import (Action, Item, TriggerQuery, TriggerQueryHandler,
                     setClipboardText)
 
-md_iid = "1.0"
-md_version = "1.0"
+md_iid = "2.0"
+md_version = "1.1"
 md_name = "Mathematica Eval"
 md_description = "Evaluate Mathemtica code"
 md_license = "GPL-3.0"
@@ -17,21 +17,16 @@ md_maintainers = "@tyilo"
 md_bin_dependencies = ["wolframscript"]
 
 
-class Plugin(TriggerQueryHandler):
-    def id(self) -> str:
-        return md_id
+class Plugin(PluginInstance, TriggerQueryHandler):
 
-    def name(self) -> str:
-        return md_name
-
-    def description(self) -> str:
-        return md_description
-
-    def defaultTrigger(self) -> str:
-        return "mma "
-
-    def synopsis(self) -> str:
-        return "<Mathematica expression>"
+    def __init__(self):
+        TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='<Mathematica expression>',
+                                     defaultTrigger='mma ')
+        PluginInstance.__init__(self, extensions=[self])
 
     def handleTriggerQuery(self, query: TriggerQuery) -> None:
         stripped = query.string.strip()
@@ -61,11 +56,11 @@ class Plugin(TriggerQueryHandler):
         result_str = output.strip()
 
         query.add(
-            Item(
+            StandardItem(
                 id=md_id,
                 text=result_str,
-                completion=query.trigger + result_str,
-                icon=["xdg:wolfram-mathematica"],
+                inputActionText=query.trigger + result_str,
+                iconUrls=["xdg:wolfram-mathematica"],
                 actions=[
                     Action(
                         "copy",
