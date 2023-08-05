@@ -317,6 +317,14 @@ def setClipboardText(text: str=''):
     """
 
 
+def setClipboardTextAndPaste(text: str=''):
+    """
+    Set the system clipboard text and paste to the front-most window
+    Args:
+        text: The text used to set the clipboard
+    """
+
+
 def openUrl(url: str = ''):
     """
     Open an URL using QDesktopServices::openUrl.
