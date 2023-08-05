@@ -76,7 +76,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def getPasswords(self):
         passwords = []
-        for root, dirnames, filenames in os.walk(PASS_DIR):
+        for root, dirnames, filenames in os.walk(PASS_DIR, followlinks=True):
             for filename in fnmatch.filter(filenames, "*.gpg"):
                 passwords.append(
                     os.path.join(root, filename.replace(".gpg", "")).replace(PASS_DIR, "")
