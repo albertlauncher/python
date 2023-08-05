@@ -169,9 +169,12 @@ class Plugin(PluginInstance, IndexQueryHandler):
                 iconUrls=[f"gen:?text={emoji}"],
                 actions=[
                     Action(
-                        "copy",
-                        "Copy to clipboard",
-                        lambda emj=emoji: setClipboardText(emj),
+                        "paste", "Copy and paste to front-most window",
+                        lambda emj=emoji: setClipboardTextAndPaste(emj)
+                    ),
+                    Action(
+                        "copy", "Copy to clipboard",
+                        lambda emj=emoji: setClipboardText(emj)
                     ),
                 ]
             )
