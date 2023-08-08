@@ -268,6 +268,16 @@ class GlobalQuery(ABC):
 class GlobalQueryHandler(TriggerQueryHandler):
     """https://albertlauncher.github.io/reference/classalbert_1_1_global_query_handler.html"""
 
+    def __init__(self,
+                 id: str,
+                 name: str,
+                 description: str,
+                 synopsis: str = '',
+                 defaultTrigger: str = f'{id} ',
+                 allowTriggerRemap: str = true,
+                 supportsFuzzyMatching: bool = False):
+        ...
+
     @abstractmethod
     def handleGlobalQuery(self, query: GlobalQuery) -> List[RankItem]:
         ...
