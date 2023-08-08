@@ -313,6 +313,12 @@ class IndexQueryHandler(GlobalQueryHandler):
         ...
 
 
+class Notification:
+
+    def __init__(self, title: str, subtitle: str = '', text: str = ''):
+        ...
+
+
 def debug(arg: Any):...
 def info(arg: Any):...
 def warning(arg: Any):...
@@ -359,15 +365,5 @@ def runTerminal(script: str = '', workdir: str = '', close_on_exit: bool = False
         script: The script to be executed.
         workdir: The working directory used to run the process
         close_on_exit: Close the terminal on exit. Otherwise exec $SHELL.
-    """
-
-
-def sendTrayNotification(title: str = '', msg: str = '', ms: int = 10000):
-    """
-    Send a tray notification.
-    Args:
-        title: The notification title
-        msg: The notification body
-        ms: The display time (if supported by the system)
     """
 
