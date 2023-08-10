@@ -319,10 +319,20 @@ class Notification:
         ...
 
 
-def debug(arg: Any):...
-def info(arg: Any):...
-def warning(arg: Any):...
-def critical(arg: Any):...
+def debug(arg: Any):
+    """Module attached attribute"""
+
+
+def info(arg: Any):
+    """Module attached attribute"""
+
+
+def warning(arg: Any):
+    """Module attached attribute"""
+
+
+def critical(arg: Any):
+    """Module attached attribute"""
 
 
 def setClipboardText(text: str=''):
