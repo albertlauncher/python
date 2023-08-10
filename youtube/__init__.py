@@ -8,7 +8,7 @@ from typing import Any
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from albert import Action, StandardItem, TriggerQuery, PluginInstance, TriggerQueryHandler, critical, info, openUrl  # pylint: disable=import-error
+from albert import Action, StandardItem, TriggerQuery, PluginInstance, TriggerQueryHandler, openUrl  # pylint: disable=import-error
 
 
 md_iid = '2.0'
