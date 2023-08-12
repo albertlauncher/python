@@ -104,8 +104,7 @@ class Plugin(PluginInstance, IndexQueryHandler):
         self.thread.join()
 
     def updateIndexItems(self):
-        mtime = self.coinCacheFilePath.lstat().st_mtime
-        if self.coinCacheFilePath.is_file() and mtime > self.mtime:
+        if self.coinCacheFilePath.is_file() and (mtime := self.coinCacheFilePath.lstat().st_mtime) > self.mtime:
             self.mtime = mtime
             with open(self.coinCacheFilePath) as f:
                 self.items.clear()
