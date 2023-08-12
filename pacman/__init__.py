@@ -9,7 +9,7 @@ import subprocess
 from time import sleep
 import pathlib
 
-from albert import Action, Item, TriggerQueryHandler, runTerminal, openUrl
+from albert import Action, StandardItem, PluginInstance, TriggerQueryHandler, runTerminal, openUrl
 
 md_iid = '2.0'
 md_version = "1.8"
