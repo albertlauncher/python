@@ -67,7 +67,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     def onTimerTimeout(self, timer):
         self.notification = Notification(
             title=f"Timer '{timer.name if timer.name else 'Timer'}'",
-            subtitle=f"Timed out at {strftime('%X', localtime(timer.end))}"
+            body=f"Timed out at {strftime('%X', localtime(timer.end))}"
         )
         self.deleteTimer(timer)
 
