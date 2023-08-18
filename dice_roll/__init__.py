@@ -15,7 +15,7 @@ Example: "roll 2d6 3d8 1d20"
 """
 
 md_iid = '2.0'
-md_version = "1.2"
+md_version = "1.3"
 md_name = "Dice Roll"
 md_description = "Roll any number of dice"
 md_license = "MIT"
@@ -39,7 +39,7 @@ def get_icon_path(num_sides: int | None) -> str:
     if num_sides is None:
         icon = "dice"
     # return the path to the icon
-    return str("file:" + icons_path / f"{icon}.svg")
+    return str(f"file:{icons_path / f'{icon}.svg'}")
 
 
 def roll_dice(num_dice: int, num_sides: int) -> tuple[int, list[int]]:
@@ -127,29 +127,28 @@ def get_items(query_string: str) -> list[albert.Item]:
     return results
 
 
-class Plugin(albert.TriggerQueryHandler):
+class Plugin(albert.PluginInstance, albert.TriggerQueryHandler):
     """A plugin to roll dice"""
 
-    def id(self) -> str:
-        return md_id
+    def __init__(self):
+        albert.TriggerQueryHandler.__init__(self,
+            id=md_id,
+            name=md_name,
+            description=md_description,
+            synopsis="<amount>d<sides> [<amount>d<sides> ...]",
+            defaultTrigger="roll ",
+        )
+        albert.PluginInstance.__init__(self, extensions=[self])
 
-    def name(self) -> str:
-        return md_name
-
-    def description(self) -> str:
-        return md_description
-
-    def synopsis(self) -> str:
-        return "<amount>d<sides> [<amount>d<sides> ...]"
-
-    def defaultTrigger(self) -> str:
-        return "roll "
-
-    def handleTriggerQuery(self, query: albert.TriggerQuery) -> None:
+    def handleTriggerQuery(self, query: albert.Query) -> None:
         query_string = query.string.strip()
         try:
             items = get_items(query_string)
             query.add(items)
         except Exception as e:
-            albert.warning(e)
-            albert.info("Something went wrong. Make sure you're using the correct format.")
+            query.add([albert.StandardItem(
+                id="error",
+                iconUrls=[get_icon_path(None)],
+                text="Something went wrong.",
+                subtext="Make sure you're using the correct format.",
+            )])
