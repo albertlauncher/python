@@ -78,7 +78,7 @@ class Editor:
                         Project(name=Path(project_path).name, path=project_path, last_opened=int(last_opened))
                     )
             return projects
-        except ElementTree.ParseError:
+        except (ElementTree.ParseError, FileNotFoundError):
             return []
 
 
