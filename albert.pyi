@@ -1,6 +1,6 @@
 """
 
-# Albert Python interface v2.0
+# Albert Python interface v2.1
 
 
 The Python interface is a subset of the internal C++ interface exposed to Python with some minor adjustments. A Python
@@ -90,6 +90,27 @@ class PluginInstance(ABC):
     def finalize(self):
         ...
 
+    def readConfig(self, key: str, type: type[str|int|float|bool]) -> str|int|float|bool|None:
+        ...
+
+    def writeConfig(self, key: str, value: str|int|float|bool):
+        ...
+
+    def configWidget(self):
+        """
+        [
+            {
+                'type': 'lineedit'|'checkbox'|'spinbox'|'doublespinbox',
+                'property_name': '…',
+                'display_name': '…',
+                'widget_properties': {
+                    'widget_property': bool|int|float|string,
+                    …
+                }
+            },
+            …
+        ]
+        """
 
 class Action:
     """https://albertlauncher.github.io/reference/classalbert_1_1_action.html"""
