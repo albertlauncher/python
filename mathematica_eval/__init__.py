@@ -4,8 +4,7 @@ import subprocess
 from tempfile import NamedTemporaryFile
 from threading import Lock
 
-from albert import (Action, Item, TriggerQuery, TriggerQueryHandler,
-                    setClipboardText)
+from albert import *
 
 md_iid = "2.0"
 md_version = "1.1"
