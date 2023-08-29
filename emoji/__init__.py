@@ -10,8 +10,8 @@ from pathlib import Path
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "2.0"
+md_iid = '2.1'
+md_version = "2.1"
 md_name = "Emoji"
 md_description = "Find and copy emojis by name"
 md_license = "MIT"
@@ -30,9 +30,32 @@ class Plugin(PluginInstance, IndexQueryHandler):
         PluginInstance.__init__(self, extensions=[self])
         self.thread = None
 
+        self._use_derived = self.readConfig('use_derived', bool)
+        if self._use_derived is None:
+            self._use_derived = False
+
     def finalize(self):
         if self.thread.is_alive():
             self.thread.join()
+
+    @property
+    def use_derived(self):
+        return self._use_derived
+
+    @use_derived.setter
+    def use_derived(self, value):
+        self._use_derived = value
+        self.writeConfig('use_derived', value)
+        self.updateIndexItems()
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'checkbox',
+                'property': 'use_derived',
+                'label': 'Use derived emojis'
+            }
+        ]
 
     def updateIndexItems(self):
         if self.thread and self.thread.is_alive():
@@ -99,7 +122,7 @@ class Plugin(PluginInstance, IndexQueryHandler):
 
             return fully_qualified
 
-        def get_annotations(cache_path: str) -> dict:
+        def get_annotations(cache_path: str, use_derived: bool) -> dict:
 
             # determine locale
 
@@ -117,6 +140,12 @@ class Plugin(PluginInstance, IndexQueryHandler):
                       'cldr-annotations-full/annotations/%s/annotations.json' % lang
                 download_file(url, path_full)
 
+            with path_full.open("r", encoding='utf-8') as file_full:
+                json_full = json.load(file_full)['annotations']['annotations']
+
+            if not use_derived:
+                return json_full
+
             # fetch localized cldr annotations 'derived'
 
             path_derived = cache_path / 'emoji_annotations_derived.json'
@@ -127,13 +156,12 @@ class Plugin(PluginInstance, IndexQueryHandler):
 
             # open, read, parse, merge, return
 
-            with path_full.open("r", encoding='utf-8') as file_full, \
-                    path_derived.open("r", encoding='utf-8') as file_derived:
-                json_full = json.load(file_full)['annotations']['annotations']
+            with path_derived.open("r", encoding='utf-8') as file_derived:
                 json_derived = json.load(file_derived)['annotationsDerived']['annotations']
                 return json_full | json_derived
+
         emojis = get_fully_qualified_emojis(self.cacheLocation)
-        annotations = get_annotations(self.cacheLocation)
+        annotations = get_annotations(self.cacheLocation, self.use_derived)
 
         def remove_redundancy(sentences):
             sets_of_words = [set(sentence.lower().split()) for sentence in sentences]
@@ -156,7 +184,7 @@ class Plugin(PluginInstance, IndexQueryHandler):
                     non_rgi_emoji = emoji.replace('\uFE0F', '')
                     ann = annotations[non_rgi_emoji]
                 except KeyError as e:
-                    debug(f"Found no translation for {e}. Emoji will not be available.")
+                    # debug(f"Found no translation for {e}. Emoji will not be available.")
                     continue
 
             title = ann['tts'][0]
