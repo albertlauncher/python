@@ -17,11 +17,11 @@ md_name = "Google Translate"
 md_description = "Translate sentences using googletrans"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/"
-md_lib_dependencies = "googletrans==3.1.0a0"
+md_lib_dependencies = "googletrans==4.0.0-rc1"
 md_maintainers = "@manuelschneid3r"
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         TriggerQueryHandler.__init__(self,
