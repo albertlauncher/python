@@ -95,7 +95,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     and splits[0] in self.src_languages and splits[1] in self.dst_languages:
                 src, dst, text = splits
             elif len(splits := stripped.split(maxsplit=1)) == 2 and splits[0] in self.src_languages:
-                src, dst, text = splits[0], self.lang, splits[1]
+                src, dst, text = 'auto', splits[0], splits[1]
             else:
                 src, dst, text = 'auto', self.lang, stripped
 
