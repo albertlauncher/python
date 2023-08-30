@@ -22,7 +22,7 @@ md_url = "https://github.com/albertlauncher/python/tree/master/locate"
 md_bin_dependencies = "locate"
 
 
-class Plugin(TriggerQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         TriggerQueryHandler.__init__(self,
