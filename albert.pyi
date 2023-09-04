@@ -91,10 +91,17 @@ class PluginInstance(ABC):
         ...
 
     def readConfig(self, key: str, type: type[str|int|float|bool]) -> str|int|float|bool|None:
-        ...
+        """
+        Read a config value from the Albert settings.
+        Note: Due to limitations of QSettings on some platforms the type may be lost, therefore the type expected has to
+        be passed.
+
+        Returns:
+             The requested value or None if the value does not exist or errors occurred.
+        """
 
     def writeConfig(self, key: str, value: str|int|float|bool):
-        ...
+        """Write a config value to the Albert settings."""
 
     def configWidget(self) -> List[dict]:
         """
