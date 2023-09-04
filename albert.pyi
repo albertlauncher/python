@@ -96,20 +96,31 @@ class PluginInstance(ABC):
     def writeConfig(self, key: str, value: str|int|float|bool):
         ...
 
-    def configWidget(self):
+    def configWidget(self) -> List[dict]:
         """
-        [
-            {
-                'type': 'lineedit'|'checkbox'|'spinbox'|'doublespinbox',
-                'property_name': '…',
-                'display_name': '…',
-                'widget_properties': {
-                    'widget_property': bool|int|float|string,
-                    …
-                }
-            },
-            …
-        ]
+        Descriptive config widget factory.
+
+        Define a static config widget using a list of dicts, each defining a row in the resulting form layout.
+        Supported keys are:
+
+        - 'property' The name of the property that will be set upon editing the forms.
+        - 'label' The text displayed in front of the the editor widget.
+        - 'type' The type of editor widget used. See the supported types below.
+        - 'items' The list of strings used for 'type': 'combobox'.
+        - 'widget_properties' Dict setting the widget properties of the editor widget.
+          See the links along the editor types below (but also the base classes) to find available properties.
+          Note that due to the restricted type conversion only properties of type str|int|float|bool are settable.
+
+        The supported editor widget types are:
+
+        * 'checkbox' for boolean properties (See https://doc.qt.io/qt-6/qcheckbox.html)
+        * 'spinbox' for integer properties. (See https://doc.qt.io/qt-6/qspinbox.html)
+        * 'doublespinbox' for float properties. (See https://doc.qt.io/qt-6/qdoublespinbox.html)
+        * 'lineedit' if you want the user to input any string. (See https://doc.qt.io/qt-6/qlineedit.html)
+        * 'combobox' if you want the user to choose a string. (See https://doc.qt.io/qt-6/qcombobox.html)
+
+        Returns:
+            A list of dicts, describing a form layout as defined above.
         """
 
 class Action:
