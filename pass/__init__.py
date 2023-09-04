@@ -119,7 +119,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def showPasswords(self, query):
         if query.string.strip():
-            passwords = self.getPasswordsFromSearch(query)
+            passwords = self.getPasswordsFromSearch(query.string)
         else:
             passwords = self.getPasswords()
 
