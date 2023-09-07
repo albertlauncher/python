@@ -9,7 +9,7 @@ md_version = "1.5"
 md_name = "Pass"
 md_description = "Manage passwords in pass"
 md_bin_dependencies = ["pass"]
-md_maintainers = ["@maxmil", "@Pete-Hamlin"]
+md_maintainers = ["@Pete-Hamlin"]
 md_license = "BSD-3"
 
 HOME_DIR = os.environ["HOME"]
