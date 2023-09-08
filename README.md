@@ -5,3 +5,9 @@ This repository is shipped with albert. If you want to have bleeding edge plugin
 ```shell
 git clone https://github.com/albertlauncher/python.git ~/.local/share/albert/python/plugins
 ```
+
+Credits go to our contributors
+
+<a href = "https://github.com/albertlauncher/python/graphs/contributors">
+<img src = "https://contrib.rocks/image?repo=albertlauncher/python"/>
+</a>
