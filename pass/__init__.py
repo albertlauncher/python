@@ -4,12 +4,12 @@ import fnmatch
 import os
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.4"
+md_iid = "2.1"
+md_version = "1.5"
 md_name = "Pass"
 md_description = "Manage passwords in pass"
 md_bin_dependencies = ["pass"]
-md_maintainers = "@maxmil"
+md_maintainers = ["@Pete-Hamlin"]
 md_license = "BSD-3"
 
 HOME_DIR = os.environ["HOME"]
@@ -17,40 +17,109 @@ PASS_DIR = os.environ.get("PASSWORD_STORE_DIR", os.path.join(HOME_DIR, ".passwor
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
-
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis='<pass-name>',
-                                     defaultTrigger='pass ')
+        TriggerQueryHandler.__init__(
+            self,
+            id=md_id,
+            name=md_name,
+            description=md_description,
+            synopsis="<pass-name>",
+            defaultTrigger="pass ",
+        )
         PluginInstance.__init__(self, extensions=[self])
         self.iconUrls = ["xdg:dialog-password"]
+        self._use_otp = self.readConfig("use_otp", bool) or False
+        self._otp_glob = self.readConfig("otp_glob", str) or "*-otp.gpg"
+
+    @property
+    def use_otp(self):
+        return self._use_otp
+
+    @use_otp.setter
+    def use_otp(self, value):
+        print(f"Setting _use_otp to {value}")
+        self._use_otp = value
+        self.writeConfig("use_otp", value)
+
+    @property
+    def otp_glob(self):
+        return self._otp_glob
+
+    @otp_glob.setter
+    def otp_glob(self, value):
+        print(f"Setting _otp_glob to {value}")
+        self._otp_glob = value
+        self.writeConfig("otp_glob", value)
+
+    def configWidget(self):
+        return [
+            {"type": "checkbox", "property": "use_otp", "label": "Enable pass OTP extension"},
+            {
+                "type": "lineedit",
+                "property": "otp_glob",
+                "label": "Glob pattern for OTP passwords",
+                "widget_properties": {"placeholderText": "*-otp.gpg"},
+            },
+        ]
 
     def handleTriggerQuery(self, query):
         if query.string.strip().startswith("generate"):
             self.generatePassword(query)
-        else: 
+        elif query.string.strip().startswith("otp") and self._use_otp:
+            self.showOtp(query)
+        else:
             self.showPasswords(query)
 
     def generatePassword(self, query):
         location = query.string.strip()[9:]
 
-        query.add(StandardItem(
-            id="generate_password",
-            iconUrls=self.iconUrls,
-            text="Generate a new password",
-            subtext="The new password will be located at %s" % location,
-            inputActionText="pass %s" % query.string,
-            actions=[
-                Action("generate", "Generate", lambda: runDetachedProcess(["pass", "generate", "--clip", location, "20"]))
-            ]
-        ))
+        query.add(
+            StandardItem(
+                id="generate_password",
+                iconUrls=self.iconUrls,
+                text="Generate a new password",
+                subtext="The new password will be located at %s" % location,
+                inputActionText="pass %s" % query.string,
+                actions=[
+                    Action(
+                        "generate",
+                        "Generate",
+                        lambda: runDetachedProcess(["pass", "generate", "--clip", location, "20"]),
+                    )
+                ],
+            )
+        )
+
+    def showOtp(self, query):
+        otp_query = query.string.strip()[4:]
+        passwords = []
+        if otp_query:
+            passwords = self.getPasswordsFromSearch(otp_query, otp=True)
+        else:
+            passwords = self.getPasswords(otp=True)
+
+        results = []
+        for password in passwords:
+            results.append(
+                StandardItem(
+                    id=password,
+                    iconUrls=self.iconUrls,
+                    text=password.split("/")[-1],
+                    subtext=password,
+                    actions=[
+                        Action(
+                            "copy",
+                            "Copy",
+                            lambda pwd=password: runDetachedProcess(["pass", "otp", "--clip", pwd]),
+                        ),
+                    ],
+                ),
+            )
+        query.add(results)
 
     def showPasswords(self, query):
         if query.string.strip():
-            passwords = self.getPasswordsFromSearch(query)
+            passwords = self.getPasswordsFromSearch(query.string)
         else:
             passwords = self.getPasswords()
 
@@ -65,31 +134,35 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     iconUrls=self.iconUrls,
                     inputActionText="pass %s" % password,
                     actions=[
-                        Action("copy", "Copy", lambda pwd=password: runDetachedProcess(["pass", "--clip", pwd])),
-                        Action("edit", "Edit", lambda pwd=password: runDetachedProcess(["pass", "edit", pwd])),
-                        Action("remove", "Remove", lambda pwd=password: runDetachedProcess(["pass", "rm", "--force", pwd])),
-                    ]
+                        Action(
+                            "copy",
+                            "Copy",
+                            lambda pwd=password: runDetachedProcess(["pass", "--clip", pwd]),
+                        ),
+                        Action(
+                            "edit",
+                            "Edit",
+                            lambda pwd=password: runDetachedProcess(["pass", "edit", pwd]),
+                        ),
+                        Action(
+                            "remove",
+                            "Remove",
+                            lambda pwd=password: runDetachedProcess(["pass", "rm", "--force", pwd]),
+                        ),
+                    ],
                 ),
             )
 
         query.add(results)
 
-    def getPasswords(self):
+    def getPasswords(self, otp=False):
         passwords = []
         for root, dirnames, filenames in os.walk(PASS_DIR, followlinks=True):
-            for filename in fnmatch.filter(filenames, "*.gpg"):
-                passwords.append(
-                    os.path.join(root, filename.replace(".gpg", "")).replace(PASS_DIR, "")
-                )
+            for filename in fnmatch.filter(filenames, self._otp_glob if otp else "*.gpg"):
+                passwords.append(os.path.join(root, filename.replace(".gpg", "")).replace(PASS_DIR, ""))
 
         return sorted(passwords, key=lambda s: s.lower())
 
-    def getPasswordsFromSearch(self, query):
-        passwords = []
-        for password in self.getPasswords():
-            if query.string.strip().lower() not in password.lower():
-                continue
-
-            passwords.append(password)
-
+    def getPasswordsFromSearch(self, otp_query, otp=False):
+        passwords = [password for password in self.getPasswords(otp) if otp_query.strip().lower() in password.lower()]
         return passwords
