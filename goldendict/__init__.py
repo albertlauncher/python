@@ -1,4 +1,4 @@
-from albert import Action, Item, TriggerQuery, PluginInstance, TriggerQueryHandler, runDetachedProcess  # pylint: disable=import-error
+from albert import Action, StandardItem, TriggerQuery, PluginInstance, TriggerQueryHandler, runDetachedProcess  # pylint: disable=import-error
 
 md_iid = '2.0'
 md_version = '1.3'
