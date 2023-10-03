@@ -16,7 +16,7 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = '2.0'
-md_version = "1.5"
+md_version = "1.6"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
@@ -155,6 +155,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 icon=plugin_dir / "webstorm.svg",
                 config_dir_prefix="JetBrains/WebStorm",
                 binaries=["webstorm", "webstorm-eap"]),
+            Editor(
+                name="RustRover",
+                icon=plugin_dir / "rustrover.svg",
+                config_dir_prefix="JetBrains/RustRover",
+                binaries=["rustrover", "rustrover-eap"]),
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
