@@ -16,7 +16,7 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = '2.0'
-md_version = "1.5"
+md_version = "1.6"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
