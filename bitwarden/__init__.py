@@ -27,25 +27,6 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         PluginInstance.__init__(self, extensions=[self])
         self.iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
 
-    def __get_items(self):
-        field_names = ["id", "name", "user", "folder"]
-        p = run(
-            ["rbw", "list", "--fields", ",".join(field_names)],
-            capture_output=True,
-            encoding="utf-8",
-            check=True,
-        )
-        passwords = []
-        for l in p.stdout.splitlines():
-            fields = l.split("\t")
-            d = dict(zip(field_names, fields))
-            if d["folder"]:
-                d["path"] = d["folder"] + "/" + d["name"]
-            else:
-                d["path"] = d["name"]
-            passwords.append(d)
-
-        return passwords
 
     def handleTriggerQuery(self, query):
         if query.string.strip().lower() == "unlock":
@@ -66,25 +47,10 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     ]
                 )
             )
-        passwords = self.__get_items()
-        filtered_passwords = []
-        search_fields = ["path", "user"]
-        words = query.string.strip().lower().split()
 
-        for p in passwords:
-            all_matches = True
-            for w in words:
-                for k in search_fields:
-                    if w in p[k].lower():
-                        break
-                else:
-                    all_matches = False
-                    break
+        filtered_items = self.__filter_items(query)
 
-            if all_matches:
-                filtered_passwords.append(p)
-
-        for p in filtered_passwords:
+        for p in filtered_items:
             query.add(
                 StandardItem(
                     id=p["id"],
@@ -116,6 +82,45 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     ]
                 )
             )
+
+    def __get_items(self):
+        field_names = ["id", "name", "user", "folder"]
+        p = run(
+            ["rbw", "list", "--fields", ",".join(field_names)],
+            capture_output=True,
+            encoding="utf-8",
+            check=True,
+        )
+        passwords = []
+        for l in p.stdout.splitlines():
+            fields = l.split("\t")
+            d = dict(zip(field_names, fields))
+            if d["folder"]:
+                d["path"] = d["folder"] + "/" + d["name"]
+            else:
+                d["path"] = d["name"]
+            passwords.append(d)
+
+        return passwords
+
+    def __filter_items(self, query):
+        passwords = self.__get_items()
+        search_fields = ["path", "user"]
+        # Use a set for faster membership tests
+        words = set(query.string.strip().lower().split())
+
+        filtered_passwords = []
+
+        for p in passwords:
+            match_all_words_with_any_field = all(
+                any(word in p[field].lower() for field in search_fields)
+                for word in words
+            )
+
+            if match_all_words_with_any_field:
+                filtered_passwords.append(p)
+
+        return filtered_passwords
 
     def __get_password(self, item):
         id = item["id"]
