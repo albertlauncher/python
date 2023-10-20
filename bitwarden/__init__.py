@@ -27,7 +27,6 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         PluginInstance.__init__(self, extensions=[self])
         self.iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
 
-
     def handleTriggerQuery(self, query):
         if query.string.strip().lower() == "sync":
             query.add(
@@ -47,7 +46,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 )
             )
 
-        filtered_items = self.__filter_items(query)
+        filtered_items = self._filter_items(query)
 
         for p in filtered_items:
             query.add(
@@ -60,12 +59,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action(
                             id="copy",
                             text="Copy password to clipboard",
-                            callable=lambda item=p: self.__password_to_clipboard(item)
+                            callable=lambda item=p: self._password_to_clipboard(item)
                         ),
                         Action(
                             id="copy-auth",
                             text="Copy auth code to clipboard",
-                            callable=lambda item=p: self.__code_to_clipboard(item)
+                            callable=lambda item=p: self._code_to_clipboard(item)
                         ),
                         Action(
                             id="copy-username",
@@ -76,13 +75,13 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action(
                             id="edit",
                             text="Edit entry in terminal",
-                            callable=lambda item=p: self.__edit_entry(item)
+                            callable=lambda item=p: self._edit_entry(item)
                         )
                     ]
                 )
             )
 
-    def __get_items(self):
+    def _get_items(self):
         field_names = ["id", "name", "user", "folder"]
         raw_items = run(
             ["rbw", "list", "--fields", ",".join(field_names)],
@@ -105,8 +104,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         return items
 
-    def __filter_items(self, query):
-        passwords = self.__get_items()
+    def _filter_items(self, query):
+        passwords = self._get_items()
         search_fields = ["path", "user"]
         # Use a set for faster membership tests
         words = set(query.string.strip().lower().split())
@@ -124,7 +123,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         return filtered_passwords
 
-    def __password_to_clipboard(self, item):
+    def _password_to_clipboard(self, item):
         id = item["id"]
 
         password = run(
@@ -136,7 +135,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         setClipboardText(text=password)
 
-    def __code_to_clipboard(self, item):
+    def _code_to_clipboard(self, item):
         id = item["id"]
 
         try:
@@ -156,7 +155,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         setClipboardText(text=code)
 
-    def __edit_entry(self, item):
+    def _edit_entry(self, item):
         id = item["id"]
 
         runTerminal(
