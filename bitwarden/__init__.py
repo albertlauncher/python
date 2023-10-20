@@ -120,6 +120,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                                 text=code)
                         ),
                         Action(
+                            id="copy-username",
+                            text="Copy username to clipboard",
+                            callable=lambda username=p["user"]:
+                                setClipboardText(text=username)
+                        ),
+                        Action(
                             id="edit",
                             text="Edit entry in terminal",
                             callable=lambda pid=p['id']: runTerminal(
