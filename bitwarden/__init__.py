@@ -27,7 +27,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         PluginInstance.__init__(self, extensions=[self])
         self.iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
 
-    def _get_passwords(self):
+    def __get_items(self):
         field_names = ["id", "name", "user", "folder"]
         p = run(
             ["rbw", "list", "--fields", ",".join(field_names)],
@@ -66,7 +66,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     ]
                 )
             )
-        passwords = self._get_passwords()
+        passwords = self.__get_items()
         filtered_passwords = []
         search_fields = ["path", "user"]
         words = query.string.strip().lower().split()
@@ -85,21 +85,6 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 filtered_passwords.append(p)
 
         for p in filtered_passwords:
-            pw = run(
-                ["rbw", "get", p["id"]],
-                capture_output=True,
-                encoding="utf-8",
-                check=True
-            )
-            try:
-                code = run(
-                    ["rbw", "code", p["id"]],
-                    capture_output=True,
-                    encoding="utf-8",
-                    check=True
-                )
-            except CalledProcessError as err:
-                code = run (["echo"], capture_output=True,encoding="utf-8", check=True)
             query.add(
                 StandardItem(
                     id=p["id"],
@@ -110,14 +95,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action(
                             id="copy",
                             text="Copy password to clipboard",
-                            callable=lambda password=pw.stdout.strip(): setClipboardText(
-                                text=password)
+                            callable=lambda item=p: self.__get_password(item)
                         ),
                         Action(
                             id="copy-auth",
                             text="Copy auth code to clipboard",
-                            callable=lambda code=code.stdout.strip(): setClipboardText(
-                                text=code)
+                            callable=lambda item=p: self.__get_auth_code(item)
                         ),
                         Action(
                             id="copy-username",
@@ -128,12 +111,48 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action(
                             id="edit",
                             text="Edit entry in terminal",
-                            callable=lambda pid=p['id']: runTerminal(
-                                script=f"rbw edit {pid}",
-                                workdir="~",
-                                close_on_exit=False
-                            )
+                            callable=lambda item=p: self.__edit_entry(item)
                         )
                     ]
                 )
             )
+
+    def __get_password(self, item):
+        id = item["id"]
+
+        password = run(
+            ["rbw", "get", id],
+            capture_output=True,
+            encoding="utf-8",
+            check=True
+        ).stdout.strip()
+
+        setClipboardText(text=password)
+
+    def __get_auth_code(self, item):
+        id = item["id"]
+
+        try:
+            code = run(
+                ["rbw", "code", id],
+                capture_output=True,
+                encoding="utf-8",
+                check=True
+            ).stdout.strip()
+        except CalledProcessError as err:
+            code = run(
+                ["echo", err.__str__()],
+                capture_output=True,
+                encoding="utf-8",
+                check=True
+            ).stdout.strip()
+
+        setClipboardText(text=code)
+
+    def __edit_entry(self, item):
+        id = item["id"]
+
+        runTerminal(
+            script=f"rbw edit {id}",
+            close_on_exit=True
+        )
