@@ -85,23 +85,26 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __get_items(self):
         field_names = ["id", "name", "user", "folder"]
-        p = run(
+        raw_items = run(
             ["rbw", "list", "--fields", ",".join(field_names)],
             capture_output=True,
             encoding="utf-8",
             check=True,
         )
-        passwords = []
-        for l in p.stdout.splitlines():
-            fields = l.split("\t")
-            d = dict(zip(field_names, fields))
-            if d["folder"]:
-                d["path"] = d["folder"] + "/" + d["name"]
-            else:
-                d["path"] = d["name"]
-            passwords.append(d)
 
-        return passwords
+        items = []
+
+        for line in raw_items.stdout.splitlines():
+            fields = line.split("\t")
+            item = dict(zip(field_names, fields))
+
+            if item["folder"]:
+                item["path"] = item["folder"] + "/" + item["name"]
+            else:
+                item["path"] = item["name"]
+            items.append(item)
+
+        return items
 
     def __filter_items(self, query):
         passwords = self.__get_items()
