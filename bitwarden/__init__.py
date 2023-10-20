@@ -60,12 +60,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action(
                             id="copy",
                             text="Copy password to clipboard",
-                            callable=lambda item=p: self.__get_password(item)
+                            callable=lambda item=p: self.__password_to_clipboard(item)
                         ),
                         Action(
                             id="copy-auth",
                             text="Copy auth code to clipboard",
-                            callable=lambda item=p: self.__get_auth_code(item)
+                            callable=lambda item=p: self.__code_to_clipboard(item)
                         ),
                         Action(
                             id="copy-username",
@@ -124,7 +124,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         return filtered_passwords
 
-    def __get_password(self, item):
+    def __password_to_clipboard(self, item):
         id = item["id"]
 
         password = run(
@@ -136,7 +136,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         setClipboardText(text=password)
 
-    def __get_auth_code(self, item):
+    def __code_to_clipboard(self, item):
         id = item["id"]
 
         try:
