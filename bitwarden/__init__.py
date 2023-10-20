@@ -29,19 +29,18 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
 
     def handleTriggerQuery(self, query):
-        if query.string.strip().lower() == "unlock":
+        if query.string.strip().lower() == "sync":
             query.add(
                 StandardItem(
-                    id="unlock",
-                    text="Unlock Bitwarden Vault",
+                    id="sync",
+                    text="Sync Bitwarden Vault",
                     iconUrls=self.iconUrls,
                     actions=[
                         Action(
-                            id="unlock",
-                            text="Unlocking Bitwarden Vault",
-                            callable=lambda: runTerminal(
-                                script="rbw stop-agent && rbw unlock",
-                                close_on_exit=True
+                            id="sync",
+                            text="Syncing Bitwarden Vault",
+                            callable=lambda: run(
+                                ["rbw", "sync"],
                             )
                         )
                     ]
