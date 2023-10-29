@@ -32,7 +32,7 @@ md_credits: [str|List(str)]          | Third party credit(s) and license notes
 ## The Plugin class
 
 The plugin class is the entry point for a Python plugin. It is instantiated on plugin initialization and has to subclass
-PluginInstance. Implement extension(s) by subclassing _one_ extension class (TriggerQueryHandler etc…) provided by the
+PluginInstance. Implement extensions by subclassing _one_ extension class (TriggerQueryHandler etc…) provided by the
 built-in `albert` module and pass the list of your extensions to the PluginInstance init function. Due to the
 differences in type systems multiple inheritance of extensions is not supported. (Python does not support virtual
 inheritance, which is used in the C++ space to inherit from 'Extension'). For more details see
@@ -51,7 +51,7 @@ from typing import overload
 
 
 class PluginInstance(ABC):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_plugin_instance.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1PluginInstance.html"""
 
     def __init__(self, extensions: List[Extension] = []):
         ...
@@ -131,7 +131,7 @@ class PluginInstance(ABC):
         """
 
 class Action:
-    """https://albertlauncher.github.io/reference/classalbert_1_1_action.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1Action.html"""
 
     def __init__(self,
                  id: str,
@@ -141,7 +141,7 @@ class Action:
 
 
 class Item(ABC):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_item.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1Item.html"""
 
     @abstractmethod
     def id(self) -> str:
@@ -161,7 +161,7 @@ class Item(ABC):
 
     @abstractmethod
     def iconUrls(self) -> List[str]:
-        """See https://albertlauncher.github.io/reference/classalbert_1_1_icon_provider.html"""
+        """See https://albertlauncher.github.io/reference/classalbert_1_1IconProvider.html"""
 
     @abstractmethod
     def actions(self) -> List[Action]:
@@ -169,7 +169,7 @@ class Item(ABC):
 
 
 class StandardItem(Item):
-    """https://albertlauncher.github.io/reference/structalbert_1_1_standard_item.html"""
+    """https://albertlauncher.github.io/reference/structalbert_1_1StandardItem.html"""
 
     def __init__(self,
                  id: str = '',
@@ -189,7 +189,7 @@ class StandardItem(Item):
 
 
 class Extension(ABC):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_extension.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1Extension.html"""
 
     @property
     def id(self) -> str:
@@ -205,7 +205,7 @@ class Extension(ABC):
 
 
 class FallbackHandler(ABC):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_fallback_handler.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1FallbackHandler.html"""
 
     @abstractmethod
     def fallbacks(self, query: str ) ->List[Item]:
@@ -213,7 +213,7 @@ class FallbackHandler(ABC):
 
 
 class TriggerQuery(ABC):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_trigger_query_handler_1_1_trigger_query.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1TriggerQueryHandler_1_1TriggerQuery.html"""
 
     @property
     def trigger(self) -> str:
@@ -237,7 +237,7 @@ class TriggerQuery(ABC):
 
 
 class TriggerQueryHandler(Extension):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_trigger_query_handler.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1TriggerQueryHandler.html"""
 
     def __init__(self,
                  id: str,
@@ -283,7 +283,7 @@ class TriggerQueryHandler(Extension):
 
 
 class RankItem:
-    """https://albertlauncher.github.io/reference/classalbert_1_1_rank_item.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1RankItem.html"""
 
     def __init__(self, item: Item, score: float):
         ...
@@ -293,7 +293,7 @@ class RankItem:
 
 
 class GlobalQuery(ABC):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_global_query_handler_1_1_global_query.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1GlobalQueryHandler_1_1GlobalQuery.html"""
 
     @property
     def string(self) -> str:
@@ -305,7 +305,7 @@ class GlobalQuery(ABC):
 
 
 class GlobalQueryHandler(TriggerQueryHandler):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_global_query_handler.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1GlobalQueryHandler.html"""
 
     def __init__(self,
                  id: str,
@@ -329,7 +329,7 @@ class GlobalQueryHandler(TriggerQueryHandler):
 
 
 class IndexItem:
-    """https://albertlauncher.github.io/reference/classalbert_1_1_index_item.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1IndexItem.html"""
 
     def __init__(self, item: AbstractItem, string: str):
         ...
@@ -339,7 +339,7 @@ class IndexItem:
 
 
 class IndexQueryHandler(GlobalQueryHandler):
-    """https://albertlauncher.github.io/reference/classalbert_1_1_index_query_handler.html"""
+    """https://albertlauncher.github.io/reference/classalbert_1_1IndexQueryHandler.html"""
 
     @abstractmethod
     def updateIndexItems(self):
