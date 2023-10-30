@@ -20,7 +20,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         TriggerQueryHandler.__init__(self,
-                                     id=md_iid,
+                                     id=md_id,
                                      name=md_name,
                                      description=md_description,
                                      defaultTrigger='bw ')
