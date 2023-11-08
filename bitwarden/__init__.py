@@ -5,7 +5,7 @@ from subprocess import run, CalledProcessError
 
 from albert import *
 
-md_iid = '2.0'
+md_iid = '2.1'
 md_version = "1.3"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
