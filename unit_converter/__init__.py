@@ -29,7 +29,7 @@ import pint
 from albert import *
 
 md_iid = "2.1"
-md_version = "1.4"
+md_version = "1.5"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
