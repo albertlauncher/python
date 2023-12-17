@@ -30,7 +30,7 @@ import pint
 
 
 md_iid = '2.0'
-md_version = "1.4"
+md_version = "1.5"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
@@ -250,12 +250,12 @@ class CurrencyConverter(UnitConverter):
             with urlopen(self.API_URL) as response:
                 data = json.loads(response.read().decode("utf-8"))
             if not data or "rates" not in data:
-                albert.info("No currencies found")
+                # albert.info("No currencies found")
                 return {}
-            albert.info(f'Currencies updated')
+            # albert.info(f'Currencies updated')
             return data["rates"]
         except URLError as error:
-            albert.warning(f"Error getting currencies: {error}")
+            # albert.warning(f"Error getting currencies: {error}")
             return {}
 
     def get_currency(self, currency: str) -> str | None:
@@ -309,8 +309,17 @@ class CurrencyConverter(UnitConverter):
         )
 
 
-class Plugin(albert.TriggerQueryHandler):
+class Plugin(albert.PluginInstance, albert.TriggerQueryHandler):
     """The plugin class"""
+
+    def __init__(self):
+        albert.TriggerQueryHandler.__init__(self,
+                                     id=md_id,
+                                     name=md_name,
+                                     description=md_description,
+                                     synopsis='<amount> <from_unit> to <to_unit>',
+                                     defaultTrigger='convert ')
+        albert.PluginInstance.__init__(self, extensions=[self])
 
     unit_convert_regex = re.compile(
         r"(?P<from_amount>-?\d+\.?\d*)\s?(?P<from_unit>.*)\s(?:to|in)\s(?P<to_unit>.*)",
@@ -355,26 +364,11 @@ class Plugin(albert.TriggerQueryHandler):
         self.unit_converter = StandardUnitConverter()
         self.currency_converter = CurrencyConverter()
 
-    def id(self) -> str:
-        return md_id
-
-    def name(self) -> str:
-        return md_name
-
-    def description(self) -> str:
-        return md_description
-
-    def synopsis(self) -> str:
-        return "<amount> <from_unit> to <to_unit>"
-
-    def defaultTrigger(self) -> str:
-        return "convert "
-
     def handleTriggerQuery(self, query: albert.TriggerQuery) -> None:
         query_string = query.string.strip()
         match = self.unit_convert_regex.fullmatch(query_string)
         if match:
-            albert.info(f"Matched {query_string}")
+            # albert.info(f"Matched {query_string}")
             try:
                 items = self._get_items(
                     float(match.group("from_amount")),
@@ -383,12 +377,12 @@ class Plugin(albert.TriggerQueryHandler):
                 )
                 query.add(items)
             except Exception as error:
-                albert.warning(f"Error: {error}")
+                # albert.warning(f"Error: {error}")
                 tb = "".join(
                     traceback.format_exception(error.__class__, error, error.__traceback__)
                 )
-                albert.warning(tb)
-                albert.info("Something went wrong. Make sure you're using the correct format.")
+                # albert.warning(tb)
+                # albert.info("Something went wrong. Make sure you're using the correct format.")
 
     def _create_item(self, text: str, subtext: str, icon: str = "") -> albert.Item:
         """Create an albert.Item from a text and subtext
@@ -403,7 +397,7 @@ class Plugin(albert.TriggerQueryHandler):
         """
         icon_path = Path(__file__).parent / "icons" / icon
         if not icon or not icon_path.exists():
-            albert.warning(f"Icon {icon} does not exist")
+            # albert.warning(f"Icon {icon} does not exist")
             icon_path = Path(__file__).parent / "icons" / "unit_converter.svg"
         return albert.StandardItem(
             id=str(icon_path),
@@ -459,13 +453,13 @@ class Plugin(albert.TriggerQueryHandler):
                 )
             ]
         except pint.errors.DimensionalityError as e:
-            albert.warning(f"DimensionalityError: {e}")
+            # albert.warning(f"DimensionalityError: {e}")
             return [
                 self._create_item(f"Unable to convert {amount} {from_unit} to {to_unit}", str(e))
             ]
         except pint.errors.UndefinedUnitError as e:
-            albert.warning(f"UndefinedUnitError: {e}")
+            # albert.warning(f"UndefinedUnitError: {e}")
             return []
         except UnknownCurrencyError as e:
-            albert.warning(f"UnknownCurrencyError: {e}")
+            # albert.warning(f"UnknownCurrencyError: {e}")
             return []
