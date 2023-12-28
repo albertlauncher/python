@@ -12,7 +12,7 @@ import pathlib
 from albert import Action, StandardItem, PluginInstance, TriggerQueryHandler, runTerminal, openUrl
 
 md_iid = '2.0'
-md_version = "1.8"
+md_version = "1.9"
 md_name = "PacMan"
 md_description = "Search, install and remove packages"
 md_license = "BSD-3"
@@ -87,8 +87,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 ])
             else:
                 actions.append(Action("inst", "Install", lambda n=pkg_name: runTerminal("sudo pacman -S %s" % n)))
+
             actions.append(Action("pkg_url", "Show on packages.archlinux.org",
-                                  lambda r=pkg_repo, n=pkg_name: openUrl(f"{r}/x86_64/{n}/")))
+                                  lambda r=pkg_repo, n=pkg_name: openUrl(f"{self.pkgs_url}{r}/x86_64/{n}/")))
             if pkg_purl:
                 actions.append(Action("proj_url", "Show project website", lambda u=pkg_purl: openUrl(u)))
 
