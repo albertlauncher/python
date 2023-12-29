@@ -19,7 +19,8 @@ md_description: str | A brief, imperative description. (Like "Launch apps" or "O
 
 ## Optional metadata variables:
 
-md_id                                | Identifier overwrite. [a-zA-Z0-9_]. Defaults to module name.
+md_id                                | Identifier overwrite. [a-zA-Z0-9_]. Note: This variable is attached at runtime 
+                                     | if it is unset and defaults to the module name.
 __doc__                              | The docstring of the module is used as long description/readme of the extension.
 md_license: str                      | Short form e.g. BSD-2-Clause or GPL-3.0
 md_url: str                          | Browsable source, issues etc
@@ -35,8 +36,7 @@ The plugin class is the entry point for a Python plugin. It is instantiated on p
 PluginInstance. Implement extensions by subclassing _one_ extension class (TriggerQueryHandler etc…) provided by the
 built-in `albert` module and pass the list of your extensions to the PluginInstance init function. Due to the
 differences in type systems multiple inheritance of extensions is not supported. (Python does not support virtual
-inheritance, which is used in the C++ space to inherit from 'Extension'). For more details see
-
+inheritance, which is used in the C++ space to inherit from 'Extension').
 """
 
 
