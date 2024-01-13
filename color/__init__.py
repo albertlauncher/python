@@ -2,20 +2,16 @@
 # Copyright (c) 2024 Manuel Schneider
 
 """
-Displays a color parsed from name, which may be in one of these formats:
+Displays a color parsed from a code, which may be in one of these formats:
 
 * #RGB (each of R, G, and B is a single hex digit)
 * #RRGGBB
 * #AARRGGBB
 * #RRRGGGBBB
 * #RRRRGGGGBBBB
-* A name from the list of colors defined in the list of SVG color keyword
-names provided by the World Wide Web Consortium; for example, "steelblue"
-or "gainsboro".
 
-Note: This extension started as a prototype to test the internal color pixmap
-generator. However it may serve as a starting point for people having a real
-need for color workflows. PR's welcome.
+Note: This extension started as a prototype to test the internal color pixmap generator. However it may serve as a \
+starting point for people having a real need for color workflows. PR's welcome.
 """
 
 from albert import *
@@ -23,7 +19,7 @@ from urllib.parse import quote_plus
 from string import hexdigits
 
 md_iid = '2.0'
-md_version = '1.0'
+md_version = '1.1'
 md_name = 'Color'
 md_description = 'Display color for color codes'
 md_license = 'MIT'
@@ -63,3 +59,11 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                 )
 
         return rank_items
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip()
+            }
+        ]
