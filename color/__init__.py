@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 """
 Displays a color parsed from name, which may be in one of these formats:
@@ -27,6 +28,7 @@ md_name = 'Color'
 md_description = 'Display color for color codes'
 md_license = 'MIT'
 md_url = 'https://github.com/albertlauncher/python/color'
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, GlobalQueryHandler):
