@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
-#  Copyright (c) 2022-2023 Manuel Schneider
 
 from albert import *
 from locale import getdefaultlocale
@@ -14,8 +14,9 @@ md_iid = '2.0'
 md_version = "1.10"
 md_name = "Wikipedia"
 md_description = "Search Wikipedia articles"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/wikipedia"
+md_authors = "@manuelschneid3r"
 
 
 class WikiFallbackHandler(FallbackHandler):
