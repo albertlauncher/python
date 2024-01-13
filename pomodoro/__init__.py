@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#  Copyright (c) 2022 Manuel Schneider
+#  Copyright (c) 2024 Manuel Schneider
 
 """
 https://en.wikipedia.org/wiki/Pomodoro_Technique
@@ -16,9 +16,9 @@ md_iid = '2.0'
 md_version = "1.3"
 md_name = "Pomodoro"
 md_description = "Set up a Pomodoro timer"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/pomodoro"
-md_maintainers = "@manuelschneid3r"
+md_author = "@manuelschneid3r"
 
 
 class PomodoroTimer:
