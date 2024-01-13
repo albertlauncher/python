@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
+
 """
 Provides an item 'Inhibit sleep' which can be used to temporarily disable system suspension.
 
@@ -12,7 +15,9 @@ md_iid = '2.0'
 md_version = '1.0'
 md_name = 'Inhibit sleep'
 md_description = 'Inhibit system sleep mode.'
+md_license = "MIT"
 md_url = 'https://github.com/albertlauncher/python/inhibit_sleep'
+md_authors = "@manuelschneid3r"
 md_bin_dependencies = ['systemd-inhibit', "sleep"]
 
 
