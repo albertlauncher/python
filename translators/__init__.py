@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 """
 Translates text using the python package translators. See https://pypi.org/project/translators/
@@ -15,8 +16,9 @@ md_iid = '2.0'
 md_version = "1.4"
 md_name = "Translator"
 md_description = "Translate sentences using 'translators' package"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/translators"
+md_authors = "@manuelschneid3r"
 md_lib_dependencies = "translators"
 
 
