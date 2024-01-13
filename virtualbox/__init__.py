@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 import virtualbox
 from virtualbox.library import LockType, MachineState
@@ -9,9 +10,9 @@ md_iid = '2.0'
 md_version = "1.5"
 md_name = "VirtualBox"
 md_description = "Manage your VirtualBox machines"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/virtualbox"
-md_maintainers = "@manuelschneid3r"
+md_authors = "@manuelschneid3r"
 md_lib_dependencies = ['virtualbox']
 
 
