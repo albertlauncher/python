@@ -22,6 +22,7 @@ md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
 md_url = "https://github.com/albertlauncher/python/"
 md_maintainers = ["@mqus", "@tomsquest"]
+md_authors = ["@mqus", "@tomsquest"]
 
 
 @dataclass
