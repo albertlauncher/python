@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 import json
 from pathlib import Path
@@ -9,10 +10,11 @@ from albert import *
 
 md_iid = '2.0'
 md_version = "1.5"
-md_name = "ArchLinux Wiki"
-md_description = "Search ArchLinux Wiki articles"
-md_license = "BSD-3"
-md_url = "https://github.com/albertlauncher/python/tree/master/awiki"
+md_name = "Arch Linux Wiki"
+md_description = "Search Arch Linux Wiki articles"
+md_license = "MIT"
+md_url = "https://github.com/albertlauncher/python/tree/master/arch_wiki"
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
