@@ -18,8 +18,8 @@ from albert import *
 from urllib.parse import quote_plus
 from string import hexdigits
 
-md_iid = '2.0'
-md_version = '1.1'
+md_iid = '2.2'
+md_version = '1.2'
 md_name = 'Color'
 md_description = 'Display color for color codes'
 md_license = 'MIT'
@@ -67,3 +67,4 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                 'text': __doc__.strip()
             }
         ]
+    
