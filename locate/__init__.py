@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#  Copyright (c) 2022 Manuel Schneider
+# Copyright (c) 2022-2024 Manuel Schneider
 
 """
 `locate` wrapper. Note that it is up to you to ensure that the locate database is \
@@ -17,9 +17,10 @@ md_iid = '2.0'
 md_version = "1.9"
 md_name = "Locate"
 md_description = "Find and open files using locate"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/locate"
 md_bin_dependencies = "locate"
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
