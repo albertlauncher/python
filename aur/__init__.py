@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#  Copyright (c) 2022-2023 Manuel Schneider
+# Copyright (c) 2024 Manuel Schneider
 
 """
 Search for packages and open their URLs. This extension is also intended to be used to \
@@ -19,9 +19,10 @@ md_iid = '2.0'
 md_version = "1.8"
 md_name = "AUR"
 md_description = "Query and install AUR packages"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/aur"
 # md_platforms = ["Linux"]
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
