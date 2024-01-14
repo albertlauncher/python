@@ -4,14 +4,14 @@
 """
 Provides an item 'Inhibit sleep' which can be used to temporarily disable system suspension.
 
-This is a prototype using `systemd-inhibit`. A sophisticated implementation would probably use the systemd D-Bus
+This is a prototype using `systemd-inhibit`. A sophisticated implementation would probably use the systemd D-Bus \
 interface documented [here](https://www.freedesktop.org/software/systemd/man/latest/org.freedesktop.login1.html).
 """
 
 from albert import *
 from subprocess import Popen, TimeoutExpired
 
-md_iid = '2.0'
+md_iid = '2.2'
 md_version = '1.0'
 md_name = 'Inhibit sleep'
 md_description = 'Inhibit system sleep mode.'
@@ -49,6 +49,17 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                                "--what=idle:sleep", "--who=Albert", "--why=User",
                                "sleep", "infinity"])
             info(str(self.proc))
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+                'widget_properties': {
+                    'textFormat': 'Qt::MarkdownText'
+                }
+            }
+        ]
 
     def handleGlobalQuery(self, query: GlobalQuery):
         stripped = query.string.strip().lower()
