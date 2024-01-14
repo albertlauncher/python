@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2017 Benedict Dudel
+# Copyright (c) 2023 Max
+# Copyright (c) 2023 Pete-Hamlin
 
 import fnmatch
 import os
@@ -8,9 +11,9 @@ md_iid = "2.1"
 md_version = "1.5"
 md_name = "Pass"
 md_description = "Manage passwords in pass"
-md_bin_dependencies = ["pass"]
-md_maintainers = ["@Pete-Hamlin"]
 md_license = "BSD-3"
+md_authors = ["@benedictdudel", "@maxmil", "@Pete-Hamlin"]
+md_bin_dependencies = ["pass"]
 
 HOME_DIR = os.environ["HOME"]
 PASS_DIR = os.environ.get("PASSWORD_STORE_DIR", os.path.join(HOME_DIR, ".password-store/"))
