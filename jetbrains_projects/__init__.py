@@ -1,15 +1,26 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2018-2020 Markus Richter
 # Copyright (c) 2018-2023 Thomas Queste
 # Copyright (c) 2023 Valentin Maerten
 
 """
-Supported IDEs:
+This plugin allows you to quickly open projects of the Jetbrains IDEs
 
-Android Studio, CLion, DataGrip, DataSpell, GoLand, IntelliJ IDEA, PhpStorm, PyCharm, Rider, RubyMine, WebStorm.
+* Android Studio
+* CLion
+* DataGrip
+* DataSpell
+* GoLand
+* IntelliJ IDEA
+* PhpStorm
+* PyCharm
+* Rider
+* RubyMine
+* WebStorm.
 
-Note: To open projects the command-line launcher is required. If your IDE has no \
-command-line launcher in $PATH, use `Tools` > `Create Command-line Launcher`.
+Note that for this plugin to find the IDEs, a commandline launcher in $PATH is required.
+Open the IDE and click Tools -> Create Command-line Launcher to add one.
+
+Disclaimer: This plugin has no affiliation with JetBrains s.r.o.. The icons are used under the terms specified here.
 """
 
 from dataclasses import dataclass
@@ -24,9 +35,9 @@ md_iid = '2.0'
 md_version = "1.6"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
-md_license = "GPL-3"
-md_url = "https://github.com/albertlauncher/python/"
-md_authors = ["@mqus", "@tomsquest", "@vmaerten"]
+md_license = "MIT"
+md_url = "https://github.com/albertlauncher/python/tree/master/jetbrains_projects"
+md_authors = ["@tomsquest", "@vmaerten", "@manuelschneid3r"]
 
 
 @dataclass
@@ -198,3 +209,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 )
             ],
         )
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+                'widget_properties': {
+                    'textFormat': 'Qt::MarkdownText'
+                }
+            }
+        ]
