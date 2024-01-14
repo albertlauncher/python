@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Jonah Lawrence
 
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ md_name = "Dice Roll"
 md_description = "Roll any number of dice"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
-md_maintainers = "@DenverCoder1"
+md_authors = "@DenverCoder1"
 
 
 def get_icon_path(num_sides: int | None) -> str:
