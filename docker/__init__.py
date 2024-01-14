@@ -1,8 +1,5 @@
-"""
-Docker wrapper (prototype)
-"""
-
-from pathlib import Path
+# -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 import docker
 from albert import *
@@ -11,8 +8,9 @@ md_iid = "2.0"
 md_version = "1.6"
 md_name = "Docker"
 md_description = "Manage docker images and containers"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/docker"
+md_authors = "@manuelschneid3r"
 md_bin_dependencies = "docker"
 md_lib_dependencies = "docker"
 
