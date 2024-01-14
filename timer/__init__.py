@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# # Copyright (c) 2018-2024 Manuel Schneider
+# # Copyright (c) 2020 Andreas Dominik Preikschat
 
 """
 Takes arguments in the form of '`[[hrs:]mins:]secs [name]`'. Empty fields resolve to `0`. \
@@ -21,9 +23,9 @@ md_iid = '2.0'
 md_version = "1.7"
 md_name = "Timer"
 md_description = "Set up timers"
-md_license = "BSD-2"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/timer"
-md_maintainers = ["@manuelschneid3r", "@googol42", "@uztnus"]
+md_authors = ["@manuelschneid3r", "@googol42"]
 
 
 class Timer(threading.Timer):
