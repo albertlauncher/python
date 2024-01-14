@@ -12,8 +12,8 @@ from time import sleep
 from albert import *
 import translators as ts
 
-md_iid = '2.0'
-md_version = "1.4"
+md_iid = '2.2'
+md_version = "1.5"
 md_name = "Translator"
 md_description = "Translate sentences using 'translators' package"
 md_license = "MIT"
@@ -72,6 +72,10 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def configWidget(self):
         return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+            },
             {
                 'type': 'combobox',
                 'property': 'translator',
