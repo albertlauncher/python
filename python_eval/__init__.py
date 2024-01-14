@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2017-2014 Manuel Schneider
 
 from builtins import pow
 from math import *
@@ -12,6 +13,7 @@ md_name = "Python Eval"
 md_description = "Evaluate Python code"
 md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/master/python_eval"
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
