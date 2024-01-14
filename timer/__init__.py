@@ -19,8 +19,8 @@ from time import strftime, time, localtime
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.7"
+md_iid = '2.2'
+md_version = "1.8"
 md_name = "Timer"
 md_description = "Set up timers"
 md_license = "MIT"
@@ -72,6 +72,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             body=f"Timed out at {strftime('%X', localtime(timer.end))}"
         )
         self.deleteTimer(timer)
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+                'widget_properties': { 'textFormat': 'Qt::MarkdownText' }
+            }
+        ]
 
     def handleTriggerQuery(self, query):
         if not query.isValid:
