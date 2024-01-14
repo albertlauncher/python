@@ -31,8 +31,8 @@ from sys import platform
 from xml.etree import ElementTree
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.6"
+md_iid = '2.2'
+md_version = "1.7"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
@@ -115,65 +115,65 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         editors = [
             Editor(
                 name="Android Studio",
-                icon=plugin_dir / "androidstudio.svg",
+                icon=plugin_dir / "icons" / "androidstudio.svg",
                 config_dir_prefix="Google/AndroidStudio",
                 binaries=["studio", "androidstudio", "android-studio", "android-studio-canary", "jdk-android-studio",
                           "android-studio-system-jdk"]),
             Editor(
                 name="CLion",
-                icon=plugin_dir / "clion.svg",
+                icon=plugin_dir / "icons" / "clion.svg",
                 config_dir_prefix="JetBrains/CLion",
                 binaries=["clion", "clion-eap"]),
             Editor(
                 name="DataGrip",
-                icon=plugin_dir / "datagrip.svg",
+                icon=plugin_dir / "icons" / "datagrip.svg",
                 config_dir_prefix="JetBrains/DataGrip",
                 binaries=["datagrip", "datagrip-eap"]),
             Editor(
                 name="DataSpell",
-                icon=plugin_dir / "dataspell.svg",
+                icon=plugin_dir / "icons" / "dataspell.svg",
                 config_dir_prefix="JetBrains/DataSpell",
                 binaries=["dataspell", "dataspell-eap"]),
             Editor(
                 name="GoLand",
-                icon=plugin_dir / "goland.svg",
+                icon=plugin_dir / "icons" / "goland.svg",
                 config_dir_prefix="JetBrains/GoLand",
                 binaries=["goland", "goland-eap"]),
             Editor(
                 name="IntelliJ IDEA",
-                icon=plugin_dir / "idea.svg",
+                icon=plugin_dir / "icons" / "idea.svg",
                 config_dir_prefix="JetBrains/IntelliJIdea",
                 binaries=["idea", "idea.sh", "idea-ultimate", "idea-ce-eap", "idea-ue-eap", "intellij-idea-ce",
                           "intellij-idea-ce-eap", "intellij-idea-ue-bundled-jre", "intellij-idea-ultimate-edition",
                           "intellij-idea-community-edition-jre", "intellij-idea-community-edition-no-jre"]),
             Editor(
                 name="PhpStorm",
-                icon=plugin_dir / "phpstorm.svg",
+                icon=plugin_dir / "icons" / "phpstorm.svg",
                 config_dir_prefix="JetBrains/PhpStorm",
                 binaries=["phpstorm", "phpstorm-eap"]),
             Editor(
                 name="PyCharm",
-                icon=plugin_dir / "pycharm.svg",
+                icon=plugin_dir / "icons" / "pycharm.svg",
                 config_dir_prefix="JetBrains/PyCharm",
                 binaries=["charm", "pycharm", "pycharm-eap"]),
             Editor(
                 name="Rider",
-                icon=plugin_dir / "rider.svg",
+                icon=plugin_dir / "icons" / "rider.svg",
                 config_dir_prefix="JetBrains/Rider",
                 binaries=["rider", "rider-eap"]),
             Editor(
                 name="RubyMine",
-                icon=plugin_dir / "rubymine.svg",
+                icon=plugin_dir / "icons" / "rubymine.svg",
                 config_dir_prefix="JetBrains/RubyMine",
                 binaries=["rubymine", "rubymine-eap", "jetbrains-rubymine", "jetbrains-rubymine-eap"]),
             Editor(
                 name="WebStorm",
-                icon=plugin_dir / "webstorm.svg",
+                icon=plugin_dir / "icons" / "webstorm.svg",
                 config_dir_prefix="JetBrains/WebStorm",
                 binaries=["webstorm", "webstorm-eap"]),
             Editor(
                 name="RustRover",
-                icon=plugin_dir / "rustrover.svg",
+                icon=plugin_dir / "icons" / "rustrover.svg",
                 config_dir_prefix="JetBrains/RustRover",
                 binaries=["rustrover", "rustrover-eap"]),
         ]
