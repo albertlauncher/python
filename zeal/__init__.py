@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2024 Manuel Schneider
 
-"""Search in Zeal offline docs."""
-
 from albert import *
 
 md_iid = '2.0'
