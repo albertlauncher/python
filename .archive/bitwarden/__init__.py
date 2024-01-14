@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 from pathlib import Path
 from subprocess import run, CalledProcessError
@@ -9,10 +10,9 @@ md_iid = '2.1'
 md_version = "2.0"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
-md_maintainers = "@ovitor"
-md_credits = "Original author: @tylio"
+md_authors = ["@ovitor", "@tylio", ]
 md_bin_dependencies = ["rbw"]
 
 

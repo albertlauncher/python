@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2018-2020 Markus Richter
+# Copyright (c) 2018-2023 Thomas Queste
+# Copyright (c) 2023 Valentin Maerten
+
 """
 Supported IDEs:
 
@@ -21,8 +26,7 @@ md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "GPL-3"
 md_url = "https://github.com/albertlauncher/python/"
-md_maintainers = ["@mqus", "@tomsquest"]
-md_authors = ["@mqus", "@tomsquest"]
+md_authors = ["@mqus", "@tomsquest", "@vmaerten"]
 
 
 @dataclass
