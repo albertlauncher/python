@@ -12,8 +12,8 @@ from pathlib import Path
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.3"
+md_iid = '2.2'
+md_version = "1.4"
 md_name = "Pomodoro"
 md_description = "Set up a Pomodoro timer"
 md_license = "MIT"
@@ -84,6 +84,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         PluginInstance.__init__(self, extensions=[self])
         self.pomodoro = PomodoroTimer()
         self.iconUrls = [f"file:{Path(__file__).parent}/pomodoro.svg"]
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+            }
+        ]
 
     def handleTriggerQuery(self, query):
         item = StandardItem(
