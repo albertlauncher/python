@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024 Manuel Schneider
 
 from pathlib import Path
 from subprocess import run, CalledProcessError
@@ -7,12 +6,12 @@ from subprocess import run, CalledProcessError
 from albert import *
 
 md_iid = '2.1'
-md_version = "2.0"
+md_version = "2.1"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
-md_authors = ["@ovitor", "@tylio", ]
+md_authors = ["@ovitor", "@daviddeadly", "@manuelschneid3r"]
 md_bin_dependencies = ["rbw"]
 
 
