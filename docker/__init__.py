@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2024 Manuel Schneider
 
+from pathlib import Path
+
 import docker
 from albert import *
 
 md_iid = "2.0"
-md_version = "1.6"
+md_version = "2.0"
 md_name = "Docker"
 md_description = "Manage docker images and containers"
 md_license = "MIT"
@@ -31,10 +33,23 @@ class Plugin(PluginInstance, GlobalQueryHandler):
 
     def handleGlobalQuery(self, query):
         rank_items = []
-        try:
-            if not self.client:
-                self.client = docker.from_env()
 
+        if not self.client:
+            try:
+                self.client = docker.from_env()
+            except Exception as e:
+                rank_items.append(RankItem(
+                    item=StandardItem(
+                        id='except',
+                        text="Failed starting docker client",
+                        subtext=str(e),
+                        iconUrls=self.icon_urls_running,
+                    ),
+                    score=1.0
+                ))
+                return rank_items
+
+        try:
             for container in self.client.containers.list(all=True):
                 if query.string in container.name:
                     # Create dynamic actions
@@ -79,7 +94,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                             score=len(query.string)/len(tag)
                         ))
         except Exception as e:
-            warning(e)
+            warning(str(e))
             self.client = None
 
         return rank_items
