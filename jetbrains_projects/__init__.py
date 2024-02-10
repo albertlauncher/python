@@ -5,17 +5,17 @@
 """
 This plugin allows you to quickly open projects of the Jetbrains IDEs
 
-* Android Studio
-* CLion
-* DataGrip
-* DataSpell
-* GoLand
-* IntelliJ IDEA
-* PhpStorm
-* PyCharm
-* Rider
-* RubyMine
-* WebStorm.
+- Android Studio
+- CLion
+- DataGrip
+- DataSpell
+- GoLand
+- IntelliJ IDEA
+- PhpStorm
+- PyCharm
+- Rider
+- RubyMine
+- WebStorm.
 
 Note that for this plugin to find the IDEs, a commandline launcher in $PATH is required.
 Open the IDE and click Tools -> Create Command-line Launcher to add one.
@@ -32,7 +32,7 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = '2.2'
-md_version = "1.7"
+md_version = "1.8"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
