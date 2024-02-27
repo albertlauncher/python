@@ -8,10 +8,11 @@ import os
 from albert import *
 
 md_iid = "2.1"
-md_version = "1.5"
+md_version = "1.6"
 md_name = "Pass"
 md_description = "Manage passwords in pass"
 md_license = "BSD-3"
+md_url = "https://github.com/albertlauncher/python/tree/master/pass"
 md_authors = ["@benedictdudel", "@maxmil", "@Pete-Hamlin"]
 md_bin_dependencies = ["pass"]
 
