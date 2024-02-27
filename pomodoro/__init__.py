@@ -13,12 +13,12 @@ from pathlib import Path
 from albert import *
 
 md_iid = '2.2'
-md_version = "1.5"
+md_version = "1.6"
 md_name = "Pomodoro"
 md_description = "Set up a Pomodoro timer"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/pomodoro"
-md_author = "@manuelschneid3r"
+md_authors = "@manuelschneid3r"
 
 
 class PomodoroTimer:
