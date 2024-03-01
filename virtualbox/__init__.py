@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2024 Manuel Schneider
+"""
+This plugin is based on [virtualbox-python](https://pypi.org/project/virtualbox/) and needs the 'vboxapi' module which
+is part of the VirtualBox SDK. Some distributions package the SDK, e.g. Arch has
+[virtualbox-sdk](https://archlinux.org/packages/extra/x86_64/virtualbox-sdk/).
+"""
 
 import virtualbox
 from virtualbox.library import LockType, MachineState
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.5"
+md_iid = '2.2'
+md_version = "1.6"
 md_name = "VirtualBox"
 md_description = "Manage your VirtualBox machines"
 md_license = "MIT"
@@ -66,6 +71,17 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                                      defaultTrigger='vbox ')
         PluginInstance.__init__(self, extensions=[self])
         self.iconUrls = ["xdg:virtualbox", ":unknown"]
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+                'widget_properties': {
+                    'textFormat': 'Qt::MarkdownText'
+                }
+            }
+        ]
 
     def handleTriggerQuery(self, query):
         items = []
