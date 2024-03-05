@@ -1,26 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2024 Sharsie
 
-"""
-Recent files are sorted in order found in the VSCode configuration.
-
-Sort order with Project Manager can be adjusted, lower number = higher priority = displays first.
-
-With all priorities equal, PM results will take precedence over recents.
-
-PM extension: https://marketplace.visualstudio.com/items?itemName=alefragnani.project-manager
-
-Terminal Command:
-
-You can override how VSCode is opened.
-Terminal will enter the working directory of the project upon selection and execute the desired command.
-
-E.g. If you are using different environments based on the working dir, such as direnv, you can open
-vscode by first executing direnv to load your environment by providing the following terminal command:
-
-direnv exec . code .
-"""
-
 import os
 import json
 import unicodedata
@@ -28,14 +8,14 @@ from pathlib import Path
 from dataclasses import dataclass
 from albert import *
 
-md_iid = "2.1"
-md_version = "1.0"
+md_iid = "2.2"
+md_version = "1.1"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
 md_license = "MIT"
 md_bin_dependencies = ["code"]
-md_maintainers = "@Sharsie"
+md_authors = ["@Sharsie"]
 
 @dataclass
 class Project:
@@ -207,6 +187,19 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     def configWidget(self):
         return [
             {
+                "type": "label",
+                "text": """Recent files are sorted in order found in the VSCode configuration.
+Sort order with Project Manager can be adjusted, lower number = higher priority = displays first.
+With all priorities equal, PM results will take precedence over recents."""
+            },
+            {
+                "type": "label",
+                "text": """
+PM extension: https://marketplace.visualstudio.com/items?itemName=alefragnani.project-manager
+"""
+            },
+
+            {
                 "type": "checkbox",
                 "property": "recentEnabled",
                 "label": "Search in Recent files"
@@ -251,6 +244,16 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     "minimum": 1,
                     "maximum": 99,
                 },
+            },
+            {
+                "type": "label",
+                "text":"""
+The way VSCode is opened can be overriden through terminal command.
+Terminal will enter the working directory of the project upon selection, execute the command and then close itself.
+
+Usecase with direnv - To load direnv environment before opening VSCode, enter the following custom command: direnv exec . code .
+
+Usecase with single VSCode instance - To reuse the VSCode window instead of opening a new one, enter the following custom command: code -r ."""
             },
             {
                 "type": "lineedit",
