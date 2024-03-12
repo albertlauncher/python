@@ -9,13 +9,14 @@ from dataclasses import dataclass
 from albert import *
 
 md_iid = "2.2"
-md_version = "1.1"
+md_version = "1.2"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
 md_license = "MIT"
 md_bin_dependencies = ["code"]
 md_authors = ["@Sharsie"]
+
 
 @dataclass
 class Project:
@@ -247,7 +248,7 @@ PM extension: https://marketplace.visualstudio.com/items?itemName=alefragnani.pr
             },
             {
                 "type": "label",
-                "text":"""
+                "text": """
 The way VSCode is opened can be overriden through terminal command.
 Terminal will enter the working directory of the project upon selection, execute the command and then close itself.
 
@@ -339,7 +340,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
             actions.append(
                 Action(
                     id="open-terminal",
-                    text="Run a command through terminal in project's workdir",
+                    text=f"Run terminal command in project's workdir: {self.terminalCommand}",
                     callable=lambda: runTerminal(
                         close_on_exit=True,
                         script=self.terminalCommand,
@@ -347,15 +348,15 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
                     )
                 )
             )
-        else:
-            actions.append(
-                Action(
-                    id="open-code",
-                    text="Open VSCode",
-                    callable=lambda: runDetachedProcess(
-                        ["code", project.path]),
-                )
+
+        actions.append(
+            Action(
+                id="open-code",
+                text="Open with VSCode",
+                callable=lambda: runDetachedProcess(
+                    ["code", project.path]),
             )
+        )
 
         return StandardItem(
             id=project.path,
