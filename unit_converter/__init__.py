@@ -28,14 +28,14 @@ import inflect
 import pint
 from albert import *
 
-md_iid = "2.1"
+md_iid = "2.2"
 md_version = "1.5"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
 md_lib_dependencies = ["pint", "inflect"]
-md_maintainers = ["@DenverCoder1", "@Pete-Hamlin"]
+md_authors = ["@DenverCoder1", "@Pete-Hamlin"]
 
 
 class ConversionResult:
@@ -308,7 +308,7 @@ class CurrencyConverter(UnitConverter):
         )
 
 
-class Plugin(PluginInstance, GlobalQueryHandler, TriggerQueryHandler):
+class Plugin(PluginInstance, GlobalQueryHandler):
     """The plugin class"""
 
     config: dict[str, Any] = {
@@ -328,7 +328,7 @@ class Plugin(PluginInstance, GlobalQueryHandler, TriggerQueryHandler):
             "C": "degC",
         },
         # Display names for units
-        # Units may be added here to override the default display names
+        # Units may be added here to o>verride the default display names
         # The string version of the unit is the key, the display name to replace with is the value
         # Both the unpluralized and the pluralized version should be included
         "display_names": {
@@ -346,7 +346,7 @@ class Plugin(PluginInstance, GlobalQueryHandler, TriggerQueryHandler):
     }
 
     def __init__(self):
-        TriggerQueryHandler.__init__(
+        GlobalQueryHandler.__init__(
             self,
             id=md_id,
             name=md_name,
@@ -354,7 +354,6 @@ class Plugin(PluginInstance, GlobalQueryHandler, TriggerQueryHandler):
             synopsis="<amount> <from_unit> to <to_unit>",
             defaultTrigger="convert ",
         )
-        GlobalQueryHandler.__init__(self, id=md_id, name=md_name, description=md_description, defaultTrigger="convert ")
         PluginInstance.__init__(self, extensions=[self])
 
         self.unit_convert_regex = re.compile(
