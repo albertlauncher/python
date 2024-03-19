@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 import json
 from pathlib import Path
@@ -8,11 +9,12 @@ from urllib import request, parse
 from albert import *
 
 md_iid = '2.0'
-md_version = "1.4"
-md_name = "ArchLinux Wiki"
-md_description = "Search ArchLinux Wiki articles"
-md_license = "BSD-3"
-md_url = "https://github.com/albertlauncher/python/tree/master/awiki"
+md_version = "1.5"
+md_name = "Arch Linux Wiki"
+md_description = "Search Arch Linux Wiki articles"
+md_license = "MIT"
+md_url = "https://github.com/albertlauncher/python/tree/master/arch_wiki"
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
@@ -75,7 +77,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                                        text="Search '%s'" % query.string,
                                        subtext="No results. Start online search on Arch Wiki",
                                        iconUrls=self.iconUrls,
-                                       actions=[Action("search", "Open search", lambda s=query.string: self.search_url % s)]))
+                                       actions=[Action("search", "Open search",
+                                                       lambda s=query.string: openUrl(self.search_url % s))]))
 
         else:
             query.add(StandardItem(id=md_id,

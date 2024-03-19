@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 import json
 import re
@@ -16,6 +17,7 @@ md_name = "Emoji"
 md_description = "Find and copy emojis by name"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/emoji"
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, IndexQueryHandler):

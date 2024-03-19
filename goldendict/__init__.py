@@ -1,11 +1,15 @@
-from albert import Action, StandardItem, TriggerQuery, PluginInstance, TriggerQueryHandler, runDetachedProcess  # pylint: disable=import-error
+# -*- coding: utf-8 -*-
+# Copyright (c) 2017-2024 Manuel Schneider
+
+from albert import *
 
 md_iid = '2.0'
 md_version = '1.3'
 md_name = 'GoldenDict'
 md_description = 'Searches in GoldenDict'
+md_license = 'MIT'
 md_url = 'https://github.com/albertlauncher/python/'
-md_maintainers = '@stevenxxiu'
+md_authors = '@manuelschneid3r'
 md_bin_dependencies = ['goldendict']
 
 

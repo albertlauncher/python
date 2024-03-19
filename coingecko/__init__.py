@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-"""Show and access crypto currencies on CoinGecko.com."""
+# Copyright (c) 2024 Manuel Schneider
 
 from albert import *
 from time import time
@@ -13,8 +12,9 @@ md_iid = "2.0"
 md_version = "1.1"
 md_name = "CoinGecko"
 md_description = "Access CoinGecko"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/coingecko"
+md_authors = "@manuelschneid3r"
 
 
 class CoinFetcherThread(Thread):

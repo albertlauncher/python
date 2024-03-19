@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#  Copyright (c) 2022-2023 Manuel Schneider
+# Copyright (c) 2024 Manuel Schneider
 
 """
 Search for packages and open their URLs. This extension is also intended to be used to \
@@ -15,13 +15,13 @@ from urllib import request, parse
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.8"
+md_iid = '2.2'
+md_version = "1.9"
 md_name = "AUR"
 md_description = "Query and install AUR packages"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/aur"
-# md_platforms = ["Linux"]
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
@@ -50,6 +50,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         else:
             info("No supported AUR helper found.")
             self.install_cmdline = None
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip()
+            }
+        ]
 
     def handleTriggerQuery(self, query):
         for _ in range(50):

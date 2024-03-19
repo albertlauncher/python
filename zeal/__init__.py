@@ -1,4 +1,5 @@
-"""Search in Zeal offline docs."""
+# -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
 
 from albert import *
 
@@ -6,7 +7,9 @@ md_iid = '2.0'
 md_version = '1.2'
 md_name = 'Zeal'
 md_description = 'Search in Zeal docs'
+md_license = "MIT"
 md_url = 'https://github.com/albertlauncher/python/zeal'
+md_authors = "@manuelschneid3r"
 md_bin_dependencies = ['zeal']
 
 

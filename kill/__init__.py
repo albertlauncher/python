@@ -1,4 +1,8 @@
-"""Unix 'kill' wrapper extension."""
+# -*- coding: utf-8 -*-
+# Copyright (c) 2022 Manuel Schneider
+# Copyright (c) 2022 Benedict Dudel
+# Copyright (c) 2022 Pete Hamlin
+
 
 import os
 from signal import SIGKILL, SIGTERM
@@ -9,10 +13,9 @@ md_iid = '2.0'
 md_version = "1.3"
 md_name = "Kill Process"
 md_description = "Kill processes"
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/master/kill"
-md_maintainers = "@Pete-Hamlin"
-md_credits = "Original idea by Benedict Dudel & Manuel Schneider"
+md_authors = ["@Pete-Hamlin", "@BenedictDwudel", "@ManuelSchneid3r"]
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):

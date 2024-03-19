@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2024 Manuel Schneider
+
 """
 Inline DuckDuckGo web search using the 'duckduckgo-search' library.
 """
@@ -12,8 +15,10 @@ md_iid = '2.0'
 md_version = '1.0'
 md_name = 'DuckDuckGo'
 md_description = 'Inline DuckDuckGo web search'
+md_license = "MIT"
 md_url = 'https://github.com/albertlauncher/python/duckduckgo'
 md_lib_dependencies = "duckduckgo-search"
+md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
@@ -35,7 +40,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         if stripped:
 
             # dont flood
-            for number in range(25):
+            for _ in range(25):
                 sleep(0.01)
                 if not query.isValid:
                     return

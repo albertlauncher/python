@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2017-2024 Manuel Schneider
+# Copyright (c) 2023 Oskar Haarklou Veileborg (@BarrensZeppelin)
 
 import json
 import subprocess
@@ -11,8 +13,8 @@ md_name = "CopyQ"
 md_description = "Access CopyQ clipboard"
 md_license = "BSD-2-Clause"
 md_url = "https://github.com/albertlauncher/python"
+md_authors = ["@ManuelSchneid3r", "@BarrensZeppelin"]
 md_bin_dependencies = ["copyq"]
-md_maintainers = "@BarrensZeppelin"
 
 
 copyq_script_getAll = r"""

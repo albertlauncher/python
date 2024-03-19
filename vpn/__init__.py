@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# Copyright (c) 2020 janeklb
+# Copyright (c) 2023 Bierchermuesli
+# Copyright (c) 2020-2024 Manuel Schneider
+
 import subprocess
 from collections import namedtuple
 
@@ -10,8 +15,7 @@ md_name = "VPN"
 md_description = "Manage NetworkManager VPN connections"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
-md_maintainers = ["@Bierchermuesli"]
-md_credits = ["@janeklb"]
+md_authors = ["@janeklb", "@Bierchermuesli", "@manuelschneid3r"]
 md_bin_dependencies = ["nmcli"]
 
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Jonah Lawrence
 
 from __future__ import annotations
 
@@ -14,13 +15,13 @@ Roll any number of dice using the format `_d_`.
 Example: "roll 2d6 3d8 1d20"
 """
 
-md_iid = '2.0'
-md_version = "1.3"
+md_iid = '2.2'
+md_version = "1.4"
 md_name = "Dice Roll"
 md_description = "Roll any number of dice"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
-md_maintainers = "@DenverCoder1"
+md_authors = "@DenverCoder1"
 
 
 def get_icon_path(num_sides: int | None) -> str:
@@ -139,6 +140,14 @@ class Plugin(albert.PluginInstance, albert.TriggerQueryHandler):
             defaultTrigger="roll ",
         )
         albert.PluginInstance.__init__(self, extensions=[self])
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+            }
+        ]
 
     def handleTriggerQuery(self, query: albert.Query) -> None:
         query_string = query.string.strip()
