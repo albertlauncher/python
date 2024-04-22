@@ -32,7 +32,7 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = '2.2'
-md_version = "1.8"
+md_version = "1.9"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
@@ -179,7 +179,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
-    def handleTriggerQuery(self, query: TriggerQuery):
+    def handleTriggerQuery(self, query: Query):
         editor_project_pairs = []
         for editor in self.editors:
             projects = editor.list_projects()
@@ -192,7 +192,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         query.add([self._make_item(editor, project, query) for editor, project in editor_project_pairs])
 
-    def _make_item(self, editor: Editor, project: Project, query: TriggerQuery) -> Item:
+    def _make_item(self, editor: Editor, project: Project, query: Query) -> Item:
         return StandardItem(
             id="%s-%s-%s" % (editor.binary, project.path, project.last_opened),
             text=project.name,
