@@ -13,7 +13,7 @@ from albert import *
 import translators as ts
 
 md_iid = '2.2'
-md_version = "1.5"
+md_version = "1.6"
 md_name = "Translator"
 md_description = "Translate sentences using 'translators' package"
 md_license = "MIT"
@@ -112,19 +112,26 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                                                 to_language=dst,
                                                 timeout=5)
 
+                actions = []
+                if havePasteSupport():
+                    actions.append(
+                        Action(
+                            "paste", "Copy to clipboard and paste to front-most window",
+                            lambda t=translation: setClipboardTextAndPaste(t)
+                        )
+                    )
+
+                actions.append(
+                    Action("copy", "Copy to clipboard",
+                           lambda t=translation: setClipboardText(t))
+                )
+
                 query.add(StandardItem(
                     id=md_id,
                     text=translation,
                     subtext=f"{src.upper()} > {dst.upper()}",
                     iconUrls=self.iconUrls,
-                    actions=[
-                        Action(
-                            "paste", "Copy to clipboard and paste to front-most window",
-                            lambda t=translation: setClipboardTextAndPaste(t)
-                        ),
-                        Action("copy", "Copy to clipboard",
-                               lambda t=translation: setClipboardText(t))
-                    ]
+                    actions=actions
                 ))
 
             except Exception as e:
