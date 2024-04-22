@@ -11,8 +11,8 @@ interface documented [here](https://www.freedesktop.org/software/systemd/man/lat
 from albert import *
 from subprocess import Popen, TimeoutExpired
 
-md_iid = '2.2'
-md_version = '1.0'
+md_iid = '2.3'
+md_version = '1.1'
 md_name = 'Inhibit sleep'
 md_description = 'Inhibit system sleep mode.'
 md_license = "MIT"
@@ -24,12 +24,11 @@ md_bin_dependencies = ['systemd-inhibit', "sleep"]
 class Plugin(PluginInstance, GlobalQueryHandler):
 
     def __init__(self):
-        GlobalQueryHandler.__init__(self,
-                                    id=md_id,
-                                    name=md_name,
-                                    description=md_description,
-                                    defaultTrigger='is ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        GlobalQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='is '
+        )
         self.proc = None
 
     def finalize(self):
@@ -61,7 +60,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
             }
         ]
 
-    def handleGlobalQuery(self, query: GlobalQuery):
+    def handleGlobalQuery(self, query):
         stripped = query.string.strip().lower()
         if stripped in "inhibit sleep":
             return [
