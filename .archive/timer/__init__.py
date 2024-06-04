@@ -19,12 +19,12 @@ from time import strftime, time, localtime
 
 from albert import *
 
-md_iid = '2.2'
+md_iid = '2.3'
 md_version = "1.8"
 md_name = "Timer"
 md_description = "Set up timers"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/timer"
+md_url = "https://github.com/albertlauncher/python/tree/main/timer"
 md_authors = ["@manuelschneid3r", "@googol42"]
 
 
@@ -48,7 +48,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                                      description=md_description,
                                      synopsis='[[hrs:]mins:]secs [name]',
                                      defaultTrigger='timer ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
         self.iconUrls = [f"file:{Path(__file__).parent}/time.svg"]
         self.soundPath = Path(__file__).parent / "bing.wav"
         self.timers = []
