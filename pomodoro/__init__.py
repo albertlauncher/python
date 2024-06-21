@@ -12,12 +12,12 @@ from pathlib import Path
 
 from albert import *
 
-md_iid = '2.2'
-md_version = "1.6"
+md_iid = '2.3'
+md_version = "1.7"
 md_name = "Pomodoro"
 md_description = "Set up a Pomodoro timer"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/pomodoro"
+md_url = "https://github.com/albertlauncher/python/tree/main/pomodoro"
 md_authors = "@manuelschneid3r"
 
 
@@ -76,13 +76,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     default_pomodoro_count = 4
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis='[duration [break duration [long break duration [count]]]]',
-                                     defaultTrigger='pomo ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            synopsis='[duration [break duration [long break duration [count]]]]',
+            defaultTrigger='pomo '
+        )
         self.pomodoro = PomodoroTimer()
         self.iconUrls = [f"file:{Path(__file__).parent}/pomodoro.svg"]
 
@@ -97,7 +96,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def handleTriggerQuery(self, query):
         item = StandardItem(
-            id=md_id,
+            id=self.id,
             iconUrls=self.iconUrls,
         )
 
