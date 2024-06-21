@@ -7,12 +7,12 @@ import pathlib
 
 from albert import Action, StandardItem, PluginInstance, TriggerQueryHandler, runTerminal, openUrl
 
-md_iid = '2.0'
-md_version = "1.9"
+md_iid = '2.3'
+md_version = "1.10"
 md_name = "PacMan"
 md_description = "Search, install and remove packages"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/pacman"
+md_url = "https://github.com/albertlauncher/python/tree/main/pacman"
 md_authors = "@ManuelSchneid3r"
 md_bin_dependencies = ["pacman", "expac"]
 
@@ -22,13 +22,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     pkgs_url = "https://www.archlinux.org/packages/"
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis='<package name>',
-                                     defaultTrigger='pac ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            synopsis='<package name>',
+            defaultTrigger='pac '
+        )
         self.iconUrls = [
             "xdg:archlinux-logo",
             "xdg:system-software-install",
@@ -41,7 +40,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         # Update item on empty queries
         if not stripped:
             query.add(StandardItem(
-                id="%s-update" % md_id,
+                id="%s-update" % self.id,
                 text="Pacman package manager",
                 subtext="Enter the package you are looking for or hit enter to update.",
                 iconUrls=self.iconUrls,
@@ -91,7 +90,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 actions.append(Action("proj_url", "Show project website", lambda u=pkg_purl: openUrl(u)))
 
             item = StandardItem(
-                id="%s_%s_%s" % (md_id, pkg_repo, pkg_name),
+                id="%s_%s_%s" % (self.id, pkg_repo, pkg_name),
                 iconUrls=self.iconUrls,
                 text="%s %s [%s]" % (pkg_name, pkg_vers, pkg_repo),
                 subtext=f"{pkg_desc} [Installed]" if pkg_installed else f"{pkg_desc}",
@@ -104,7 +103,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             query.add(items)
         else:
             query.add(StandardItem(
-                id="%s-empty" % md_id,
+                id="%s-empty" % self.id,
                 text="Search on archlinux.org",
                 subtext="No results found in the local database",
                 iconUrls=self.iconUrls,
