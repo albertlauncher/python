@@ -11,12 +11,12 @@ from virtualbox.library import LockType, MachineState
 
 from albert import *
 
-md_iid = '2.2'
-md_version = "1.6"
+md_iid = '2.3'
+md_version = "1.7"
 md_name = "VirtualBox"
 md_description = "Manage your VirtualBox machines"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/virtualbox"
+md_url = "https://github.com/albertlauncher/python/tree/main/virtualbox"
 md_authors = "@manuelschneid3r"
 md_lib_dependencies = ['virtualbox']
 
@@ -63,13 +63,12 @@ def pauseVm(vm):
 class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis='<machine name>',
-                                     defaultTrigger='vbox ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            synopsis='<machine name>',
+            defaultTrigger='vbox '
+        )
         self.iconUrls = ["xdg:virtualbox", ":unknown"]
 
     def configWidget(self):
