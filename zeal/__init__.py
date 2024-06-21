@@ -3,34 +3,52 @@
 
 from albert import *
 
-md_iid = '2.0'
-md_version = '1.2'
+md_iid = '2.3'
+md_version = '2.0'
 md_name = 'Zeal'
 md_description = 'Search in Zeal docs'
 md_license = "MIT"
-md_url = 'https://github.com/albertlauncher/python/zeal'
+md_url = 'https://github.com/albertlauncher/python/tree/main/zeal'
 md_authors = "@manuelschneid3r"
 md_bin_dependencies = ['zeal']
 
 
+class FBH(FallbackHandler):
+    def fallbacks(self, s):
+        return [Plugin.createItem(s)] if s else []
+
+
 class Plugin(PluginInstance, TriggerQueryHandler):
+
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     defaultTrigger='z ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='z '
+        )
+        self.fbh = FBH(
+            id=self.id + 'fb',
+            name=self.name,
+            description=self.description
+        )
+
+        self.registerExtension(self.fbh)
+
+    def __del__(self):
+        self.deregisterExtension(self.fbh)
 
     def handleTriggerQuery(self, query):
-        stripped = query.string.strip()
-        if stripped:
-            query.add(
-                StandardItem(
-                    id=md_name,
-                    text=md_name,
-                    subtext=f"Search '{stripped}' in Zeal",
-                    iconUrls=["xdg:zeal"],
-                    actions=[Action("zeal", "Search in Zeal", lambda s=stripped: runDetachedProcess(['zeal', s]))]
-                )
-            )
+        if stripped := query.string.strip():
+            query.add(self.createItem(stripped))
+
+    @staticmethod
+    def createItem(query: str) -> Item:
+        return StandardItem(
+            id=md_name,
+            text=md_name,
+            subtext=f"Search '{query}' in Zeal",
+            iconUrls=["xdg:zeal"],
+            actions=[Action("zeal", "Search in Zeal",
+                            lambda q=query: runDetachedProcess(['zeal', q]))]
+        )
+
