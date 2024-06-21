@@ -10,25 +10,13 @@ from urllib import request, parse
 import json
 from pathlib import Path
 
-md_iid = '2.0'
-md_version = "1.10"
+md_iid = '2.3'
+md_version = "2.0"
 md_name = "Wikipedia"
 md_description = "Search Wikipedia articles"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/wikipedia"
+md_url = "https://github.com/albertlauncher/python/tree/main/wikipedia"
 md_authors = "@manuelschneid3r"
-
-
-class WikiFallbackHandler(FallbackHandler):
-    def __init__(self):
-        FallbackHandler.__init__(self,
-                                 id=f"{md_id}_fb",
-                                 name=f"{md_name} fallback",
-                                 description="Wikipedia fallback search")
-
-    def fallbacks(self, query_string):
-        stripped = query_string.strip()
-        return [Plugin.createFallbackItem(query_string)] if stripped else []
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
@@ -40,13 +28,22 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     iconUrls = [f"file:{Path(__file__).parent}/wikipedia.png"]
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     defaultTrigger='wiki ')
-        self.wiki_fb = WikiFallbackHandler()
-        PluginInstance.__init__(self, extensions=[self, self.wiki_fb])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='wiki ', supportsFuzzyMatching=True
+        )
+        self.fuzzy = False
+
+        self.local_lang_code = getdefaultlocale()[0]
+        if self.local_lang_code:
+            self.local_lang_code = self.local_lang_code[0:2]
+        else:
+            self.local_lang_code = 'en'
+            warning("Failed getting language code. Using 'en'.")
+
+        self.fbh = FBH(self)
+        self.registerExtension(self.fbh)
 
         params = {
             'action': 'query',
@@ -55,13 +52,6 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             'siprop': 'languages',
             'format': 'json'
         }
-
-        Plugin.local_lang_code = getdefaultlocale()[0]
-        if Plugin.local_lang_code:
-            Plugin.local_lang_code = Plugin.local_lang_code[0:2]
-        else:
-            Plugin.local_lang_code = 'en'
-            warning("Failed getting language code. Using 'en'.")
 
         get_url = "%s?%s" % (self.baseurl, parse.urlencode(params))
         req = request.Request(get_url, headers={'User-Agent': self.user_agent})
@@ -76,9 +66,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         except Exception as error:
             warning('Error getting languages (%s). Defaulting to EN.' % error)
 
+    def __del__(self):
+        self.deregisterExtension(self.fbh)
+
+    def setFuzzyMatching(self, enabled: bool):
+        self.fuzzy = enabled
+
     def handleTriggerQuery(self, query):
-        stripped = query.string.strip()
-        if stripped:
+        if stripped := query.string.strip():
+
             # avoid rate limiting
             for _ in range(50):
                 sleep(0.01)
@@ -92,7 +88,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 'search': stripped,
                 'limit': self.limit,
                 'utf8': 1,
-                'format': 'json'
+                'format': 'json',
+                'profile': 'fuzzy' if self.fuzzy else 'normal'
             }
             get_url = "%s?%s" % (self.baseurl, parse.urlencode(params))
             req = request.Request(get_url, headers={'User-Agent': self.user_agent})
@@ -106,7 +103,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     url = data[3][i]
                     results.append(
                         StandardItem(
-                            id=md_id,
+                            id=self.id,
                             text=title,
                             subtext=summary if summary else url,
                             iconUrls=self.iconUrls,
@@ -118,28 +115,37 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     )
 
             if not results:
-                results.append(Plugin.createFallbackItem(stripped))
+                results.append(self.createFallbackItem(stripped))
 
             query.add(results)
         else:
             query.add(
                 StandardItem(
-                    id=md_id,
-                    text=md_name,
+                    id=self.id,
+                    text=self.name,
                     subtext="Enter a query to search on Wikipedia",
                     iconUrls=self.iconUrls
                 )
             )
 
-    @staticmethod
-    def createFallbackItem(query_string):
+    def createFallbackItem(self, q: str) -> Item:
         return StandardItem(
-            id=md_id,
-            text=md_name,
-            subtext="Search '%s' on Wiki" % query_string,
-            iconUrls=Plugin.iconUrls,
+            id=self.id,
+            text=self.name,
+            subtext="Search '%s' on Wikipedia" % q,
+            iconUrls=self.iconUrls,
             actions=[
                 Action("wiki_search", "Search on Wikipedia",
-                       lambda url=Plugin.searchUrl % (Plugin.local_lang_code, query_string): openUrl(url))
+                       lambda url=self.searchUrl % (self.local_lang_code, q): openUrl(url))
             ]
         )
+
+
+class FBH(FallbackHandler):
+
+    def __init__(self, p: Plugin):
+        FallbackHandler.__init__(self, p.id + 'fb', p.name, p.description)
+        self.plugin = p
+
+    def fallbacks(self, q :str):
+        return [self.plugin.createFallbackItem(q)]
