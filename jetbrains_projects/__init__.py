@@ -31,12 +31,12 @@ from sys import platform
 from xml.etree import ElementTree
 from albert import *
 
-md_iid = '2.2'
-md_version = "1.9"
+md_iid = '2.3'
+md_version = "1.10"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/jetbrains_projects"
+md_url = "https://github.com/albertlauncher/python/tree/main/jetbrains_projects"
 md_authors = ["@tomsquest", "@vmaerten", "@manuelschneid3r"]
 
 
@@ -103,13 +103,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     executables = []
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis='project name',
-                                     defaultTrigger='jb ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='jb '
+        )
 
         plugin_dir = Path(__file__).parent
         editors = [
