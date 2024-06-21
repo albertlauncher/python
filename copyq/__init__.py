@@ -7,8 +7,8 @@ import subprocess
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.4"
+md_iid = '2.3'
+md_version = "1.5"
 md_name = "CopyQ"
 md_description = "Access CopyQ clipboard"
 md_license = "BSD-2-Clause"
@@ -50,13 +50,11 @@ JSON.stringify(result);
 class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis="<filter>",
-                                     defaultTrigger='cq ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='cp '
+        )
 
     def handleTriggerQuery(self, query):
         items = []
@@ -79,7 +77,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             )
             items.append(
                 StandardItem(
-                    id=md_id,
+                    id=self.id,
                     iconUrls=["xdg:copyq"],
                     text=text,
                     subtext="%s: %s" % (row, ", ".join(json_obj["mimetypes"])),
