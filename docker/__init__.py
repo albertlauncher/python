@@ -6,12 +6,12 @@ from pathlib import Path
 import docker
 from albert import *
 
-md_iid = "2.0"
-md_version = "2.0"
+md_iid = '2.3'
+md_version = "2.1"
 md_name = "Docker"
 md_description = "Manage docker images and containers"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/docker"
+md_url = "https://github.com/albertlauncher/python/tree/main/docker"
 md_authors = "@manuelschneid3r"
 md_bin_dependencies = "docker"
 md_lib_dependencies = "docker"
@@ -20,13 +20,12 @@ md_lib_dependencies = "docker"
 class Plugin(PluginInstance, GlobalQueryHandler):
 
     def __init__(self):
-        GlobalQueryHandler.__init__(self,
-                                    id=md_id,
-                                    name=md_name,
-                                    description=md_description,
-                                    defaultTrigger='d ',
-                                    synopsis='<image tag|container name>')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        GlobalQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='d ',
+            synopsis='<image tag|container name>'
+        )
         self.icon_urls_running = [f"file:{Path(__file__).parent}/running.png"]
         self.icon_urls_stopped = [f"file:{Path(__file__).parent}/stopped.png"]
         self.client = None
