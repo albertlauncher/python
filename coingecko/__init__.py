@@ -8,12 +8,12 @@ from json import load, loads, dumps
 from pathlib import Path
 from threading import Thread, Event
 
-md_iid = "2.0"
-md_version = "1.1"
+md_iid = '2.3'
+md_version = "1.2"
 md_name = "CoinGecko"
 md_description = "Access CoinGecko"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/coingecko"
+md_url = "https://github.com/albertlauncher/python/tree/main/coingecko"
 md_authors = "@manuelschneid3r"
 
 
@@ -86,12 +86,12 @@ class Plugin(PluginInstance, IndexQueryHandler):
     iconUrls = [f"file:{Path(__file__).parent}/coingecko.png"]
 
     def __init__(self):
+        PluginInstance.__init__(self)
         IndexQueryHandler.__init__(
-            self, md_id, md_name, md_description,
+            self, self.id, self.name, self.description,
             defaultTrigger='cg ',
             synopsis='< symbol | name >'
         )
-        PluginInstance.__init__(self, extensions=[self])
 
         self.items = []
         self.mtime = 0
@@ -99,7 +99,7 @@ class Plugin(PluginInstance, IndexQueryHandler):
         self.thread = CoinFetcherThread(self.updateIndexItems, self.coinCacheFilePath)
         self.thread.start()
 
-    def finalize(self):
+    def __del__(self):
         self.thread.stop()
         self.thread.join()
 
