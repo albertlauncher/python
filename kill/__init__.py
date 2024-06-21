@@ -9,23 +9,22 @@ from signal import SIGKILL, SIGTERM
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.3"
+md_iid = '2.3'
+md_version = "1.4"
 md_name = "Kill Process"
 md_description = "Kill processes"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/kill"
+md_url = "https://github.com/albertlauncher/python/tree/main/kill"
 md_authors = ["@Pete-Hamlin", "@BenedictDwudel", "@ManuelSchneid3r"]
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     defaultTrigger='kill ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='kill '
+        )
 
     def handleTriggerQuery(self, query):
         if not query.isValid:
