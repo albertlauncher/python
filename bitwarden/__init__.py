@@ -5,12 +5,12 @@ from subprocess import run, CalledProcessError
 
 from albert import *
 
-md_iid = '2.1'
-md_version = "2.1"
+md_iid = '2.3'
+md_version = "2.3"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python"
+md_url = "https://github.com/albertlauncher/python/tree/main/bitwarden"
 md_authors = ["@ovitor", "@daviddeadly", "@manuelschneid3r"]
 md_bin_dependencies = ["rbw"]
 
@@ -18,12 +18,11 @@ md_bin_dependencies = ["rbw"]
 class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     defaultTrigger='bw ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='bw '
+        )
         self.iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
 
     def handleTriggerQuery(self, query):
