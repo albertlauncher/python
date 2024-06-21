@@ -7,25 +7,24 @@ from pathlib import Path
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.5"
+md_iid = '2.3'
+md_version = "1.6"
 md_name = "Python Eval"
 md_description = "Evaluate Python code"
 md_license = "BSD-3"
-md_url = "https://github.com/albertlauncher/python/tree/master/python_eval"
+md_url = "https://github.com/albertlauncher/python/tree/main/python_eval"
 md_authors = "@manuelschneid3r"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis='<Python expression>',
-                                     defaultTrigger='py ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            synopsis='<Python expression>',
+            defaultTrigger='py '
+        )
         self.iconUrls = [f"file:{Path(__file__).parent}/python.svg"]
 
     def handleTriggerQuery(self, query):
@@ -39,7 +38,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             result_str = str(result)
 
             query.add(StandardItem(
-                id=md_id,
+                id=self.id,
                 text=result_str,
                 subtext=type(result).__name__,
                 inputActionText=query.trigger + result_str,
