@@ -15,12 +15,12 @@ from urllib import request, parse
 
 from albert import *
 
-md_iid = '2.2'
-md_version = "1.9"
+md_iid = '2.3'
+md_version = "1.10"
 md_name = "AUR"
 md_description = "Query and install AUR packages"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/aur"
+md_url = "https://github.com/albertlauncher/python/tree/main/aur"
 md_authors = "@manuelschneid3r"
 
 
@@ -30,13 +30,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     baseurl = 'https://aur.archlinux.org/rpc/'
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     defaultTrigger='aur ')
-        PluginInstance.__init__(self, extensions=[self])
-
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(
+            self, self.id, self.name, self.description,
+            defaultTrigger='aur '
+        )
         self.iconUrls = [f"file:{Path(__file__).parent}/arch.svg"]
 
         if which("yaourt"):
@@ -80,7 +78,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 data = json.loads(response.read().decode())
                 if data['type'] == "error":
                     query.add(StandardItem(
-                        id=md_id,
+                        id=self.id,
                         text="Error",
                         subtext=data['error'],
                         iconUrls=self.iconUrls
@@ -94,7 +92,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     for entry in results_json:
                         name = entry['Name']
                         item = StandardItem(
-                            id=md_id,
+                            id=self.id,
                             iconUrls=self.iconUrls,
                             text=f"{entry['Name']} {entry['Version']}"
                         )
@@ -141,7 +139,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     query.add(results)
         else:
             query.add(StandardItem(
-                id=md_id,
+                id=self.id,
                 text=md_name,
                 subtext="Enter a query to search the AUR",
                 iconUrls=self.iconUrls,
