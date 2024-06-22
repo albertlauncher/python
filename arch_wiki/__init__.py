@@ -8,12 +8,12 @@ from urllib import request, parse
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.5"
-md_name = "Arch Linux Wiki"
-md_description = "Search Arch Linux Wiki articles"
-md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/tree/master/arch_wiki"
+md_iid = '2.3'
+md_version = '1.6'
+md_name = 'Arch Linux Wiki'
+md_description = 'Search Arch Linux Wiki articles'
+md_license = 'MIT'
+md_url = 'https://github.com/albertlauncher/python/tree/main/arch_wiki'
 md_authors = "@manuelschneid3r"
 
 
@@ -24,12 +24,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     user_agent = "org.albert.extension.python.archwiki"
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     defaultTrigger='awiki ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(self, self.id, self.name, self.description, defaultTrigger='awiki ')
         self.iconUrls = [f"file:{Path(__file__).parent}/arch.svg"]
 
     def handleTriggerQuery(self, query):
@@ -62,7 +58,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     summary = data[2][i]
                     url = data[3][i]
 
-                    results.append(StandardItem(id=md_id,
+                    results.append(StandardItem(id=self.id,
                                                 text=title,
                                                 subtext=summary if summary else url,
                                                 iconUrls=self.iconUrls,
@@ -73,7 +69,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             if results:
                 query.add(results)
             else:
-                query.add(StandardItem(id=md_id,
+                query.add(StandardItem(id=self.id,
                                        text="Search '%s'" % query.string,
                                        subtext="No results. Start online search on Arch Wiki",
                                        iconUrls=self.iconUrls,
@@ -81,7 +77,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                                                        lambda s=query.string: openUrl(self.search_url % s))]))
 
         else:
-            query.add(StandardItem(id=md_id,
+            query.add(StandardItem(id=self.id,
                                    text=md_name,
                                    iconUrls=self.iconUrls,
                                    subtext="Enter a query to search on the Arch Wiki"))
