@@ -7,7 +7,7 @@ import shutil
 from albert import *
 
 md_iid = '2.3'
-md_version = '1.4'
+md_version = '1.5'
 md_name = 'GoldenDict'
 md_description = 'Quick access to GoldenDict'
 md_license = 'MIT'
@@ -43,7 +43,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             warning(f"Multiple GoldenDict commands found: {', '.join(executables)}")
             warning(f"Using {self.executable}")
 
-    def handleTriggerQuery(self, query: TriggerQuery):
+    def handleTriggerQuery(self, query):
         q = query.string.strip()
         query.add(
             StandardItem(
