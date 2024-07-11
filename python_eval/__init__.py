@@ -241,7 +241,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             self.name,
             self.description,
             synopsis="<Python expression>",
-            defaultTrigger="py2 ",
+            defaultTrigger="py ",
         )
         self.iconUrls = [f"file:{Path(__file__).parent}/python.svg"]
 
