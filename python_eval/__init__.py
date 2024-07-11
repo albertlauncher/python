@@ -65,7 +65,6 @@ async def _coro_repl():
 
 
 class KeywordTransformer(ast.NodeTransformer):
-    # Author: Gorialis
     # Source: https://github.com/Gorialis/jishaku/blob/master/jishaku/repl/walkers.py
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.FunctionDef:
@@ -96,78 +95,6 @@ class KeywordTransformer(ast.NodeTransformer):
                     col_offset=node.col_offset,
                 ),
                 ast.Return(value=None, lineno=node.lineno, col_offset=node.col_offset),
-            ],
-            orelse=[],
-            lineno=node.lineno,
-            col_offset=node.col_offset,
-        )
-
-    def visit_Delete(self, node: ast.Delete) -> ast.If:
-        return ast.If(
-            test=ast.Constant(
-                value=True, lineno=node.lineno, col_offset=node.col_offset
-            ),
-            body=[
-                (
-                    ast.If(
-                        test=ast.Compare(
-                            left=ast.Constant(
-                                value=target.id,
-                                lineno=node.lineno,
-                                col_offset=node.col_offset,
-                            ),
-                            ops=[
-                                # in
-                                ast.In(lineno=node.lineno, col_offset=node.col_offset)
-                            ],
-                            comparators=[
-                                # globals()
-                                self.globals_call(node)
-                            ],
-                            lineno=node.lineno,
-                            col_offset=node.col_offset,
-                        ),
-                        body=[
-                            ast.Expr(
-                                value=ast.Call(
-                                    func=ast.Attribute(
-                                        value=self.globals_call(node),
-                                        attr="pop",
-                                        ctx=ast.Load(),
-                                        lineno=node.lineno,
-                                        col_offset=node.col_offset,
-                                    ),
-                                    args=[
-                                        ast.Constant(
-                                            value=target.id,
-                                            lineno=node.lineno,
-                                            col_offset=node.col_offset,
-                                        )
-                                    ],
-                                    keywords=[],
-                                    lineno=node.lineno,
-                                    col_offset=node.col_offset,
-                                ),
-                                lineno=node.lineno,
-                                col_offset=node.col_offset,
-                            )
-                        ],
-                        orelse=[
-                            ast.Delete(
-                                targets=[target],
-                                lineno=node.lineno,
-                                col_offset=node.col_offset,
-                            )
-                        ],
-                        lineno=node.lineno,
-                        col_offset=node.col_offset,
-                    )
-                    if isinstance(target, ast.Name)
-                    else ast.Delete(
-                        targets=[target], lineno=node.lineno, col_offset=node.col_offset
-                    )
-                )
-                for target in node.targets
             ],
             orelse=[],
             lineno=node.lineno,
