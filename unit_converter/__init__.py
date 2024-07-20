@@ -28,8 +28,8 @@ import inflect
 import pint
 from albert import *
 
-md_iid = "2.2"
-md_version = "1.5"
+md_iid = "2.3"
+md_version = "1.6"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
@@ -346,15 +346,15 @@ class Plugin(PluginInstance, GlobalQueryHandler):
     }
 
     def __init__(self):
+        PluginInstance.__init__(self)
         GlobalQueryHandler.__init__(
             self,
-            id=md_id,
-            name=md_name,
-            description=md_description,
+            id=self.id ,
+            name=self.name,
+            description=self.description,
             synopsis="<amount> <from_unit> to <to_unit>",
             defaultTrigger="convert ",
         )
-        PluginInstance.__init__(self, extensions=[self])
 
         self.unit_convert_regex = re.compile(
             r"(?P<from_amount>-?\d+\.?\d*)\s?(?P<from_unit>.*)\s(?:to|in)\s(?P<to_unit>.*)",
@@ -363,7 +363,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
         self.unit_converter = StandardUnitConverter()
         self.currency_converter = CurrencyConverter()
 
-    def handleTriggerQuery(self, query: TriggerQuery) -> None:
+    def handleTriggerQuery(self, query: Query) -> None:
         query_string = query.string.strip()
         if query_string:
             items = self.match_query(query_string)
