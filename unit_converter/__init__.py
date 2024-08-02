@@ -349,7 +349,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
         PluginInstance.__init__(self)
         GlobalQueryHandler.__init__(
             self,
-            id=self.id ,
+            id=self.id,
             name=self.name,
             description=self.description,
             synopsis="<amount> <from_unit> to <to_unit>",
@@ -364,15 +364,12 @@ class Plugin(PluginInstance, GlobalQueryHandler):
         self.currency_converter = CurrencyConverter()
 
     def handleTriggerQuery(self, query: Query) -> None:
-        query_string = query.string.strip()
-        if query_string:
+        if query_string := query.string.strip():
             items = self.match_query(query_string)
             query.add(items)
 
     def handleGlobalQuery(self, query):
-        query_string = query.string.strip()
-        items = [RankItem(item=item, score=1) for item in self.match_query(query_string)]
-        return items
+        return [RankItem(item=item, score=1) for item in self.match_query(query.string.strip())]
 
     def match_query(self, query_string: str):
         match = self.unit_convert_regex.fullmatch(query_string)
