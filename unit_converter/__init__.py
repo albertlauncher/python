@@ -328,7 +328,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
             "C": "degC",
         },
         # Display names for units
-        # Units may be added here to o>verride the default display names
+        # Units may be added here to override the default display names
         # The string version of the unit is the key, the display name to replace with is the value
         # Both the unpluralized and the pluralized version should be included
         "display_names": {
