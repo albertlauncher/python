@@ -37,7 +37,7 @@ md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/main/jetbrains_projects"
-md_authors = ["@tomsquest", "@vmaerten", "@manuelschneid3r"]
+md_authors = ["@tomsquest", "@vmaerten", "@manuelschneid3r", "@d3v2a"]
 
 
 @dataclass
@@ -84,8 +84,10 @@ class Editor:
 
             projects = []
             for entry in entries:
-                project_path = entry.attrib["key"].replace("$USER_HOME$", str(Path.home()))
-
+                project_path = entry.attrib["key"]
+                files = Path(project_path + "/.idea").glob("*.iml")
+                project_path = project_path.replace("$USER_HOME$", str(Path.home()))
+                project_name = Path(project_path).name
                 tag_opened = entry.find(".//option[@name='projectOpenTimestamp']")
                 last_opened = tag_opened.attrib["value"] if tag_opened is not None and "value" in tag_opened.attrib else None
 
@@ -93,6 +95,11 @@ class Editor:
                     projects.append(
                         Project(name=Path(project_path).name, path=project_path, last_opened=int(last_opened))
                     )
+                for file in files:
+                    name = file.name.replace(".iml", "")
+                    if name != project_name:
+                        projects.append(Project(name=name, path=project_path, last_opened=int(last_opened)))
+
             return projects
         except (ElementTree.ParseError, FileNotFoundError):
             return []
@@ -179,10 +186,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def handleTriggerQuery(self, query: Query):
         editor_project_pairs = []
+        query_lower = query.string.lower()
         for editor in self.editors:
             projects = editor.list_projects()
             projects = [p for p in projects if Path(p.path).exists()]
-            projects = [p for p in projects if query.string.lower() in p.name.lower()]
+            projects = [p for p in projects if query_lower in p.name.lower() or query_lower in p.path.lower()]
             editor_project_pairs.extend([(editor, p) for p in projects])
 
         # sort by last opened
