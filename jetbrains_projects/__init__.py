@@ -125,6 +125,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 binaries=["studio", "androidstudio", "android-studio", "android-studio-canary", "jdk-android-studio",
                           "android-studio-system-jdk"]),
             Editor(
+                name="Aqua",
+                icon=plugin_dir / "icons" / "aqua.svg",
+                config_dir_prefix="JetBrains/Aqua",
+                binaries=["aqua", "aqua-eap"]),
+            Editor(
                 name="CLion",
                 icon=plugin_dir / "icons" / "clion.svg",
                 config_dir_prefix="JetBrains/CLion",
@@ -181,6 +186,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 icon=plugin_dir / "icons" / "rustrover.svg",
                 config_dir_prefix="JetBrains/RustRover",
                 binaries=["rustrover", "rustrover-eap"]),
+            Editor(
+                name="Writerside",
+                icon=plugin_dir / "icons" / "writerside.svg",
+                config_dir_prefix="JetBrains/Writerside",
+                binaries=["writerside", "writerside-eap"]),
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
