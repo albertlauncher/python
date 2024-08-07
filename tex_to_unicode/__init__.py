@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
-#  Copyright (c) 2022 Manuel Schneider
+#  Copyright (c) 2022 Jonah Lawrence
+#  Copyright (c) 2024 Manuel Schneider
 
 import re
 import unicodedata
@@ -9,30 +9,25 @@ from pylatexenc.latex2text import LatexNodes2Text
 
 from albert import *
 
-md_iid = '2.0'
-md_version = "1.2"
+md_iid = '2.3'
+md_version = "1.3"
 md_name = "TeX to Unicode"
 md_description = "Convert TeX mathmode commands to unicode characters"
-md_license = "GPL-3.0"
-md_url = "https://github.com/albertlauncher/python/"
+md_license = "MIT"
+md_url = "https://github.com/albertlauncher/python/tree/main/tex_to_unicode"
+md_authors = ["@DenverCoder1", "@manuelschneid3r"]
 md_lib_dependencies = "pylatexenc"
-md_maintainers = "@DenverCoder1"
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
-        TriggerQueryHandler.__init__(self,
-                                     id=md_id,
-                                     name=md_name,
-                                     description=md_description,
-                                     synopsis='<tex input>',
-                                     defaultTrigger='tex ')
-        PluginInstance.__init__(self, extensions=[self])
+        PluginInstance.__init__(self)
+        TriggerQueryHandler.__init__(self, self.id, self.name, self.description, defaultTrigger='tex ')
         self.COMBINING_LONG_SOLIDUS_OVERLAY = "\u0338"
-        self.iconUrls = [f"file:{Path(__file__).parent}/tex.png"]
+        self.iconUrls = [f"file:{Path(__file__).parent}/tex.svg"]
 
-    def _create_item(self, text: str, subtext: str, can_copy: bool) -> Item:
+    def _create_item(self, text: str, subtext: str, can_copy: bool):
         actions = []
         if can_copy:
             actions.append(
@@ -43,14 +38,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 )
             )
         return StandardItem(
-            id=md_id,
+            id=self.id,
             text=text,
             subtext=subtext,
             iconUrls=self.iconUrls,
             actions=actions,
         )
 
-    def handleTriggerQuery(self, query: TriggerQuery) -> None:
+    def handleTriggerQuery(self, query):
         stripped = query.string.strip()
 
         if not stripped:
