@@ -24,19 +24,18 @@ from typing import Any
 from urllib.error import URLError
 from urllib.request import urlopen
 
-import albert
 import inflect
 import pint
+from albert import *
 
-
-md_iid = '2.0'
-md_version = "1.4"
+md_iid = "2.3"
+md_version = "1.6"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python"
 md_lib_dependencies = ["pint", "inflect"]
-md_maintainers = "@DenverCoder1"
+md_authors = ["@DenverCoder1", "@Pete-Hamlin"]
 
 
 class ConversionResult:
@@ -250,12 +249,12 @@ class CurrencyConverter(UnitConverter):
             with urlopen(self.API_URL) as response:
                 data = json.loads(response.read().decode("utf-8"))
             if not data or "rates" not in data:
-                albert.info("No currencies found")
+                info("No currencies found")
                 return {}
-            albert.info(f'Currencies updated')
+            info(f"Currencies updated")
             return data["rates"]
         except URLError as error:
-            albert.warning(f"Error getting currencies: {error}")
+            warning(f"Error getting currencies: {error}")
             return {}
 
     def get_currency(self, currency: str) -> str | None:
@@ -309,13 +308,8 @@ class CurrencyConverter(UnitConverter):
         )
 
 
-class Plugin(albert.TriggerQueryHandler):
+class Plugin(PluginInstance, GlobalQueryHandler):
     """The plugin class"""
-
-    unit_convert_regex = re.compile(
-        r"(?P<from_amount>-?\d+\.?\d*)\s?(?P<from_unit>.*)\s(?:to|in)\s(?P<to_unit>.*)",
-        re.I,
-    )
 
     config: dict[str, Any] = {
         # Maximum number of decimal places for precision
@@ -351,47 +345,50 @@ class Plugin(albert.TriggerQueryHandler):
         },
     }
 
-    def initialize(self):
+    def __init__(self):
+        PluginInstance.__init__(self)
+        GlobalQueryHandler.__init__(
+            self,
+            id=self.id,
+            name=self.name,
+            description=self.description,
+            synopsis="<amount> <from_unit> to <to_unit>",
+            defaultTrigger="convert ",
+        )
+
+        self.unit_convert_regex = re.compile(
+            r"(?P<from_amount>-?\d+\.?\d*)\s?(?P<from_unit>.*)\s(?:to|in)\s(?P<to_unit>.*)",
+            re.I,
+        )
         self.unit_converter = StandardUnitConverter()
         self.currency_converter = CurrencyConverter()
 
-    def id(self) -> str:
-        return md_id
+    def handleTriggerQuery(self, query: Query) -> None:
+        if query_string := query.string.strip():
+            items = self.match_query(query_string)
+            query.add(items)
 
-    def name(self) -> str:
-        return md_name
+    def handleGlobalQuery(self, query):
+        return [RankItem(item=item, score=1) for item in self.match_query(query.string.strip())]
 
-    def description(self) -> str:
-        return md_description
-
-    def synopsis(self) -> str:
-        return "<amount> <from_unit> to <to_unit>"
-
-    def defaultTrigger(self) -> str:
-        return "convert "
-
-    def handleTriggerQuery(self, query: albert.TriggerQuery) -> None:
-        query_string = query.string.strip()
+    def match_query(self, query_string: str):
         match = self.unit_convert_regex.fullmatch(query_string)
         if match:
-            albert.info(f"Matched {query_string}")
             try:
-                items = self._get_items(
+                return self._get_items(
                     float(match.group("from_amount")),
                     match.group("from_unit").strip(),
                     match.group("to_unit").strip(),
                 )
-                query.add(items)
             except Exception as error:
-                albert.warning(f"Error: {error}")
-                tb = "".join(
-                    traceback.format_exception(error.__class__, error, error.__traceback__)
-                )
-                albert.warning(tb)
-                albert.info("Something went wrong. Make sure you're using the correct format.")
+                warning(f"Error: {error}")
+                tb = "".join(traceback.format_exception(error.__class__, error, error.__traceback__))
+                warning(tb)
+                info("Something went wrong. Make sure you're using the correct format.")
+        return []
 
-    def _create_item(self, text: str, subtext: str, icon: str = "") -> albert.Item:
-        """Create an albert.Item from a text and subtext
+    def _create_item(self, text: str, subtext: str, icon: str = "") -> Item:
+        """Create an Item from a text and subtext
 
         Args:
             text (str): The text to display
@@ -399,22 +396,22 @@ class Plugin(albert.TriggerQueryHandler):
             icon (Optional[str]): The icon to display. If not specified, the default icon will be used
 
         Returns:
-            albert.Item: The item to be added to the list of results
+            Item: The item to be added to the list of results
         """
         icon_path = Path(__file__).parent / "icons" / icon
         if not icon or not icon_path.exists():
-            albert.warning(f"Icon {icon} does not exist")
+            warning(f"Icon {icon} does not exist")
             icon_path = Path(__file__).parent / "icons" / "unit_converter.svg"
-        return albert.StandardItem(
+        return StandardItem(
             id=str(icon_path),
             iconUrls=["file:" + str(icon_path)],
             text=text,
             subtext=subtext,
             actions=[
-                albert.Action(
+                Action(
                     id="copy",
                     text="Copy result to clipboard",
-                    callable=lambda: albert.setClipboardText(text=text),
+                    callable=lambda: setClipboardText(text=text),
                 )
             ],
         )
@@ -436,7 +433,7 @@ class Plugin(albert.TriggerQueryHandler):
             return self.currency_converter
         return self.unit_converter
 
-    def _get_items(self, amount: float, from_unit: str, to_unit: str) -> list[albert.Item]:
+    def _get_items(self, amount: float, from_unit: str, to_unit: str) -> list[Item]:
         """Generate the Albert items to display for the query
 
         Args:
@@ -445,7 +442,7 @@ class Plugin(albert.TriggerQueryHandler):
             to_unit (str): The unit to convert to
 
         Returns:
-            List[albert.Item]: The list of items to display
+            List[Item]: The list of items to display
         """
         try:
             converter = self._get_converter(from_unit, to_unit)
@@ -459,13 +456,11 @@ class Plugin(albert.TriggerQueryHandler):
                 )
             ]
         except pint.errors.DimensionalityError as e:
-            albert.warning(f"DimensionalityError: {e}")
-            return [
-                self._create_item(f"Unable to convert {amount} {from_unit} to {to_unit}", str(e))
-            ]
+            warning(f"DimensionalityError: {e}")
+            return [self._create_item(f"Unable to convert {amount} {from_unit} to {to_unit}", str(e))]
         except pint.errors.UndefinedUnitError as e:
-            albert.warning(f"UndefinedUnitError: {e}")
+            warning(f"UndefinedUnitError: {e}")
             return []
         except UnknownCurrencyError as e:
-            albert.warning(f"UnknownCurrencyError: {e}")
+            warning(f"UnknownCurrencyError: {e}")
             return []
