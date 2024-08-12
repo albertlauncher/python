@@ -15,8 +15,8 @@ from urllib import request, parse
 
 from albert import *
 
-md_iid = '2.3'
-md_version = "1.10"
+md_iid = "2.3"
+md_version = "1.11"
 md_name = "AUR"
 md_description = "Query and install AUR packages"
 md_license = "MIT"
@@ -113,16 +113,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                                 id="inst",
                                 text="Install using %s" % pacman,
                                 callable=lambda n=name: runTerminal(
-                                    script=self.install_cmdline % n,
-                                    close_on_exit=False
+                                    script=self.install_cmdline % n + " ; exec $SHELL"
                                 )
                             ))
                             actions.append(Action(
                                 id="instnc",
                                 text="Install using %s (noconfirm)" % pacman,
                                 callable=lambda n=name: runTerminal(
-                                    script=self.install_cmdline % n + " --noconfirm",
-                                    close_on_exit=False
+                                    script=self.install_cmdline % n + " --noconfirm ; exec $SHELL"
                                 )
                             ))
 
