@@ -5,8 +5,8 @@ from subprocess import run, CalledProcessError
 
 from albert import *
 
-md_iid = '2.3'
-md_version = "2.3"
+md_iid = "2.3"
+md_version = "2.4"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
 md_license = "MIT"
@@ -156,7 +156,4 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     def _edit_entry(self, item):
         id = item["id"]
 
-        runTerminal(
-            script=f"rbw edit {id}",
-            close_on_exit=True
-        )
+        runTerminal(script=f"rbw edit {id}")
