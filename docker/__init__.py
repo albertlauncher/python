@@ -6,8 +6,8 @@ from pathlib import Path
 import docker
 from albert import *
 
-md_iid = '2.3'
-md_version = "2.1"
+md_iid = "2.3"
+md_version = "2.2"
 md_name = "Docker"
 md_description = "Manage docker images and containers"
 md_license = "MIT"
@@ -59,7 +59,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                         actions = [Action("start", "Start container", lambda c=container: c.start())]
                     actions.extend([
                         Action("logs", "Logs",
-                               lambda c=container.id: runTerminal("docker logs -f %s" % c, close_on_exit=False)),
+                               lambda c=container.id: runTerminal("docker logs -f %s ; exec $SHELL" % c)),
                         Action("remove", "Remove (forced, with volumes)",
                                lambda c=container: c.remove(v=True, force=True)),
                         Action("copy-id", "Copy id to clipboard",
@@ -86,9 +86,11 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                                 text=", ".join(image.tags),
                                 subtext="Image: %s" % image.id,
                                 iconUrls=self.icon_urls_stopped,
-                                actions=[Action("run", "Run with command: %s" % query.string,
-                                                lambda i=image, s=query.string: client.containers.run(i, s)),
-                                         Action("rmi", "Remove image", lambda i=image: i.remove())]
+                                actions=[
+                                    # Action("run", "Run with command: %s" % query.string,
+                                    #        lambda i=image, s=query.string: client.containers.run(i, s)),
+                                    Action("rmi", "Remove image", lambda i=image: i.remove())
+                                ]
                             ),
                             score=len(query.string)/len(tag)
                         ))
