@@ -5,6 +5,7 @@
 """
 This plugin allows you to quickly open projects of the Jetbrains IDEs
 
+- Aqua
 - Android Studio
 - CLion
 - DataGrip
@@ -15,7 +16,8 @@ This plugin allows you to quickly open projects of the Jetbrains IDEs
 - PyCharm
 - Rider
 - RubyMine
-- WebStorm.
+- WebStorm
+- Writerside.
 
 Note that for this plugin to find the IDEs, a commandline launcher in $PATH is required.
 Open the IDE and click Tools -> Create Command-line Launcher to add one.
@@ -32,12 +34,12 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = '2.3'
-md_version = "1.10"
+md_version = "2.0"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/main/jetbrains_projects"
-md_authors = ["@tomsquest", "@vmaerten", "@manuelschneid3r"]
+md_authors = ["@tomsquest", "@vmaerten", "@manuelschneid3r", "@d3v2a"]
 
 
 @dataclass
@@ -84,15 +86,22 @@ class Editor:
 
             projects = []
             for entry in entries:
-                project_path = entry.attrib["key"].replace("$USER_HOME$", str(Path.home()))
-
+                project_path = entry.attrib["key"]
+                project_path = project_path.replace("$USER_HOME$", str(Path.home()))
+                project_name = Path(project_path).name
+                files = Path(project_path + "/.idea").glob("*.iml")
                 tag_opened = entry.find(".//option[@name='projectOpenTimestamp']")
                 last_opened = tag_opened.attrib["value"] if tag_opened is not None and "value" in tag_opened.attrib else None
 
                 if project_path and last_opened:
                     projects.append(
-                        Project(name=Path(project_path).name, path=project_path, last_opened=int(last_opened))
+                        Project(name=project_name, path=project_path, last_opened=int(last_opened))
                     )
+                for file in files:
+                    name = file.name.replace(".iml", "")
+                    if name != project_name:
+                        projects.append(Project(name=name, path=project_path, last_opened=int(last_opened)))
+
             return projects
         except (ElementTree.ParseError, FileNotFoundError):
             return []
@@ -117,6 +126,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 config_dir_prefix="Google/AndroidStudio",
                 binaries=["studio", "androidstudio", "android-studio", "android-studio-canary", "jdk-android-studio",
                           "android-studio-system-jdk"]),
+            Editor(
+                name="Aqua",
+                icon=plugin_dir / "icons" / "aqua.svg",
+                config_dir_prefix="JetBrains/Aqua",
+                binaries=["aqua", "aqua-eap"]),
             Editor(
                 name="CLion",
                 icon=plugin_dir / "icons" / "clion.svg",
@@ -174,15 +188,22 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 icon=plugin_dir / "icons" / "rustrover.svg",
                 config_dir_prefix="JetBrains/RustRover",
                 binaries=["rustrover", "rustrover-eap"]),
+            Editor(
+                name="Writerside",
+                icon=plugin_dir / "icons" / "writerside.svg",
+                config_dir_prefix="JetBrains/Writerside",
+                binaries=["writerside", "writerside-eap"]),
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
     def handleTriggerQuery(self, query: Query):
         editor_project_pairs = []
+
+        m = Matcher(query.string)
         for editor in self.editors:
             projects = editor.list_projects()
             projects = [p for p in projects if Path(p.path).exists()]
-            projects = [p for p in projects if query.string.lower() in p.name.lower()]
+            projects = [p for p in projects if m.match(p.name) or m.match(p.path)]
             editor_project_pairs.extend([(editor, p) for p in projects])
 
         # sort by last opened
