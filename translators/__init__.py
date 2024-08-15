@@ -13,11 +13,11 @@ from albert import *
 import translators as ts
 
 md_iid = '2.3'
-md_version = "1.7"
+md_version = "1.8"
 md_name = "Translator"
 md_description = "Translate sentences using 'translators' package"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python/translators"
+md_url = "https://github.com/albertlauncher/python/tree/main/translators"
 md_authors = "@manuelschneid3r"
 md_lib_dependencies = "translators"
 
