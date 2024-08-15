@@ -16,11 +16,11 @@ Example: "roll 2d6 3d8 1d20"
 """
 
 md_iid = '2.3'
-md_version = "1.5"
+md_version = "1.6"
 md_name = "Dice Roll"
 md_description = "Roll any number of dice"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python"
+md_url = "https://github.com/albertlauncher/python/tree/main/dice_roll"
 md_authors = "@DenverCoder1"
 
 
