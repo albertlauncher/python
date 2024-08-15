@@ -9,11 +9,11 @@ from collections import namedtuple
 from albert import *
 
 md_iid = '2.3'
-md_version = "1.5"
+md_version = "1.6"
 md_name = "VPN"
 md_description = "Manage NetworkManager VPN connections"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python"
+md_url = "https://github.com/albertlauncher/python/tree/main/vpn"
 md_authors = ["@janeklb", "@Bierchermuesli", "@manuelschneid3r"]
 md_bin_dependencies = ["nmcli"]
 
