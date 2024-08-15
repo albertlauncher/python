@@ -8,11 +8,11 @@ import subprocess
 from albert import *
 
 md_iid = '2.3'
-md_version = "1.5"
+md_version = "1.6"
 md_name = "CopyQ"
 md_description = "Access CopyQ clipboard"
 md_license = "BSD-2-Clause"
-md_url = "https://github.com/albertlauncher/python"
+md_url = "https://github.com/albertlauncher/python/tree/main/copyq"
 md_authors = ["@ManuelSchneid3r", "@BarrensZeppelin"]
 md_bin_dependencies = ["copyq"]
 
