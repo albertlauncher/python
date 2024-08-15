@@ -29,11 +29,11 @@ import pint
 from albert import *
 
 md_iid = "2.3"
-md_version = "1.6"
+md_version = "1.7"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
-md_url = "https://github.com/albertlauncher/python"
+md_url = "https://github.com/albertlauncher/python/tree/main/unit_converter"
 md_lib_dependencies = ["pint", "inflect"]
 md_authors = ["@DenverCoder1", "@Pete-Hamlin"]
 
