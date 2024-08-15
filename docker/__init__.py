@@ -7,7 +7,7 @@ import docker
 from albert import *
 
 md_iid = "2.3"
-md_version = "2.2"
+md_version = "3.0"
 md_name = "Docker"
 md_description = "Manage docker images and containers"
 md_license = "MIT"
@@ -17,11 +17,12 @@ md_bin_dependencies = "docker"
 md_lib_dependencies = "docker"
 
 
-class Plugin(PluginInstance, GlobalQueryHandler):
+class Plugin(PluginInstance, TriggerQueryHandler):
+    # Global query handler not applicable, queries take seconds sometimes
 
     def __init__(self):
         PluginInstance.__init__(self)
-        GlobalQueryHandler.__init__(
+        TriggerQueryHandler.__init__(
             self, self.id, self.name, self.description,
             defaultTrigger='d ',
             synopsis='<image tag|container name>'
@@ -30,23 +31,20 @@ class Plugin(PluginInstance, GlobalQueryHandler):
         self.icon_urls_stopped = [f"file:{Path(__file__).parent}/stopped.png"]
         self.client = None
 
-    def handleGlobalQuery(self, query):
-        rank_items = []
+    def handleTriggerQuery(self, query):
+        items = []
 
         if not self.client:
             try:
                 self.client = docker.from_env()
             except Exception as e:
-                rank_items.append(RankItem(
-                    item=StandardItem(
-                        id='except',
-                        text="Failed starting docker client",
-                        subtext=str(e),
-                        iconUrls=self.icon_urls_running,
-                    ),
-                    score=1.0
+                items.append(StandardItem(
+                    id='except',
+                    text="Failed starting docker client",
+                    subtext=str(e),
+                    iconUrls=self.icon_urls_running,
                 ))
-                return rank_items
+                return items
 
         try:
             for container in self.client.containers.list(all=True):
@@ -66,36 +64,30 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                                lambda id=container.id: setClipboardText(id))
                     ])
 
-                    rank_items.append(RankItem(
-                        item=StandardItem(
-                            id=container.id,
-                            text="%s (%s)" % (container.name, ", ".join(container.image.tags)),
-                            subtext="Container: %s" % container.id,
-                            iconUrls=self.icon_urls_running if container.status == 'running' else self.icon_urls_stopped,
-                            actions=actions
-                        ),
-                        score=len(query.string)/len(container.name)
+                    items.append(StandardItem(
+                        id=container.id,
+                        text="%s (%s)" % (container.name, ", ".join(container.image.tags)),
+                        subtext="Container: %s" % container.id,
+                        iconUrls=self.icon_urls_running if container.status == 'running' else self.icon_urls_stopped,
+                        actions=actions
                     ))
 
             for image in reversed(self.client.images.list()):
                 for tag in sorted(image.tags, key=len):  # order by resulting score
                     if query.string in tag:
-                        rank_items.append(RankItem(
-                            item=StandardItem(
-                                id=image.short_id,
-                                text=", ".join(image.tags),
-                                subtext="Image: %s" % image.id,
-                                iconUrls=self.icon_urls_stopped,
-                                actions=[
-                                    # Action("run", "Run with command: %s" % query.string,
-                                    #        lambda i=image, s=query.string: client.containers.run(i, s)),
-                                    Action("rmi", "Remove image", lambda i=image: i.remove())
-                                ]
-                            ),
-                            score=len(query.string)/len(tag)
+                        items.append(StandardItem(
+                            id=image.short_id,
+                            text=", ".join(image.tags),
+                            subtext="Image: %s" % image.id,
+                            iconUrls=self.icon_urls_stopped,
+                            actions=[
+                                # Action("run", "Run with command: %s" % query.string,
+                                #        lambda i=image, s=query.string: client.containers.run(i, s)),
+                                Action("rmi", "Remove image", lambda i=image: i.remove())
+                            ]
                         ))
         except Exception as e:
             warning(str(e))
             self.client = None
 
-        return rank_items
+        query.add(items)
