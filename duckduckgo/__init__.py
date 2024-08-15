@@ -12,11 +12,11 @@ from itertools import islice
 from time import sleep
 
 md_iid = '2.3'
-md_version = '1.1'
+md_version = '1.2'
 md_name = 'DuckDuckGo'
 md_description = 'Inline DuckDuckGo web search'
 md_license = "MIT"
-md_url = 'https://github.com/albertlauncher/python/duckduckgo'
+md_url = 'https://github.com/albertlauncher/python/tree/main/duckduckgo'
 md_lib_dependencies = "duckduckgo-search"
 md_authors = "@manuelschneid3r"
 
