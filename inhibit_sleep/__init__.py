@@ -12,11 +12,11 @@ from albert import *
 from subprocess import Popen, TimeoutExpired
 
 md_iid = '2.3'
-md_version = '1.1'
+md_version = '1.2'
 md_name = 'Inhibit sleep'
 md_description = 'Inhibit system sleep mode.'
 md_license = "MIT"
-md_url = 'https://github.com/albertlauncher/python/inhibit_sleep'
+md_url = 'https://github.com/albertlauncher/python/tree/main/inhibit_sleep'
 md_authors = "@manuelschneid3r"
 md_bin_dependencies = ['systemd-inhibit', "sleep"]
 
