@@ -19,11 +19,11 @@ from urllib.parse import quote_plus
 from string import hexdigits
 
 md_iid = '2.3'
-md_version = '1.3'
+md_version = '1.4'
 md_name = 'Color'
 md_description = 'Display color for color codes'
 md_license = 'MIT'
-md_url = 'https://github.com/albertlauncher/python/color'
+md_url = 'https://github.com/albertlauncher/python/tree/main/color'
 md_authors = "@manuelschneid3r"
 
 
