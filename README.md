@@ -18,6 +18,6 @@ This repository is shipped with Albert. Credits go to our contributors 👍
   git clone https://github.com/<username>/python.git ~/Library/Application\ Support/albert/python/plugins
   ```
 * Open the directory in your favorite IDE (PyCharmCE is a good choice).
-* Write your plugin (Make sure it is upstream-polished-enough though).
-  This repository ships a [python stub file](https://github.com/albertlauncher/python/blob/master/albert.pyi) which gives you coding assistance.
+* The Python plugins plugin installs a python stub file in your user plugin directory. This file serves as API documentation and gives you coding assistance if you are using a decent IDE.
+* Write your plugin. Make sure it is polished (No bugs, few to no linting warnings, efficient, readable, maintainable, …).
 * Commit, push, send a PR.
