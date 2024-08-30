@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from albert import *
 
 md_iid = "2.3"
-md_version = "1.3"
+md_version = "1.4"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
@@ -372,17 +372,19 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
         for path in self._configStoragePaths:
             c = self._getStorageConfig(path)
             for proj in c.projects:
-                if matcher.match(proj.name) or matcher.match(proj.path):
-                    results[proj.path] = self._getHigherPriorityResult(
+                # Resolve sym links to get unique results
+                resolvedPath = str(Path(proj.path).resolve())
+                if matcher.match(proj.name) or matcher.match(proj.path) or matcher.match(resolvedPath):
+                    results[resolvedPath] = self._getHigherPriorityResult(
                         SearchResult(
                             project=proj,
                             priority=self.priorityRecent,
                             sortIndex=sortIndex
                         ),
-                        results.get(proj.path),
+                        results.get(resolvedPath),
                     )
 
-                if results.get(proj.path) is not None:
+                if results.get(resolvedPath) is not None:
                     sortIndex += 1
 
         return results
@@ -391,35 +393,37 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
         for path in self._configProjectManagerPaths:
             c = self._getProjectManagerConfig(path)
             for proj in c.projects:
+                # Resolve sym links to get unique results
+                resolvedPath = str(Path(proj.path).resolve())
                 if matcher.match(proj.name):
-                    results[proj.path] = self._getHigherPriorityResult(
+                    results[resolvedPath] = self._getHigherPriorityResult(
                         SearchResult(
                             project=proj,
                             priority=self.priorityPMName,
                             sortIndex=0 if matcher.match(proj.name).isExactMatch() else 1
                         ),
-                        results.get(proj.path),
+                        results.get(resolvedPath),
                     )
 
-                if matcher.match(proj.path):
-                    results[proj.path] = self._getHigherPriorityResult(
+                if matcher.match(proj.path) or matcher.match(resolvedPath):
+                    results[resolvedPath] = self._getHigherPriorityResult(
                         SearchResult(
                             project=proj,
                             priority=self.priorityPMPath,
                             sortIndex=1
                         ),
-                        results.get(proj.path),
+                        results.get(resolvedPath),
                     )
 
                 for tag in proj.tags:
                     if matcher.match(tag):
-                        results[proj.path] = self._getHigherPriorityResult(
+                        results[resolvedPath] = self._getHigherPriorityResult(
                             SearchResult(
                                 project=proj,
                                 priority=self.priorityPMTag,
                                 sortIndex=1
                             ),
-                            results.get(proj.path),
+                            results.get(resolvedPath),
                         )
                         break
 
