@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from albert import *
 
 md_iid = "2.3"
-md_version = "1.4"
+md_version = "1.5"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
@@ -340,11 +340,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
                 Action(
                     id="open-terminal",
                     text=f"Run terminal command in project's workdir: {self.terminalCommand}",
-                    callable=lambda: runTerminal(
-                        close_on_exit=True,
-                        script=self.terminalCommand,
-                        workdir=project.path,
-                    )
+                    callable=lambda: runTerminal(f"cd {project.path} && {self.terminalCommand}")
                 )
             )
 
