@@ -1,0 +1,1 @@
+## please note that the license of each item will be included in its folder as a ".txt" file, and that subfolder may not contain the same license as the parent folder.
