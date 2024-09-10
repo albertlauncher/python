@@ -12,15 +12,12 @@ Usage examples:
 - `convert 100 USD to EUR`
 """
 
-
-from __future__ import annotations
-
 import json
 import re
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -29,7 +26,7 @@ import pint
 from albert import *
 
 md_iid = "2.3"
-md_version = "1.7"
+md_version = "1.8"
 md_name = "Unit Converter"
 md_description = "Convert between units"
 md_license = "MIT"
@@ -96,7 +93,8 @@ class ConversionResult:
         unit = self.__pluralize_unit(unit) if amount != 1 else unit
         return self.display_names.get(unit, unit)
 
-    def __format_float(self, num: float) -> str:
+    @staticmethod
+    def __format_float(num: float) -> str:
         """Format a float to remove trailing zeros and avoid scientific notation
 
         Args:
@@ -257,7 +255,7 @@ class CurrencyConverter(UnitConverter):
             warning(f"Error getting currencies: {error}")
             return {}
 
-    def get_currency(self, currency: str) -> str | None:
+    def get_currency(self, currency: str) -> Optional[str]:
         """Get the currency name normalized using aliases and capitalization
 
         Args:
@@ -387,7 +385,8 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                 info("Something went wrong. Make sure you're using the correct format.")
         return []
 
-    def _create_item(self, text: str, subtext: str, icon: str = "") -> Item:
+    @staticmethod
+    def _create_item(text: str, subtext: str, icon: str = "") -> Item:
         """Create an Item from a text and subtext
 
         Args:
