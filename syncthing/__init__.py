@@ -11,13 +11,13 @@ from albert import *
 from syncthing import Syncthing
 
 md_iid = '2.3'
-md_version = "1.0"
+md_version = "1.1"
 md_name = "Syncthing"
 md_description = "Trigger basic syncthing actions."
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/main/syncthing"
 md_authors = "@manuelschneid3r"
-md_lib_dependencies = "syncthing"
+md_lib_dependencies = "syncthing2"
 
 
 class Plugin(PluginInstance, GlobalQueryHandler):
