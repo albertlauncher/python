@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from shutil import which
 from sys import platform
-from typing import Union
+from typing import Any, Union
 
 from albert import (  # type: ignore
     Action,
@@ -26,7 +26,7 @@ from albert import (  # type: ignore
 from dateutil.parser import isoparse
 
 md_iid = '2.3'
-md_version = "0.1"
+md_version = "0.2"
 md_name = "Zed Workspaces"
 md_description = "Open your Zed workspaces"
 md_license = "MIT"
@@ -44,14 +44,15 @@ class Workspace:
 @dataclass
 class Editor:
     name: str
-    # TODO: Add option in settings whether to use this icon or xdg:zed one
     icon: Path
+    icon_system: str
     config_dir_prefix: str
     binary: Union[str, None]
 
-    def __init__(self, name: str, icon: Path, config_dir_prefix: str, binaries: list[str]):
+    def __init__(self, name: str, icon: Path, icon_system: str, config_dir_prefix: str, binaries: list[str]):
         self.name = name
         self.icon = icon
+        self.icon_system = icon_system
         self.config_dir_prefix = config_dir_prefix
         self.binary = self._find_binary(binaries)
 
@@ -64,7 +65,6 @@ class Editor:
     def list_workspaces(self) -> list[Workspace]:
         config_dir = Path.home() / ".local/share/"
         if platform == "darwin":
-            # TODO: Add Mac Support
             config_dir = Path.home() / "Library" / "Application Support"
 
         dirs = list(config_dir.glob(f"{self.config_dir_prefix}*/"))
@@ -111,13 +111,26 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             defaultTrigger='zd '
         )
 
+        self._systemicon: bool | Any = self.readConfig('systemicon', bool)
+
         plugin_dir = Path(__file__).parent
+        zed_dir_name = "zed"
+        if platform == "darwin":
+            zed_dir_name = "Zed"
+
         editors = [
             Editor(
                 name="Zed Editor",
-                icon=plugin_dir / "icons" / "zed.svg",
-                config_dir_prefix="zed/db/0-stable",
-                binaries=["zed", "zeditor"])
+                icon=plugin_dir / "icons" / "zed-stable.png",
+                icon_system="xdg:zed",
+                config_dir_prefix=f"{zed_dir_name}/db/0-stable",
+                binaries=["zed", "zeditor", "zedit", "zed-cli"]),
+            Editor(
+                name="Zed Editor (Preview)",
+                icon=plugin_dir / "icons" / "zed-preview.png",
+                icon_system="xdg:zed-preview",
+                config_dir_prefix=f"{zed_dir_name}/db/0-preview",
+                binaries=["zed", "zeditor", "zedit", "zed-cli"])
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
@@ -142,7 +155,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             text=workspace.name,
             subtext=workspace.path,
             inputActionText=query.trigger + workspace.name,
-            iconUrls=["xdg:zed"],
+            iconUrls=[editor.icon_system if self._systemicon else f"file:{editor.icon}"],
             actions=[
                 Action(
                     "Open",
@@ -155,6 +168,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             ],
         )
 
+    @property
+    def systemicon(self) -> bool:
+        return self._systemicon
+
+    @systemicon.setter
+    def systemicon(self, value: bool) -> None:
+        self._systemicon = value
+        self.writeConfig('systemicon', value)
+
     def configWidget(self):
         return [
             {
@@ -163,5 +185,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 'widget_properties': {
                     'textFormat': 'Qt::MarkdownText'
                 }
-            }
+            },
+            {
+                'type': 'checkbox',
+                'property': 'systemicon',
+                'label': 'Use System Icon for Zed',
+                'default': True
+            },
         ]
