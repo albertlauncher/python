@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from albert import *
 
 md_iid = "2.3"
-md_version = "1.5"
+md_version = "1.6"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
@@ -353,10 +353,15 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
             )
         )
 
+        subtext = ""
+
+        if len(project.tags) > 0:
+            subtext = "<" + ",".join(project.tags) + "> "
+
         return StandardItem(
             id=project.path,
             text=project.displayName,
-            subtext=project.path,
+            subtext=f"{subtext}{project.path}",
             iconUrls=self.iconUrls,
             inputActionText=f"{query.trigger} {project.displayName}",
             actions=actions,
