@@ -8,8 +8,8 @@ from json import load, loads, dumps
 from pathlib import Path
 from threading import Thread, Event
 
-md_iid = '2.3'
-md_version = "1.3"
+md_iid = '2.5'
+md_version = "1.4"
 md_name = "CoinGecko"
 md_description = "Access CoinGecko"
 md_license = "MIT"
@@ -130,5 +130,5 @@ class Plugin(PluginInstance, IndexQueryHandler):
     def handleTriggerQuery(self, query):
         m = Matcher(query.string)
         for item in self.items:
-            if m.match(item.symbol) or m.match(item.name):
+            if m.match(item.symbol, item.name):
                 query.add(item)
