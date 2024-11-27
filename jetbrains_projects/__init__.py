@@ -56,11 +56,21 @@ class Editor:
     config_dir_prefix: str
     binary: str
 
-    def __init__(self, name: str, icon: Path, config_dir_prefix: str, binaries: list[str]):
+    # Rider calls recentProjects.xml -> recentSolutions.xml and in it RecentProjectsManager -> RiderRecentProjectsManager
+    is_rider: bool
+
+    def __init__(
+            self,
+            name: str,
+            icon: Path,
+            config_dir_prefix: str,
+            binaries: list[str],
+            is_rider = False):
         self.name = name
         self.icon = icon
         self.config_dir_prefix = config_dir_prefix
         self.binary = self._find_binary(binaries)
+        self.is_rider = is_rider
 
     def _find_binary(self, binaries: list[str]) -> Union[str, None]:
         for binary in binaries:
@@ -77,12 +87,19 @@ class Editor:
         if not dirs:
             return []
         latest = sorted(dirs)[-1]
-        return self._parse_recent_projects(Path(latest) / "options" / "recentProjects.xml")
+        if not self.is_rider:
+            recent_projects_xml = "recentProjects.xml"
+        else:
+            recent_projects_xml = "recentSolutions.xml"
+        return self._parse_recent_projects(Path(latest) / "options" / recent_projects_xml)
 
     def _parse_recent_projects(self, recent_projects_file: Path) -> list[Project]:
         try:
             root = ElementTree.parse(recent_projects_file).getroot()
-            entries = root.findall(".//component[@name='RecentProjectsManager']//entry[@key]")
+            if not self.is_rider:
+                entries = root.findall(".//component[@name='RecentProjectsManager']//entry[@key]")
+            else:
+                entries = root.findall(".//component[@name='RiderRecentProjectsManager']//entry[@key]")
 
             projects = []
             for entry in entries:
@@ -172,7 +189,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 name="Rider",
                 icon=plugin_dir / "icons" / "rider.svg",
                 config_dir_prefix="JetBrains/Rider",
-                binaries=["rider", "rider-eap"]),
+                binaries=["rider", "rider-eap"],
+                is_rider=True),
             Editor(
                 name="RubyMine",
                 icon=plugin_dir / "icons" / "rubymine.svg",
