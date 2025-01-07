@@ -33,8 +33,8 @@ from sys import platform
 from xml.etree import ElementTree
 from albert import *
 
-md_iid = '2.3'
-md_version = "2.0"
+md_iid = '2.5'
+md_version = "2.1"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
@@ -203,7 +203,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         for editor in self.editors:
             projects = editor.list_projects()
             projects = [p for p in projects if Path(p.path).exists()]
-            projects = [p for p in projects if m.match(p.name) or m.match(p.path)]
+            projects = [p for p in projects if m.match(p.name, p.path)]
             editor_project_pairs.extend([(editor, p) for p in projects])
 
         # sort by last opened
