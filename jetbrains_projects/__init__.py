@@ -167,7 +167,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 name="PyCharm",
                 icon=plugin_dir / "icons" / "pycharm.svg",
                 config_dir_prefix="JetBrains/PyCharm",
-                binaries=["charm", "pycharm", "pycharm-eap"]),
+                binaries=["charm", "pycharm", "pycharm-eap", "pycharm-professional"]),
             Editor(
                 name="Rider",
                 icon=plugin_dir / "icons" / "rider.svg",
