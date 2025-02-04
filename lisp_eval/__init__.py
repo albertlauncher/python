@@ -18,7 +18,6 @@ from pathlib import Path
 import json
 import subprocess
 from typing import List, Dict, Any, Optional
-from pprint import pprint
 
 from albert import *
 
@@ -49,29 +48,31 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         with config_path.open() as f:
             return json.load(f)
 
+    def _run_subprocess(self, lang: str, script: str) -> Optional[subprocess.CompletedProcess]:
+        """Run a subprocess for the given language and script."""
+        args = self.lang_opts[lang]
+        try:
+            return subprocess.run(
+                [args["prog"], *args["args"][0:-1], args["args"][-1].format(script)],
+                input=script.encode(),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+        except FileNotFoundError as ex:
+            warning(f"Language {lang} not found: {ex}")
+            return None
+
     def _detect_languages(self) -> List[str]:
-        """Detect available languages that support S-Expressions.
-        Users should make available the executables in the system PATH.
-        """
+        """Detect available languages that support S-Expressions."""
         detected_langs: List[str] = []
-        for lang, args in self.lang_opts.items():
-            # R is secretly a Lisp too!
+        for lang in self.lang_opts:
             test_sexp = "`+`(1, 1)" if lang.lower() == 'r' else "(+ 1 1)"
-            script = args["args"][-1].format(test_sexp)
-            debug(f"Testing {lang} with: {' '.join([args['prog'], *args['args'][0:-1], script])}")
-            try:
-                proc = subprocess.run(
-                    [args["prog"], *args["args"][0:-1], script],
-                    input=script.encode(),
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=False,
-                )
-                result = proc.stdout.strip()
-                if proc.returncode == 0 and result == b'2':
-                    detected_langs.append(lang)
-            except FileNotFoundError as ex:
-                warning(f"Language {lang} not found: {ex}")
+            debug(f"Testing {lang} with: {test_sexp}")
+            proc = self._run_subprocess(lang, test_sexp)
+            if proc and proc.returncode == 0 and proc.stdout.strip() == b'2':
+                detected_langs.append(lang)
+                debug(f"Confirmed working {lang} installation.")
         return detected_langs
 
     def _initialize_language(self) -> str:
@@ -131,22 +132,13 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def runSubprocess(self, query_script: str) -> str:
         """Run the subprocess to evaluate the S-Expression."""
-        try:
-            script = self.lang_opts[self._lang]["args"][-1].format(query_script)
-            proc = subprocess.run(
-                [self.lang_opts[self._lang]["prog"], *self.lang_opts[self._lang]["args"][0:-1], script],
-                input=script.encode(),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                check=False,
-            )
-            result = (
-                proc.stderr.decode("utf-8", errors="replace").strip()
-                + proc.stdout.decode("utf-8", errors="replace").strip()
-            )
-        except Exception as ex:
-            critical(f"Python Subprocess call exception: {ex}")
-            result = str(ex)
+        proc = self._run_subprocess(self._lang, query_script)
+        if proc is None:
+            return f"Error: Language {self._lang} not found."
+        result = (
+            proc.stderr.decode("utf-8", errors="replace").strip()
+            + proc.stdout.decode("utf-8", errors="replace").strip()
+        )
         return result
 
     def handleTriggerQuery(self, query):
