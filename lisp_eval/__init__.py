@@ -5,8 +5,8 @@
 Evaluates an S-Expression using an available Lisp language. Choose from the detected interpreters.
 """
 
-from builtins import pow
 from pathlib import Path
+import json
 import subprocess
 
 from albert import *
@@ -19,44 +19,19 @@ md_license = "BSD-3"
 md_url = "https://github.com/albertlauncher/python/tree/main/lisp_eval/"
 md_authors = "@hyiltiz"
 
+_config_file = 'config.yaml'
+_config_file = 'config.json'
 
 class Plugin(PluginInstance, TriggerQueryHandler):
     def __init__(self):
         # search for a language supporting S-Exp: fennel, janet, elisp, clojure, racket
         # TODO: this should be a configurable option
         # Users should make available the executables in the system PATH
-        lang_opts = {
-            "elisp": {
-                "prog": "emacs",
-                "args": ["--batch", "--eval", "(print {})"],
-                "url": "emacs-small.png",
-            },
-            "elisp": {
-                "prog": "Emacs",
-                "args": ["--batch", "--eval", "(print {})"],
-                "url": "emacs-small.png",
-            },
-            "fennel": {
-                "prog": "fennel",
-                "args": ["-e", "(print {})"],
-                "url": "fennel.svg",
-            },
-            "janet": {
-                "prog": "janet",
-                "args": ["-e", "(print {})"],
-                "url": "janet.png",
-            },
-            "hylang": {
-                "prog": "hy", # this is a pip3 dependency: `hy`
-                "args": ["-c", "(print {})"],
-                "url": "cuddles.png",
-            },
-            "racket": {
-                "prog": "racket",
-                "args": ["-e", "(print {})"],
-                "url": "racket.svg",
-            },
-        }
+
+        lang_opts = json.load((Path(__file__).parent / Path(_config_file)).open())
+        print('---------------------------')
+        print(type(lang_opts))
+        print(lang_opts)
         self.lang_opts = lang_opts
 
         test_sexp = "(+ 1 1)"

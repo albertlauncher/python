@@ -1,0 +1,43 @@
+{
+    "elisp": {
+        "prog": "Emacs",
+        "args": [
+            "--batch",
+            "--eval",
+            "(print {})"
+        ],
+        "url": "emacs-small.png"
+    },
+    "fennel": {
+        "prog": "fennel",
+        "args": [
+            "-e",
+            "(print {})"
+        ],
+        "url": "fennel.svg"
+    },
+    "janet": {
+        "prog": "janet",
+        "args": [
+            "-e",
+            "(print {})"
+        ],
+        "url": "janet.png"
+    },
+    "hylang": {
+        "prog": "hy",
+        "args": [
+            "-c",
+            "(print {})"
+        ],
+        "url": "cuddles.png"
+    },
+    "racket": {
+        "prog": "racket",
+        "args": [
+            "-e",
+            "(print {})"
+        ],
+        "url": "racket.svg"
+    }
+}
