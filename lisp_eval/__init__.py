@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2025 Hormet Yiltiz
 
+"""
+Evaluates an S-Expression using an available Lisp language. Choose from the detected interpreters.
+"""
+
 from builtins import pow
 from pathlib import Path
 import subprocess
@@ -69,14 +73,23 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 result = proc.stdout.strip()
                 if result:
                     detected_langs.append(lang)
-                    break  # TODO: unless we provide alternatives in drop-down menu, do not bother detecting the rest
+                    pass # break DONE: unless we provide alternatives in drop-down menu, do not bother detecting the rest
             except FileNotFoundError as ex:
                 warning(str(ex))
                 continue
 
         PluginInstance.__init__(self)
         self.detected_langs = detected_langs
-        self.call_external = lang_opts[detected_langs[0]]
+
+        self._detected_langs = self.readConfig('detected_langs', list[str])
+        if self._detected_langs is None:
+            self._detected_langs = detected_langs
+
+        self._lang = self.readConfig('lang', str)
+        if self._lang is None:
+            self._lang = detected_langs[0]
+
+        self.call_external = self.lang_opts[self._lang]
         self.iconUrls = [f"file:{Path(__file__).parent}/{self.call_external['url']}"]
         TriggerQueryHandler.__init__(
             self,
@@ -86,6 +99,43 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             synopsis=f"<Evaluate S-Expression using {detected_langs[0]}",
             defaultTrigger="() ",
         )
+
+
+    @property
+    def detected_langs(self):
+        return self._detected_langs
+
+    @detected_langs.setter
+    def detected_langs(self, value):
+        self._detected_langs = value
+        self.writeConfig('detected_langs', value)
+
+    @property
+    def lang(self):
+        return self._lang
+
+    @lang.setter
+    def lang(self, value):
+        self._lang = value
+        print('Setting lang to', self.lang)
+        print('Setting _lang to', self._lang)
+        self.writeConfig('lang', value)
+        self.call_external = self.lang_opts[self._lang]
+        self.iconUrls = [f"file:{Path(__file__).parent}/{self.call_external['url']}"]
+
+    def configWidget(self):
+        return [
+            {
+                'type': 'label',
+                'text': __doc__.strip(),
+            },
+            {
+                'type': 'combobox',
+                'property': 'lang',
+                'label': 'Lisp Interpreter',
+                'items': self._detected_langs,
+            },
+        ]
 
     def runSubprocess(self, query_script):
         try:
