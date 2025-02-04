@@ -40,7 +40,7 @@
             "--quiet",
             "--no-echo",
             "-e",
-            "'{}'"],
+            "cat({})"],
         "url": "r-is-also-a-lisp-shrug.png"
     },
     "racket": {
