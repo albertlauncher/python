@@ -96,7 +96,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         print('Setting _lang to', self._lang)
         self.writeConfig('lang', value)
         self.call_external = self.lang_opts[self._lang]
-        self.iconUrls = [f"file:{Path(__file__).parent}/{self.call_external['url']}"]
+        icon_fname = Path(__file__).parent / self.call_external['url']
+        if icon_fname.exists():
+            self.iconUrls = [f"file:{icon_fname}"]
+        else:
+            self.iconUrls = [f"file:{Path(__file__).parent}" + "/lambda.svg"]
 
     def configWidget(self):
         return [

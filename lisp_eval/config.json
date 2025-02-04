@@ -32,6 +32,17 @@
         ],
         "url": "cuddles.png"
     },
+    "R": {
+        "prog": "R",
+        "args": ["--no-restore",
+            "--no-save",
+            "--no-readline",
+            "--quiet",
+            "--no-echo",
+            "-e",
+            "'{}'"],
+        "url": "r-is-also-a-lisp-shrug.png"
+    },
     "racket": {
         "prog": "racket",
         "args": [
