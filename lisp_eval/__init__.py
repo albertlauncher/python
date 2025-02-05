@@ -150,7 +150,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     id=self.id,
                     text=result,
                     subtext=stripped,
-                    inputActionText=f"{self.lang_opts[self._lang]['prog']}: {result}",
+                    inputActionText=f"{self.lang_opts[self._lang]['prog']}",
                     iconUrls=self.iconUrls,
                     actions=[
                         Action(
