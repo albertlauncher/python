@@ -25,7 +25,7 @@ md_iid = "2.4"
 md_version = "2.4"
 md_name = "S-Exp Eval"
 md_description = "Evaluate S-Expression via Fennel, Emacs, Janet, Racket or Hylang."
-md_license = "BSD-3"
+md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/main/lisp_eval/"
 md_authors = "@hyiltiz"
 
