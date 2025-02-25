@@ -8,8 +8,8 @@ from json import load, loads, dumps
 from pathlib import Path
 from threading import Thread, Event
 
-md_iid = '2.5'
-md_version = "1.4"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "CoinGecko"
 md_description = "Access CoinGecko"
 md_license = "MIT"
@@ -71,9 +71,9 @@ class NameItem(StandardItem):
             iconUrls=Plugin.iconUrls,
             actions=[
                 Action("show", f"Show {name} on CoinGecko",
-                       lambda id=identifier: openUrl(Plugin.coinsUrl + id)),
+                       lambda coin_id=identifier: openUrl(Plugin.coinsUrl + coin_id)),
                 Action("url", "Copy URL to clipboard",
-                       lambda id=identifier: setClipboardText(Plugin.coinsUrl + id))
+                       lambda coin_id=identifier: setClipboardText(Plugin.coinsUrl + coin_id))
             ]
         )
         self.name = name
@@ -87,21 +87,23 @@ class Plugin(PluginInstance, IndexQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        IndexQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='cg ',
-            synopsis='< symbol | name >'
-        )
+        IndexQueryHandler.__init__(self)
 
         self.items = []
         self.mtime = 0
-        self.coinCacheFilePath = self.cacheLocation / "coins.json"
+        self.coinCacheFilePath = self.cacheLocation() / "coins.json"
         self.thread = CoinFetcherThread(self.updateIndexItems, self.coinCacheFilePath)
         self.thread.start()
 
     def __del__(self):
         self.thread.stop()
         self.thread.join()
+
+    def defaultTrigger(self):
+        return 'cg '
+
+    def synopsis(self, query):
+        return "< symbol | name >"
 
     def updateIndexItems(self):
         if self.coinCacheFilePath.is_file() and (mtime := self.coinCacheFilePath.lstat().st_mtime) > self.mtime:
