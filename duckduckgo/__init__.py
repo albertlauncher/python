@@ -11,8 +11,8 @@ from duckduckgo_search import DDGS
 from itertools import islice
 from time import sleep
 
-md_iid = '2.3'
-md_version = '1.2'
+md_iid = "3.0"
+md_version = "2.0"
 md_name = 'DuckDuckGo'
 md_description = 'Inline DuckDuckGo web search'
 md_license = "MIT"
@@ -25,12 +25,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='ddg '
-        )
+        TriggerQueryHandler.__init__(self)
         self.ddg = DDGS()
         self.iconUrls = [f"file:{Path(__file__).parent}/duckduckgo.svg"]
+
+    def defaultTrigger(self):
+        return "ddg "
 
     def handleTriggerQuery(self, query):
 
@@ -46,7 +46,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             for r in islice(self.ddg.text(stripped, safesearch='off'), 10):
                 query.add(
                     StandardItem(
-                        id=self.id,
+                        id=self.id(),
                         text=r['title'],
                         subtext=r['body'],
                         iconUrls=self.iconUrls,
