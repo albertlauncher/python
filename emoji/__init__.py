@@ -5,14 +5,14 @@ import json
 import re
 import threading
 import urllib.request
-from itertools import product
+import builtins
 from locale import getdefaultlocale
 from pathlib import Path
 
 from albert import *
 
-md_iid = '2.3'
-md_version = "2.2"
+md_iid = "3.0"
+md_version = "3.0"
 md_name = "Emoji"
 md_description = "Find and copy emojis by name"
 md_license = "MIT"
@@ -24,7 +24,7 @@ class Plugin(PluginInstance, IndexQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        IndexQueryHandler.__init__(self, self.id, self.name, self.description, defaultTrigger=':')
+        IndexQueryHandler.__init__(self)
         self.thread = None
 
         self._use_derived = self.readConfig('use_derived', bool)
@@ -34,6 +34,9 @@ class Plugin(PluginInstance, IndexQueryHandler):
     def __del__(self):
         if self.thread and self.thread.is_alive():
             self.thread.join()
+
+    def defaultTrigger(self):
+        return ':'
 
     @property
     def use_derived(self):
@@ -69,7 +72,7 @@ class Plugin(PluginInstance, IndexQueryHandler):
             with urllib.request.urlopen(request, timeout=3) as response:
                 if response.getcode() == 200:
                     debug(f"Success. Storing to {path}.")
-                    with open(path, 'wb') as file:
+                    with builtins.open(path, 'wb') as file:
                         file.write(response.read())
                 else:
                     raise RuntimeError(f"Failed to download {url}. Status code: {response.getcode()}")
@@ -157,8 +160,8 @@ class Plugin(PluginInstance, IndexQueryHandler):
                 json_derived = json.load(file_derived)['annotationsDerived']['annotations']
                 return json_full | json_derived
 
-        emojis = get_fully_qualified_emojis(self.cacheLocation)
-        annotations = get_annotations(self.cacheLocation, self.use_derived)
+        emojis = get_fully_qualified_emojis(self.cacheLocation())
+        annotations = get_annotations(self.cacheLocation(), self.use_derived)
 
         def remove_redundancy(sentences):
             sets_of_words = [set(sentence.lower().split()) for sentence in sentences]
@@ -181,7 +184,7 @@ class Plugin(PluginInstance, IndexQueryHandler):
                     non_rgi_emoji = emoji.replace('\uFE0F', '')
                     ann = annotations[non_rgi_emoji]
                 except KeyError as e:
-                    # debug(f"Found no translation for {e}. Emoji will not be available.")
+                    debug(f"Found no translation for {e}. Emoji will not be available.")
                     continue
 
             title = ann['tts'][0]
