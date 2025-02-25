@@ -12,8 +12,8 @@ from time import sleep
 from albert import *
 import translators as ts
 
-md_iid = '2.3'
-md_version = "1.8"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "Translator"
 md_description = "Translate sentences using 'translators' package"
 md_license = "MIT"
@@ -26,11 +26,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            synopsis="[[from] to] text",
-            defaultTrigger='tr '
-        )
+        TriggerQueryHandler.__init__(self)
+
         self.iconUrls = [f"file:{Path(__file__).parent}/google_translate.png"]
 
         self._translator = self.readConfig('translator', str)
@@ -69,6 +66,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         self._lang = value
         self.writeConfig('lang', value)
 
+    def defaultTrigger(self):
+        return 'tr '
+
     def configWidget(self):
         return [
             {
@@ -87,6 +87,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 'label': 'Default language',
             }
         ]
+
+    def synopsis(self, s):
+        return "[[from] to] text"
 
     def handleTriggerQuery(self, query):
         stripped = query.string.strip()
@@ -126,7 +129,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 )
 
                 query.add(StandardItem(
-                    id=self.id,
+                    id=self.id(),
                     text=translation,
                     subtext=f"{src.upper()} > {dst.upper()}",
                     iconUrls=self.iconUrls,
@@ -136,7 +139,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             except Exception as e:
 
                 query.add(StandardItem(
-                    id=self.id,
+                    id=self.id(),
                     text="Error",
                     subtext=str(e),
                     iconUrls=self.iconUrls
