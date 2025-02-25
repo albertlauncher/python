@@ -15,8 +15,8 @@ Roll any number of dice using the format `_d_`.
 Example: "roll 2d6 3d8 1d20"
 """
 
-md_iid = '2.3'
-md_version = "1.6"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "Dice Roll"
 md_description = "Roll any number of dice"
 md_license = "MIT"
@@ -133,11 +133,13 @@ class Plugin(albert.PluginInstance, albert.TriggerQueryHandler):
 
     def __init__(self):
         albert.PluginInstance.__init__(self)
-        albert.TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            synopsis="<amount>d<sides> [<amount>d<sides> ...]",
-            defaultTrigger='roll '
-        )
+        albert.TriggerQueryHandler.__init__(self)
+
+    def synopsis(self, query):
+        return "<amount>d<sides> [<amount>d<sides> ...]"
+
+    def defaultTrigger(self):
+        return "roll "
 
     def configWidget(self):
         return [{ 'type': 'label', 'text': __doc__.strip() }]
@@ -147,7 +149,7 @@ class Plugin(albert.PluginInstance, albert.TriggerQueryHandler):
         try:
             items = get_items(query_string)
             query.add(items)
-        except Exception as e:
+        except Exception:
             query.add([albert.StandardItem(
                 id="error",
                 iconUrls=[get_icon_path(None)],
