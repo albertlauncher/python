@@ -25,7 +25,7 @@ import inflect
 import pint
 from albert import *
 
-md_iid = "2.3"
+md_iid = "3.0"
 md_version = "1.8"
 md_name = "Unit Converter"
 md_description = "Convert between units"
@@ -126,7 +126,7 @@ class ConversionResult:
     def icon(self) -> str:
         """Return the icon for the result's dimensionality"""
         # strip characters from the dimensionality if not alphanumeric or underscore
-        dimensionality = re.sub(r"[^\w]", "", self.dimensionality)
+        dimensionality = re.sub(r"\W", "", self.dimensionality)
         return f"{dimensionality}.svg"
 
     def __repr__(self):
@@ -345,14 +345,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        GlobalQueryHandler.__init__(
-            self,
-            id=self.id,
-            name=self.name,
-            description=self.description,
-            synopsis="<amount> <from_unit> to <to_unit>",
-            defaultTrigger="convert ",
-        )
+        GlobalQueryHandler.__init__(self)
 
         self.unit_convert_regex = re.compile(
             r"(?P<from_amount>-?\d+\.?\d*)\s?(?P<from_unit>.*)\s(?:to|in)\s(?P<to_unit>.*)",
@@ -360,6 +353,12 @@ class Plugin(PluginInstance, GlobalQueryHandler):
         )
         self.unit_converter = StandardUnitConverter()
         self.currency_converter = CurrencyConverter()
+
+    def defaultTrigger(self):
+        return "convert "
+
+    def synopsis(self, query):
+        return "<amount> <from_unit> to <to_unit>"
 
     def handleTriggerQuery(self, query: Query) -> None:
         if query_string := query.string.strip():
