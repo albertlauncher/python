@@ -1,54 +1,55 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2024 Manuel Schneider
 
-from albert import *
+import albert
 
-md_iid = '2.3'
-md_version = '2.0'
-md_name = 'Zeal'
-md_description = 'Search in Zeal docs'
+md_iid = "3.0"
+md_version = "3.0"
+md_name = "Zeal"
+md_description = "Search in Zeal docs"
 md_license = "MIT"
-md_url = 'https://github.com/albertlauncher/python/tree/main/zeal'
+md_url = "https://github.com/albertlauncher/python/tree/main/zeal"
 md_authors = "@manuelschneid3r"
 md_bin_dependencies = ['zeal']
 
+def createItem(query: str):
+    return albert.StandardItem(
+        id=md_name,
+        text=md_name,
+        subtext=f"Search '{query}' in Zeal",
+        iconUrls=["xdg:zeal"],
+        actions=[albert.Action("zeal", "Search in Zeal",
+                               lambda q=query: albert.runDetachedProcess(['zeal', q]))]
+    )
 
-class FBH(FallbackHandler):
+class FBH(albert.FallbackHandler):
+
+    def id(self):
+        return "zeal_fbh"
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
+
     def fallbacks(self, s):
-        return [Plugin.createItem(s)] if s else []
+        return [createItem(s)] if s else []
 
 
-class Plugin(PluginInstance, TriggerQueryHandler):
+class Plugin(albert.PluginInstance, albert.TriggerQueryHandler):
 
     def __init__(self):
-        PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='z '
-        )
-        self.fbh = FBH(
-            id=self.id + 'fb',
-            name=self.name,
-            description=self.description
-        )
+        albert.PluginInstance.__init__(self)
+        albert.TriggerQueryHandler.__init__(self)
+        self.fbh = FBH()
 
-        self.registerExtension(self.fbh)
+    def defaultTrigger(self):
+        return "z "
 
-    def __del__(self):
-        self.deregisterExtension(self.fbh)
+    def extensions(self):
+        return [self, self.fbh]
 
     def handleTriggerQuery(self, query):
         if stripped := query.string.strip():
-            query.add(self.createItem(stripped))
-
-    @staticmethod
-    def createItem(query: str) -> Item:
-        return StandardItem(
-            id=md_name,
-            text=md_name,
-            subtext=f"Search '{query}' in Zeal",
-            iconUrls=["xdg:zeal"],
-            actions=[Action("zeal", "Search in Zeal",
-                            lambda q=query: runDetachedProcess(['zeal', q]))]
-        )
-
+            query.add(createItem(stripped))
