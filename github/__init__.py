@@ -120,7 +120,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         if query_stripped:
 
-            # fefresh local repositories cache
+            # refresh local repositories cache
             if query_stripped.lower() == "rebuild cache":
                 query.add(StandardItem(
                     id=self.id,
