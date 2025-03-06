@@ -12,7 +12,7 @@ from pathlib import Path
 from albert import *
 
 md_iid = "3.0"
-md_version = "3.0"
+md_version = "3.1"
 md_name = "Emoji"
 md_description = "Find and copy emojis by name"
 md_license = "MIT"
@@ -160,8 +160,10 @@ class Plugin(PluginInstance, IndexQueryHandler):
                 json_derived = json.load(file_derived)['annotationsDerived']['annotations']
                 return json_full | json_derived
 
-        emojis = get_fully_qualified_emojis(self.cacheLocation())
-        annotations = get_annotations(self.cacheLocation(), self.use_derived)
+        cache_location = self.cacheLocation()
+        cache_location.mkdir(parents=True, exist_ok=True)
+        emojis = get_fully_qualified_emojis(cache_location)
+        annotations = get_annotations(cache_location, self.use_derived)
 
         def remove_redundancy(sentences):
             sets_of_words = [set(sentence.lower().split()) for sentence in sentences]
