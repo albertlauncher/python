@@ -91,7 +91,9 @@ class Plugin(PluginInstance, IndexQueryHandler):
 
         self.items = []
         self.mtime = 0
-        self.coinCacheFilePath = self.cacheLocation() / "coins.json"
+        cache_location = self.cacheLocation()
+        cache_location.mkdir(parents=True, exist_ok=True)
+        self.coinCacheFilePath = cache_location / "coins.json"
         self.thread = CoinFetcherThread(self.updateIndexItems, self.coinCacheFilePath)
         self.thread.start()
 
