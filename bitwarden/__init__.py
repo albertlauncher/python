@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import time
 from pathlib import Path
-from subprocess import run, CalledProcessError
+from subprocess import CalledProcessError, run
 
 from albert import *
 
@@ -16,6 +17,9 @@ md_bin_dependencies = ["rbw"]
 
 
 class Plugin(PluginInstance, TriggerQueryHandler):
+    _cached_items = None
+    _last_fetch_time = 0
+    _cache_timeout = 300
 
     iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
 
@@ -24,7 +28,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         TriggerQueryHandler.__init__(self)
 
     def defaultTrigger(self):
-        return 'bw '
+        return "bw "
 
     def handleTriggerQuery(self, query):
         if query.string.strip().lower() == "sync":
@@ -37,11 +41,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action(
                             id="sync",
                             text="Syncing Bitwarden Vault",
-                            callable=lambda: run(
-                                ["rbw", "sync"],
-                            )
+                            callable=lambda: self._sync_vault(),
                         )
-                    ]
+                    ],
                 )
             )
 
@@ -56,30 +58,39 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action(
                             id="copy",
                             text="Copy password to clipboard",
-                            callable=lambda item=p: self._password_to_clipboard(item)
+                            callable=lambda item=p: self._password_to_clipboard(item),
                         ),
                         Action(
                             id="copy-auth",
                             text="Copy auth code to clipboard",
-                            callable=lambda item=p: self._code_to_clipboard(item)
+                            callable=lambda item=p: self._code_to_clipboard(item),
                         ),
                         Action(
                             id="copy-username",
                             text="Copy username to clipboard",
-                            callable=lambda username=p["user"]:
-                            setClipboardText(text=username)
+                            callable=lambda username=p["user"]: setClipboardText(
+                                text=username
+                            ),
                         ),
                         Action(
                             id="edit",
                             text="Edit entry in terminal",
-                            callable=lambda item=p: self._edit_entry(item)
-                        )
-                    ]
+                            callable=lambda item=p: self._edit_entry(item),
+                        ),
+                    ],
                 )
             )
 
-    @staticmethod
-    def _get_items():
+    def _get_items(self):
+        not_first_time = self._cached_items is not None
+        is_chache_fresh = (time.time() - self._last_fetch_time) < self._cache_timeout
+
+        print(f"not_first_time: {not_first_time}")
+        print(f"is_chache_fresh: {is_chache_fresh}")
+
+        if not_first_time and is_chache_fresh:
+            return self._cached_items
+
         field_names = ["id", "name", "user", "folder"]
         raw_items = run(
             ["rbw", "list", "--fields", ",".join(field_names)],
@@ -98,12 +109,16 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 item["path"] = item["folder"] + "/" + item["name"]
             else:
                 item["path"] = item["name"]
+
             items.append(item)
+
+        self._cached_items = items
+        self._last_fetch_time = time.time()
 
         return items
 
     def _filter_items(self, query):
-        passwords = self._get_items()
+        passwords = self._get_items() or []
         search_fields = ["path", "user"]
         # Use a set for faster membership tests
         words = set(query.string.strip().lower().split())
@@ -121,15 +136,18 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         return filtered_passwords
 
+    def _sync_vault(self):
+        run(["rbw", "sync"], check=True)
+
+        self._cached_items = None
+        self._last_fetch_time = 0
+
     @staticmethod
     def _password_to_clipboard(item):
         rbw_id = item["id"]
 
         password = run(
-            ["rbw", "get", rbw_id],
-            capture_output=True,
-            encoding="utf-8",
-            check=True
+            ["rbw", "get", rbw_id], capture_output=True, encoding="utf-8", check=True
         ).stdout.strip()
 
         setClipboardText(text=password)
@@ -143,14 +161,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 ["rbw", "code", rbw_id],
                 capture_output=True,
                 encoding="utf-8",
-                check=True
+                check=True,
             ).stdout.strip()
         except CalledProcessError as err:
             code = run(
                 ["echo", err.__str__()],
                 capture_output=True,
                 encoding="utf-8",
-                check=True
+                check=True,
             ).stdout.strip()
 
         setClipboardText(text=code)
