@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import time
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 from subprocess import CalledProcessError, run
 
@@ -15,11 +17,18 @@ md_url = "https://github.com/albertlauncher/python/tree/main/bitwarden"
 md_authors = ["@ovitor", "@daviddeadly", "@manuelschneid3r"]
 md_bin_dependencies = ["rbw"]
 
+MAX_MINUTES_CACHE_TIMEOUT = 60
+DEFAULT_MINUTE_CACHE_TIMEOUT = 5
+
+
+@dataclass(frozen=True)
+class ConfigKeys:
+    CACHE_TIMEOUT = "cache_timeout"
+
 
 class Plugin(PluginInstance, TriggerQueryHandler):
     _cached_items = None
     _last_fetch_time = 0
-    _cache_timeout = 300
 
     iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
 
@@ -27,8 +36,36 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         PluginInstance.__init__(self)
         TriggerQueryHandler.__init__(self)
 
+        self.cache_timeout = (
+            self.readConfig(ConfigKeys.CACHE_TIMEOUT, int)
+            or DEFAULT_MINUTE_CACHE_TIMEOUT
+        )
+
     def defaultTrigger(self):
         return "bw "
+
+    @property
+    def cache_timeout(self):
+        return int(self._cache_timeout / 60)
+
+    @cache_timeout.setter
+    def cache_timeout(self, value):
+        self._cache_timeout = int(value * 60)
+        self.writeConfig(ConfigKeys.CACHE_TIMEOUT, value)
+
+    def configWidget(self):
+        return [
+            {
+                "type": "label",
+                "text": "Cache (result of `rbw list`) duration",
+            },
+            {
+                "type": "spinbox",
+                "property": ConfigKeys.CACHE_TIMEOUT,
+                "label": f"Minutes: (max: {MAX_MINUTES_CACHE_TIMEOUT}, disable: 0)",
+                "widget_properties": {"maximum": MAX_MINUTES_CACHE_TIMEOUT},
+            },
+        ]
 
     def handleTriggerQuery(self, query):
         if query.string.strip().lower() == "sync":
@@ -83,10 +120,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def _get_items(self):
         not_first_time = self._cached_items is not None
-        is_chache_fresh = (time.time() - self._last_fetch_time) < self._cache_timeout
 
-        print(f"not_first_time: {not_first_time}")
-        print(f"is_chache_fresh: {is_chache_fresh}")
+        time_passed = time.time() - self._last_fetch_time
+        is_chache_fresh = time_passed < self._cache_timeout
 
         if not_first_time and is_chache_fresh:
             return self._cached_items
