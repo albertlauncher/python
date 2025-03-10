@@ -14,8 +14,8 @@ from pathlib import Path
 import github3
 from rapidfuzz import fuzz
 
-md_iid = '2.5'
-md_version = "1.3"
+md_iid = '3.0'
+md_version = "1.4"
 md_name = "GitHub repositories"
 md_description = "Open GitHub user repositories in the browser"
 md_license = "GPL-3.0"
@@ -29,17 +29,16 @@ CACHE_FILE = os.path.join(plugin_dir, "repository_cache.json")
 
 class Plugin(PluginInstance, TriggerQueryHandler):
 
+    # set the icon
+    iconUrls = [f"file:{Path(__file__).parent}/plugin.svg"]
+
     # initialize the plugin
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self,
-            id=self.id,
-            name=self.name,
-            description=self.description,
-            defaultTrigger='gh '
-        )
-        self.iconUrls = [f"file:{Path(__file__).parent}/plugin.svg"]
+        TriggerQueryHandler.__init__(self)
+
+    def defaultTrigger(self):
+        return 'gh '
 
     # persist the github token in the keyring
     def save_token(self, token):
@@ -96,8 +95,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         token = self.load_token()
         if not token:
             query.add(StandardItem(
-                id=self.id,
-                text=self.name,
+                id=self.id(),
+                text=self.name(),
                 iconUrls=self.iconUrls,
                 subtext="Paste your GitHub token and press [enter] to save it",
                 actions=[
@@ -108,8 +107,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         repositories = self.load_cached_repositories()
         if not repositories:
             query.add(StandardItem(
-                id=self.id,
-                text=self.name,
+                id=self.id(),
+                text=self.name(),
                 iconUrls=self.iconUrls,
                 subtext="Press [enter] to initialize the repository cache (may take a few seconds)",
                 actions=[Action("cache", "Create repository cache", lambda: self.cache_repositories(
@@ -123,8 +122,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             # refresh local repositories cache
             if query_stripped.lower() == "rebuild cache":
                 query.add(StandardItem(
-                    id=self.id,
-                    text=self.name,
+                    id=self.id(),
+                    text=self.name(),
                     iconUrls=self.iconUrls,
                     subtext="Press [enter] to rebuild the local repository cache (may take a few seconds)",
                     actions=[Action("rebuild", "Rebuild repository cache", lambda: self.cache_repositories(
@@ -156,7 +155,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             results = []
             for repo in exact_matches:
                 results.append(StandardItem(
-                    id=self.id,
+                    id=self.id(),
                     text=repo["name"],
                     iconUrls=self.iconUrls,
                     subtext=repo["full_name"],
@@ -166,7 +165,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
             for repo, similarity_ratio in fuzzy_matches:
                 results.append(StandardItem(
-                    id=self.id,
+                    id=self.id(),
                     text=repo["name"],
                     iconUrls=self.iconUrls,
                     subtext=repo["full_name"],
@@ -178,14 +177,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 query.add(results)
             else:
                 query.add(StandardItem(
-                    id=self.id,
+                    id=self.id(),
                     text="No repositories matching search string",
                     iconUrls=self.iconUrls
                 ))
 
         else:
             query.add(StandardItem(
-                id=self.id,
+                id=self.id(),
                 iconUrls=self.iconUrls,
                 text="...",
                 subtext="Search for a GitHub user repository name"
