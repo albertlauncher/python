@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2024 Stefan Schnyder
 
 """
 Searches GitHub user repositories and opens the selected match in the browser
@@ -18,7 +19,7 @@ md_iid = '3.0'
 md_version = "1.4"
 md_name = "GitHub repositories"
 md_description = "Open GitHub user repositories in the browser"
-md_license = "GPL-3.0"
+md_license = "MIT"
 md_url = 'https://github.com/albertlauncher/python/tree/main/github'
 md_authors = "@aironskin"
 md_lib_dependencies = ["github3.py", "rapidfuzz", "keyring"]
