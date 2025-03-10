@@ -11,8 +11,8 @@ from virtualbox.library import LockType, MachineState
 
 from albert import *
 
-md_iid = '2.3'
-md_version = "1.7"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "VirtualBox"
 md_description = "Manage your VirtualBox machines"
 md_license = "MIT"
@@ -64,12 +64,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            synopsis='<machine name>',
-            defaultTrigger='vbox '
-        )
+        TriggerQueryHandler.__init__(self)
         self.iconUrls = ["xdg:virtualbox", ":unknown"]
+
+    def defaultTrigger(self):
+        return 'vbox '
+
+    def synopsis(self, query):
+        return "<machine name>"
 
     def configWidget(self):
         return [
@@ -89,17 +91,17 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             for vm in filter(lambda vm: pattern in vm.name.lower(), virtualbox.VirtualBox().machines):
                 actions = []
                 if vm.state == MachineState.powered_off or vm.state == MachineState.aborted:  # 1 # 4
-                    actions.append(Action("startvm", "Start virtual machine", lambda vm=vm: startVm(vm)))
+                    actions.append(Action("startvm", "Start virtual machine", lambda m=vm: startVm(m)))
                 if vm.state == MachineState.saved:  # 2
-                    actions.append(Action("restorevm", "Start saved virtual machine", lambda vm=vm: startVm(vm)))
-                    actions.append(Action("discardvm", "Discard saved state", lambda vm=vm: discardSavedVm(vm)))
+                    actions.append(Action("restorevm", "Start saved virtual machine", lambda m=vm: startVm(m)))
+                    actions.append(Action("discardvm", "Discard saved state", lambda m=vm: discardSavedVm(m)))
                 if vm.state == MachineState.running:  # 5
-                    actions.append(Action("savevm", "Save virtual machine", lambda vm=vm: saveVm(vm)))
-                    actions.append(Action("poweroffvm", "Power off via ACPI event (Power button)", lambda vm=vm: acpiPowerVm(vm)))
-                    actions.append(Action("stopvm", "Turn off virtual machine", lambda vm=vm: stopVm(vm)))
-                    actions.append(Action("pausevm", "Pause virtual machine", lambda vm=vm: pauseVm(vm)))
+                    actions.append(Action("savevm", "Save virtual machine", lambda m=vm: saveVm(m)))
+                    actions.append(Action("poweroffvm", "Power off via ACPI event (Power button)", lambda m=vm: acpiPowerVm(m)))
+                    actions.append(Action("stopvm", "Turn off virtual machine", lambda m=vm: stopVm(m)))
+                    actions.append(Action("pausevm", "Pause virtual machine", lambda m=vm: pauseVm(m)))
                 if vm.state == MachineState.paused:  # 6
-                    actions.append(Action("resumevm", "Resume virtual machine", lambda vm=vm: resumeVm(vm)))
+                    actions.append(Action("resumevm", "Resume virtual machine", lambda m=vm: resumeVm(m)))
 
                 items.append(
                     StandardItem(

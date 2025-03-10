@@ -7,8 +7,8 @@ import pathlib
 
 from albert import Action, StandardItem, PluginInstance, TriggerQueryHandler, runTerminal, openUrl
 
-md_iid = '2.3'
-md_version = "1.10"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "PacMan"
 md_description = "Search, install and remove packages"
 md_license = "MIT"
@@ -23,16 +23,18 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            synopsis='<package name>',
-            defaultTrigger='pac '
-        )
+        TriggerQueryHandler.__init__(self)
         self.iconUrls = [
             "xdg:archlinux-logo",
             "xdg:system-software-install",
             f"file:{pathlib.Path(__file__).parent}/arch.svg"
         ]
+
+    def synopsis(self, query):
+        return "<package name>"
+
+    def defaultTrigger(self):
+        return "pac "
 
     def handleTriggerQuery(self, query):
         stripped = query.string.strip()

@@ -5,8 +5,8 @@ from subprocess import run, CalledProcessError
 
 from albert import *
 
-md_iid = "2.3"
-md_version = "2.4"
+md_iid = "3.0"
+md_version = "3.0"
 md_name = "Bitwarden"
 md_description = "'rbw' wrapper extension"
 md_license = "MIT"
@@ -17,13 +17,14 @@ md_bin_dependencies = ["rbw"]
 
 class Plugin(PluginInstance, TriggerQueryHandler):
 
+    iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
+
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='bw '
-        )
-        self.iconUrls = [f"file:{Path(__file__).parent}/bw.svg"]
+        TriggerQueryHandler.__init__(self)
+
+    def defaultTrigger(self):
+        return 'bw '
 
     def handleTriggerQuery(self, query):
         if query.string.strip().lower() == "sync":
@@ -44,9 +45,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 )
             )
 
-        filtered_items = self._filter_items(query)
-
-        for p in filtered_items:
+        for p in self._filter_items(query):
             query.add(
                 StandardItem(
                     id=p["id"],
@@ -68,7 +67,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                             id="copy-username",
                             text="Copy username to clipboard",
                             callable=lambda username=p["user"]:
-                                setClipboardText(text=username)
+                            setClipboardText(text=username)
                         ),
                         Action(
                             id="edit",
@@ -79,7 +78,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 )
             )
 
-    def _get_items(self):
+    @staticmethod
+    def _get_items():
         field_names = ["id", "name", "user", "folder"]
         raw_items = run(
             ["rbw", "list", "--fields", ",".join(field_names)],
@@ -121,11 +121,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         return filtered_passwords
 
-    def _password_to_clipboard(self, item):
-        id = item["id"]
+    @staticmethod
+    def _password_to_clipboard(item):
+        rbw_id = item["id"]
 
         password = run(
-            ["rbw", "get", id],
+            ["rbw", "get", rbw_id],
             capture_output=True,
             encoding="utf-8",
             check=True
@@ -133,12 +134,13 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         setClipboardText(text=password)
 
-    def _code_to_clipboard(self, item):
-        id = item["id"]
+    @staticmethod
+    def _code_to_clipboard(item):
+        rbw_id = item["id"]
 
         try:
             code = run(
-                ["rbw", "code", id],
+                ["rbw", "code", rbw_id],
                 capture_output=True,
                 encoding="utf-8",
                 check=True
@@ -153,7 +155,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         setClipboardText(text=code)
 
-    def _edit_entry(self, item):
-        id = item["id"]
+    @staticmethod
+    def _edit_entry(item):
+        rbw_id = item["id"]
 
-        runTerminal(script=f"rbw edit {id}")
+        runTerminal(script=f"rbw edit {rbw_id}")
