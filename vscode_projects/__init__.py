@@ -8,7 +8,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from albert import *
 
-md_iid = "2.3"
+md_iid = "3.0"
 md_version = "1.6"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
@@ -159,19 +159,18 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         self._terminalCommand = value
         self.writeConfig("terminalCommand", value)
 
+    def defaultTrigger(self):
+        return "code "
+
+    def synopsis(self, query):
+        return "project name or path"
+
     def __init__(self):
         self.iconUrls = [f"file:{Path(__file__).parent}/icon.svg"]
 
         PluginInstance.__init__(self)
 
-        TriggerQueryHandler.__init__(
-            self,
-            id=self.id,
-            name=self.name,
-            description=self.description,
-            defaultTrigger="code ",
-            synopsis="project name or path"
-        )
+        TriggerQueryHandler.__init__(self)
 
         configFound = False
 
