@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from albert import *
 
 md_iid = "3.0"
-md_version = "1.6"
+md_version = "1.7"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
@@ -362,7 +362,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
             text=project.displayName,
             subtext=f"{subtext}{project.path}",
             iconUrls=self.iconUrls,
-            inputActionText=f"{query.trigger} {project.displayName}",
+            inputActionText=f"{query.trigger}{project.displayName}",
             actions=actions,
         )
 
@@ -499,6 +499,8 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
                             tags=[],
                         ))
 
+        self._configCache[path] = c
+
         return c
 
     def _getProjectManagerConfig(self, path: str) -> CachedConfig:
@@ -545,5 +547,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
                         project.tags.append(self._normalizeString(tag))
 
                 c.projects.append(project)
+
+        self._configCache[path] = c
 
         return c
