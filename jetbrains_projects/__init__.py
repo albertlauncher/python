@@ -5,8 +5,8 @@
 """
 This plugin allows you to quickly open projects of the Jetbrains IDEs
 
-- Aqua
 - Android Studio
+- Aqua
 - CLion
 - DataGrip
 - DataSpell
@@ -16,13 +16,12 @@ This plugin allows you to quickly open projects of the Jetbrains IDEs
 - PyCharm
 - Rider
 - RubyMine
+- RustRover
 - WebStorm
 - Writerside.
 
 Note that for this plugin to find the IDEs, a commandline launcher in $PATH is required.
 Open the IDE and click Tools -> Create Command-line Launcher to add one.
-
-Disclaimer: This plugin has no affiliation with JetBrains s.r.o.. The icons are used under the terms specified here.
 """
 
 from dataclasses import dataclass
@@ -34,7 +33,7 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = "3.0"
-md_version = "3.0"
+md_version = "4.0"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
@@ -201,15 +200,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 config_dir_prefix="JetBrains/RubyMine",
                 binaries=["rubymine", "rubymine-eap", "jetbrains-rubymine", "jetbrains-rubymine-eap"]),
             Editor(
-                name="WebStorm",
-                icon=plugin_dir / "icons" / "webstorm.svg",
-                config_dir_prefix="JetBrains/WebStorm",
-                binaries=["webstorm", "webstorm-eap"]),
-            Editor(
                 name="RustRover",
                 icon=plugin_dir / "icons" / "rustrover.svg",
                 config_dir_prefix="JetBrains/RustRover",
                 binaries=["rustrover", "rustrover-eap"]),
+            Editor(
+                name="WebStorm",
+                icon=plugin_dir / "icons" / "webstorm.svg",
+                config_dir_prefix="JetBrains/WebStorm",
+                binaries=["webstorm", "webstorm-eap"]),
             Editor(
                 name="Writerside",
                 icon=plugin_dir / "icons" / "writerside.svg",
