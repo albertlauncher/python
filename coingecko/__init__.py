@@ -9,7 +9,7 @@ from pathlib import Path
 from threading import Thread, Event
 
 md_iid = "3.0"
-md_version = "2.0"
+md_version = "2.1"
 md_name = "CoinGecko"
 md_description = "Access CoinGecko"
 md_license = "MIT"
@@ -133,6 +133,4 @@ class Plugin(PluginInstance, IndexQueryHandler):
     # override default trigger handling to sort by rank
     def handleTriggerQuery(self, query):
         m = Matcher(query.string)
-        for item in self.items:
-            if m.match(item.symbol, item.name):
-                query.add(item)
+        query.add([item for item in self.items if m.match(item.symbol, item.name)])
