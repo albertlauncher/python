@@ -236,15 +236,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         # sort by last opened
         editor_project_pairs.sort(key=lambda pair: pair[1].last_opened, reverse=True)
 
-        query.add([self._make_item(editor, project, query) for editor, project in editor_project_pairs])
+        query.add([self._make_item(editor, project) for editor, project in editor_project_pairs])
 
     @staticmethod
-    def _make_item(editor: Editor, project: Project, query: Query) -> Item:
+    def _make_item(editor: Editor, project: Project) -> Item:
         return StandardItem(
             id="%s-%s-%s" % (editor.binary, project.path, project.last_opened),
             text=project.name,
             subtext=project.path,
-            inputActionText=query.trigger + project.name,
+            inputActionText=project.name,
             iconUrls=["file:" + str(editor.icon)],
             actions=[
                 Action(
