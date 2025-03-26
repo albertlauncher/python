@@ -94,8 +94,7 @@ class Editor:
             recent_projects_xml = "recentSolutions.xml"
         return self._parse_recent_projects(Path(latest) / "options" / recent_projects_xml)
 
-    @staticmethod
-    def _parse_recent_projects(recent_projects_file: Path) -> list[Project]:
+    def _parse_recent_projects(self, recent_projects_file: Path) -> list[Project]:
         try:
             root = ElementTree.parse(recent_projects_file).getroot()
             if not self.is_rider:
