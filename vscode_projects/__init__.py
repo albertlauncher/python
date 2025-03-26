@@ -3,13 +3,12 @@
 
 import os
 import json
-import unicodedata
 from pathlib import Path
 from dataclasses import dataclass
 from albert import *
 
 md_iid = "3.0"
-md_version = "1.7"
+md_version = "1.8"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
@@ -302,11 +301,6 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
         if terminalCommand is not None:
             self._terminalCommand = terminalCommand
 
-    # Strings are normalized to match without accents and casing
-    def _normalizeString(self, input: str) -> str:
-        return ''.join(c for c in unicodedata.normalize('NFD', input)
-                       if unicodedata.category(c) != 'Mn').lower()
-
     def handleTriggerQuery(self, query):
         if not query.isValid:
             return
@@ -494,7 +488,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
                         # Inject the project
                         c.projects.append(Project(
                             displayName=displayName,
-                            name=self._normalizeString(displayName),
+                            name=displayName,
                             path=recentPath,
                             tags=[],
                         ))
@@ -536,7 +530,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
 
                 project = Project(
                     displayName=p["name"],
-                    name=self._normalizeString(p["name"]),
+                    name=p["name"],
                     path=rootPath,
                     tags=[],
                 )
@@ -544,7 +538,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
                 # Search against the query string
                 if "tags" in p:
                     for tag in p["tags"]:
-                        project.tags.append(self._normalizeString(tag))
+                        project.tags.append(tag)
 
                 c.projects.append(project)
 
