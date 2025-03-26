@@ -135,6 +135,10 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         self.fuzzy = False
 
+        self._match_path = self.readConfig('match_path', bool)
+        if self._match_path is None:
+            self._match_path = False
+
         plugin_dir = Path(__file__).parent
         editors = [
             Editor(
@@ -214,6 +218,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
+    @property
+    def match_path(self):
+        return self._match_path
+
+    @match_path.setter
+    def match_path(self, value):
+        self._match_path = value
+        self.writeConfig('match_path', value)
+
     def supportsFuzzyMatching(self):
         return True
 
@@ -230,8 +243,13 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
         for editor in self.editors:
             for project in editor.list_projects():
-                if Path(project.path).exists() and m.match(project.name, project.path):
-                    editor_project_pairs.append((editor, project))
+                if Path(project.path).exists():
+                    if self._match_path:
+                        if m.match(project.name, project.path):
+                            editor_project_pairs.append((editor, project))
+                    else:
+                        if m.match(project.name):
+                            editor_project_pairs.append((editor, project))
 
         # sort by last opened
         editor_project_pairs.sort(key=lambda pair: pair[1].last_opened, reverse=True)
@@ -259,6 +277,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def configWidget(self):
         return [
+            {
+                'type': 'checkbox',
+                'property': 'match_path',
+                'label': 'Match path'
+            },
             {
                 'type': 'label',
                 'text': __doc__.strip(),
