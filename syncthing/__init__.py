@@ -10,8 +10,8 @@ from pathlib import Path
 from albert import *
 from syncthing import Syncthing
 
-md_iid = '2.3'
-md_version = "1.1"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "Syncthing"
 md_description = "Trigger basic syncthing actions."
 md_license = "MIT"
@@ -26,11 +26,15 @@ class Plugin(PluginInstance, GlobalQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        GlobalQueryHandler.__init__(self, self.id, self.name, self.description, defaultTrigger='st ')
+        GlobalQueryHandler.__init__(self)
+
         self.iconUrls = ["xdg:syncthing", f"file:{Path(__file__).parent}/syncthing.svg"]
         self._api_key = self.readConfig(self.config_key, str)
         if self._api_key:
             self.st = Syncthing(self._api_key)
+
+    def defaultTrigger(self):
+        return 'st '
 
     @property
     def api_key(self) -> str:
@@ -84,7 +88,7 @@ class Plugin(PluginInstance, GlobalQueryHandler):
             matcher = Matcher(query.string)
 
             # create device items
-            for id, d in devices.items():
+            for device_id, d in devices.items():
                 device_name = d['name']
 
                 if match := matcher.match(device_name):
@@ -94,50 +98,43 @@ class Plugin(PluginInstance, GlobalQueryHandler):
                     if d['paused']:
                         actions.append(
                             Action("resume", "Resume synchronization",
-                                   lambda did=id: self.st.system.resume(did))
+                                   lambda did=device_id: self.st.system.resume(did))
                         )
                     else:
                         actions.append(
                             Action("pause", "Pause synchronization",
-                                   lambda did=id: self.st.system.pause(did))
+                                   lambda did=device_id: self.st.system.pause(did))
                         )
 
-                    results.append(
-                        RankItem(
-                            StandardItem(
-                                id=id,
-                                text=f"{device_name}",
-                                subtext=f"{'Paused ' if d['paused'] else ''}Syncthing device. "
-                                        f"Shared: {device_folders if device_folders else 'Nothing'}.",
-                                iconUrls=self.iconUrls,
-                                actions=actions
-                            ),
-                            match.score
-                        )
+                    item = StandardItem(
+                        id=device_id,
+                        text=f"{device_name}",
+                        subtext=f"{'Paused ' if d['paused'] else ''}Syncthing device. "
+                                f"Shared: {device_folders if device_folders else 'Nothing'}.",
+                        iconUrls=self.iconUrls,
+                        actions=actions
                     )
 
+                    results.append(RankItem(item, match))
+
             # create folder items
-            for id, f in folders.items():
+            for folder_id, f in folders.items():
                 folder_name = f['label']
                 if match := matcher.match(folder_name):
                     folders_devices = ", ".join([devices[d['deviceID']]['name'] for d in f['devices']])
-                    results.append(
-                        RankItem(
-                            StandardItem(
-                                id=id,
-                                text=folder_name,
-                                subtext=f"Syncthing folder {f['path']}. "
-                                        f"Shared with {folders_devices if folders_devices else 'nobody'}.",
-                                iconUrls=self.iconUrls,
-                                actions=[
-                                    Action("scan", "Scan the folder",
-                                           lambda fid=id: self.st.database.scan(fid)),
-                                    Action("open", "Open this folder in file browser",
-                                           lambda p=f['path']: openUrl(f'file://{p}'))
-                                ]
-                            ),
-                            match.score
-                        )
+                    item = StandardItem(
+                        id=folder_id,
+                        text=folder_name,
+                        subtext=f"Syncthing folder {f['path']}. "
+                                f"Shared with {folders_devices if folders_devices else 'nobody'}.",
+                        iconUrls=self.iconUrls,
+                        actions=[
+                            Action("scan", "Scan the folder",
+                                   lambda fid=folder_id: self.st.database.scan(fid)),
+                            Action("open", "Open this folder in file browser",
+                                   lambda p=f['path']: openFile(p))
+                        ]
                     )
+                    results.append(RankItem(item, match))
 
         return results

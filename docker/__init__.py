@@ -6,8 +6,8 @@ from pathlib import Path
 import docker
 from albert import *
 
-md_iid = "2.3"
-md_version = "3.0"
+md_iid = "3.0"
+md_version = "4.0"
 md_name = "Docker"
 md_description = "Manage docker images and containers"
 md_license = "MIT"
@@ -22,14 +22,16 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='d ',
-            synopsis='<image tag|container name>'
-        )
+        TriggerQueryHandler.__init__(self)
         self.icon_urls_running = [f"file:{Path(__file__).parent}/running.png"]
         self.icon_urls_stopped = [f"file:{Path(__file__).parent}/stopped.png"]
         self.client = None
+
+    def synopsis(self, query):
+        return "<image tag|container name>"
+
+    def defaultTrigger(self):
+        return "d "
 
     def handleTriggerQuery(self, query):
         items = []
@@ -61,7 +63,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                         Action("remove", "Remove (forced, with volumes)",
                                lambda c=container: c.remove(v=True, force=True)),
                         Action("copy-id", "Copy id to clipboard",
-                               lambda id=container.id: setClipboardText(id))
+                               lambda cid=container.id: setClipboardText(cid))
                     ])
 
                     items.append(StandardItem(

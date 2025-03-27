@@ -5,8 +5,8 @@
 """
 This plugin allows you to quickly open projects of the Jetbrains IDEs
 
-- Aqua
 - Android Studio
+- Aqua
 - CLion
 - DataGrip
 - DataSpell
@@ -16,25 +16,24 @@ This plugin allows you to quickly open projects of the Jetbrains IDEs
 - PyCharm
 - Rider
 - RubyMine
+- RustRover
 - WebStorm
 - Writerside.
 
 Note that for this plugin to find the IDEs, a commandline launcher in $PATH is required.
 Open the IDE and click Tools -> Create Command-line Launcher to add one.
-
-Disclaimer: This plugin has no affiliation with JetBrains s.r.o.. The icons are used under the terms specified here.
 """
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 from shutil import which
 from sys import platform
 from xml.etree import ElementTree
 from albert import *
 
-md_iid = '2.3'
-md_version = "2.0"
+md_iid = "3.0"
+md_version = "4.0"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
@@ -56,19 +55,30 @@ class Editor:
     config_dir_prefix: str
     binary: str
 
-    def __init__(self, name: str, icon: Path, config_dir_prefix: str, binaries: list[str]):
+    # Rider calls recentProjects.xml -> recentSolutions.xml and in it RecentProjectsManager -> RiderRecentProjectsManager
+    is_rider: bool
+
+    def __init__(
+            self,
+            name: str,
+            icon: Path,
+            config_dir_prefix: str,
+            binaries: list[str],
+            is_rider = False):
         self.name = name
         self.icon = icon
         self.config_dir_prefix = config_dir_prefix
         self.binary = self._find_binary(binaries)
+        self.is_rider = is_rider
 
-    def _find_binary(self, binaries: list[str]) -> Union[str, None]:
+    @staticmethod
+    def _find_binary(binaries: list[str]) -> Union[str, None]:
         for binary in binaries:
             if which(binary):
                 return binary
         return None
 
-    def list_projects(self) -> list[Project]:
+    def list_projects(self) -> List[Project]:
         config_dir = Path.home() / ".config"
         if platform == "darwin":
             config_dir = Path.home() / "Library" / "Application Support"
@@ -77,12 +87,19 @@ class Editor:
         if not dirs:
             return []
         latest = sorted(dirs)[-1]
-        return self._parse_recent_projects(Path(latest) / "options" / "recentProjects.xml")
+        if not self.is_rider:
+            recent_projects_xml = "recentProjects.xml"
+        else:
+            recent_projects_xml = "recentSolutions.xml"
+        return self._parse_recent_projects(Path(latest) / "options" / recent_projects_xml)
 
     def _parse_recent_projects(self, recent_projects_file: Path) -> list[Project]:
         try:
             root = ElementTree.parse(recent_projects_file).getroot()
-            entries = root.findall(".//component[@name='RecentProjectsManager']//entry[@key]")
+            if not self.is_rider:
+                entries = root.findall(".//component[@name='RecentProjectsManager']//entry[@key]")
+            else:
+                entries = root.findall(".//component[@name='RiderRecentProjectsManager']//entry[@key]")
 
             projects = []
             for entry in entries:
@@ -113,10 +130,13 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='jb '
-        )
+        TriggerQueryHandler.__init__(self)
+
+        self.fuzzy = False
+
+        self._match_path = self.readConfig('match_path', bool)
+        if self._match_path is None:
+            self._match_path = False
 
         plugin_dir = Path(__file__).parent
         editors = [
@@ -172,22 +192,23 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 name="Rider",
                 icon=plugin_dir / "icons" / "rider.svg",
                 config_dir_prefix="JetBrains/Rider",
-                binaries=["rider", "rider-eap"]),
+                binaries=["rider", "rider-eap"],
+                is_rider=True),
             Editor(
                 name="RubyMine",
                 icon=plugin_dir / "icons" / "rubymine.svg",
                 config_dir_prefix="JetBrains/RubyMine",
                 binaries=["rubymine", "rubymine-eap", "jetbrains-rubymine", "jetbrains-rubymine-eap"]),
             Editor(
-                name="WebStorm",
-                icon=plugin_dir / "icons" / "webstorm.svg",
-                config_dir_prefix="JetBrains/WebStorm",
-                binaries=["webstorm", "webstorm-eap"]),
-            Editor(
                 name="RustRover",
                 icon=plugin_dir / "icons" / "rustrover.svg",
                 config_dir_prefix="JetBrains/RustRover",
                 binaries=["rustrover", "rustrover-eap"]),
+            Editor(
+                name="WebStorm",
+                icon=plugin_dir / "icons" / "webstorm.svg",
+                config_dir_prefix="JetBrains/WebStorm",
+                binaries=["webstorm", "webstorm-eap"]),
             Editor(
                 name="Writerside",
                 icon=plugin_dir / "icons" / "writerside.svg",
@@ -196,27 +217,51 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         ]
         self.editors = [e for e in editors if e.binary is not None]
 
+    @property
+    def match_path(self):
+        return self._match_path
+
+    @match_path.setter
+    def match_path(self, value):
+        self._match_path = value
+        self.writeConfig('match_path', value)
+
+    def supportsFuzzyMatching(self):
+        return True
+
+    def setFuzzyMatching(self, enabled):
+        self.fuzzy = enabled
+
+    def defaultTrigger(self):
+        return "jb "
+
     def handleTriggerQuery(self, query: Query):
         editor_project_pairs = []
 
-        m = Matcher(query.string)
+        m = Matcher(query.string, MatchConfig(fuzzy=self.fuzzy))
+
         for editor in self.editors:
-            projects = editor.list_projects()
-            projects = [p for p in projects if Path(p.path).exists()]
-            projects = [p for p in projects if m.match(p.name) or m.match(p.path)]
-            editor_project_pairs.extend([(editor, p) for p in projects])
+            for project in editor.list_projects():
+                if Path(project.path).exists():
+                    if self._match_path:
+                        if m.match(project.name, project.path):
+                            editor_project_pairs.append((editor, project))
+                    else:
+                        if m.match(project.name):
+                            editor_project_pairs.append((editor, project))
 
         # sort by last opened
         editor_project_pairs.sort(key=lambda pair: pair[1].last_opened, reverse=True)
 
-        query.add([self._make_item(editor, project, query) for editor, project in editor_project_pairs])
+        query.add([self._make_item(editor, project) for editor, project in editor_project_pairs])
 
-    def _make_item(self, editor: Editor, project: Project, query: Query) -> Item:
+    @staticmethod
+    def _make_item(editor: Editor, project: Project) -> Item:
         return StandardItem(
             id="%s-%s-%s" % (editor.binary, project.path, project.last_opened),
             text=project.name,
             subtext=project.path,
-            inputActionText=query.trigger + project.name,
+            inputActionText=project.name,
             iconUrls=["file:" + str(editor.icon)],
             actions=[
                 Action(
@@ -231,6 +276,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def configWidget(self):
         return [
+            {
+                'type': 'checkbox',
+                'property': 'match_path',
+                'label': 'Match path'
+            },
             {
                 'type': 'label',
                 'text': __doc__.strip(),

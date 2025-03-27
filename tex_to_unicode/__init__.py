@@ -9,8 +9,8 @@ from pylatexenc.latex2text import LatexNodes2Text
 
 from albert import *
 
-md_iid = '2.3'
-md_version = "1.3"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "TeX to Unicode"
 md_description = "Convert TeX mathmode commands to unicode characters"
 md_license = "MIT"
@@ -23,7 +23,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(self, self.id, self.name, self.description, defaultTrigger='tex ')
+        TriggerQueryHandler.__init__(self)
         self.COMBINING_LONG_SOLIDUS_OVERLAY = "\u0338"
         self.iconUrls = [f"file:{Path(__file__).parent}/tex.svg"]
 
@@ -38,12 +38,15 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 )
             )
         return StandardItem(
-            id=self.id,
+            id=self.id(),
             text=text,
             subtext=subtext,
             iconUrls=self.iconUrls,
             actions=actions,
         )
+
+    def defaultTrigger(self):
+        return "tex "
 
     def handleTriggerQuery(self, query):
         stripped = query.string.strip()

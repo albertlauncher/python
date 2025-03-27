@@ -10,14 +10,13 @@ from urllib import request, parse
 import json
 from pathlib import Path
 
-md_iid = '2.3'
-md_version = "2.0"
+md_iid = "3.0"
+md_version = "3.0"
 md_name = "Wikipedia"
 md_description = "Search Wikipedia articles"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/main/wikipedia"
 md_authors = "@manuelschneid3r"
-
 
 class Plugin(PluginInstance, TriggerQueryHandler):
 
@@ -29,10 +28,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='wiki ', supportsFuzzyMatching=True
-        )
+        TriggerQueryHandler.__init__(self)
+
+        self.fbh = FBH(self)
         self.fuzzy = False
 
         self.local_lang_code = getdefaultlocale()[0]
@@ -41,9 +39,6 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         else:
             self.local_lang_code = 'en'
             warning("Failed getting language code. Using 'en'.")
-
-        self.fbh = FBH(self)
-        self.registerExtension(self.fbh)
 
         params = {
             'action': 'query',
@@ -66,8 +61,14 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         except Exception as error:
             warning('Error getting languages (%s). Defaulting to EN.' % error)
 
-    def __del__(self):
-        self.deregisterExtension(self.fbh)
+    def extensions(self):
+        return [self, self.fbh]
+
+    def defaultTrigger(self):
+        return "wiki "
+
+    def supportsFuzzyMatching(self):
+        return True
 
     def setFuzzyMatching(self, enabled: bool):
         self.fuzzy = enabled
@@ -103,7 +104,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     url = data[3][i]
                     results.append(
                         StandardItem(
-                            id=self.id,
+                            id=self.id(),
                             text=title,
                             subtext=summary if summary else url,
                             iconUrls=self.iconUrls,
@@ -121,8 +122,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         else:
             query.add(
                 StandardItem(
-                    id=self.id,
-                    text=self.name,
+                    id=self.id(),
+                    text=self.name(),
                     subtext="Enter a query to search on Wikipedia",
                     iconUrls=self.iconUrls
                 )
@@ -130,8 +131,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def createFallbackItem(self, q: str) -> Item:
         return StandardItem(
-            id=self.id,
-            text=self.name,
+            id=self.id(),
+            text=self.name(),
             subtext="Search '%s' on Wikipedia" % q,
             iconUrls=self.iconUrls,
             actions=[
@@ -144,8 +145,17 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 class FBH(FallbackHandler):
 
     def __init__(self, p: Plugin):
-        FallbackHandler.__init__(self, p.id + 'fb', p.name, p.description)
+        FallbackHandler.__init__(self)
         self.plugin = p
+
+    def id(self):
+        return "wikipedia.fallbacks"
+
+    def name(self):
+        return md_name
+
+    def description(self):
+        return md_description
 
     def fallbacks(self, q :str):
         return [self.plugin.createFallbackItem(q)]

@@ -9,8 +9,8 @@ from signal import SIGKILL, SIGTERM
 
 from albert import *
 
-md_iid = '2.3'
-md_version = "1.4"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "Kill Process"
 md_description = "Kill processes"
 md_license = "MIT"
@@ -21,10 +21,10 @@ md_authors = ["@Pete-Hamlin", "@BenedictDwudel", "@ManuelSchneid3r"]
 class Plugin(PluginInstance, TriggerQueryHandler):
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='kill '
-        )
+        TriggerQueryHandler.__init__(self)
+
+    def defaultTrigger(self):
+        return "kill "
 
     def handleTriggerQuery(self, query):
         if not query.isValid:

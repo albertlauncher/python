@@ -8,8 +8,8 @@ from collections import namedtuple
 
 from albert import *
 
-md_iid = '2.3'
-md_version = "1.6"
+md_iid = "3.0"
+md_version = "2.0"
 md_name = "VPN"
 md_description = "Manage NetworkManager VPN connections"
 md_license = "MIT"
@@ -24,10 +24,10 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='vpn '
-        )
+        TriggerQueryHandler.__init__(self)
+
+    def defaultTrigger(self):
+        return "vpn "
 
     def getVPNConnections(self):
         consStr = subprocess.check_output(
