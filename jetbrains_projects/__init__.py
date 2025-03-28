@@ -33,7 +33,7 @@ from xml.etree import ElementTree
 from albert import *
 
 md_iid = "3.0"
-md_version = "4.0"
+md_version = "4.1"
 md_name = "Jetbrains projects"
 md_description = "Open your JetBrains projects"
 md_license = "MIT"
@@ -187,7 +187,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 name="PyCharm",
                 icon=plugin_dir / "icons" / "pycharm.svg",
                 config_dir_prefix="JetBrains/PyCharm",
-                binaries=["charm", "pycharm", "pycharm-eap"]),
+                binaries=["charm", "pycharm", "pycharm-eap", "pycharm-professional"]),
             Editor(
                 name="Rider",
                 icon=plugin_dir / "icons" / "rider.svg",
