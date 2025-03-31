@@ -13,16 +13,15 @@ import keyring
 from albert import *
 from pathlib import Path
 import github3
-from rapidfuzz import fuzz
 
 md_iid = '3.0'
-md_version = "1.4"
+md_version = "1.5"
 md_name = "GitHub repositories"
 md_description = "Open GitHub user repositories in the browser"
 md_license = "MIT"
 md_url = 'https://github.com/albertlauncher/python/tree/main/github'
 md_authors = "@aironskin"
-md_lib_dependencies = ["github3.py", "rapidfuzz", "keyring"]
+md_lib_dependencies = ["github3.py", "keyring"]
 
 plugin_dir = os.path.dirname(__file__)
 CACHE_FILE = os.path.join(plugin_dir, "repository_cache.json")
@@ -37,6 +36,28 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     def __init__(self):
         PluginInstance.__init__(self)
         TriggerQueryHandler.__init__(self)
+
+        self._fuzzy = self.readConfig("fuzzy", bool)
+        if self._fuzzy is None:
+            self._fuzzy = False
+
+    @property
+    def fuzzy(self):
+        return self._fuzzy
+
+    @fuzzy.setter
+    def fuzzy(self, value):
+        self._fuzzy = value
+        self.writeConfig("fuzzy", value)
+
+    def configWidget(self):
+        return [
+            {
+                "type": "checkbox",
+                "label": "Enable fuzzy matching for repository names",
+                "property": "fuzzy",
+            }
+        ]
 
     def defaultTrigger(self):
         return 'gh '
@@ -79,17 +100,6 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             with open(CACHE_FILE, "r") as file:
                 return json.load(file)
         return None
-
-    # perform fuzzy search on the repositories
-    def fuzzy_search_repositories(self, repositories, search_string):
-        matching_repos = []
-        for repo in repositories:
-            repo_name = repo["name"]
-            ratio = fuzz.token_set_ratio(
-                repo_name.lower(), search_string.lower())
-            if ratio >= 75:
-                matching_repos.append(repo)
-        return matching_repos
 
     def handleTriggerQuery(self, query):
         # load github user token
@@ -134,43 +144,21 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             if not repositories:
                 return []
 
-            # fuzzy search the query in repository names
-            search_term = query.string.strip().lower()
-            exact_matches = []
-            fuzzy_matches = []
-
-            for repo in repositories:
-                repo_name = repo["name"]
-                if repo_name.lower().startswith(search_term):
-                    exact_matches.append(repo)
-                else:
-                    similarity_ratio = fuzz.token_set_ratio(
-                        repo_name.lower(), search_term)
-                    if similarity_ratio > 25:
-                        fuzzy_matches.append((repo, similarity_ratio))
-
-            # sort the fuzzy matches based on similarity ratio
-            fuzzy_matches.sort(key=lambda x: x[1], reverse=True)
+            # match the query with the cached repositories
+            m = Matcher(query.string, MatchConfig(fuzzy=self.fuzzy))
+            matching_repos = [
+                repo for repo in repositories if m.match(repo["name"])
+            ]
 
             # return the results
             results = []
-            for repo in exact_matches:
+            for repo in matching_repos:
                 results.append(StandardItem(
                     id=self.id(),
                     text=repo["name"],
                     iconUrls=self.iconUrls,
                     subtext=repo["full_name"],
-                    actions=[Action("eopen", "Open exact match",
-                                    lambda u=repo["html_url"]: openUrl(u))]
-                ))
-
-            for repo, similarity_ratio in fuzzy_matches:
-                results.append(StandardItem(
-                    id=self.id(),
-                    text=repo["name"],
-                    iconUrls=self.iconUrls,
-                    subtext=repo["full_name"],
-                    actions=[Action("fopen", "Open fuzzy match",
+                    actions=[Action("open", "Open repository",
                                     lambda u=repo["html_url"]: openUrl(u))]
                 ))
 
