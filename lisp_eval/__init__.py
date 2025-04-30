@@ -21,7 +21,7 @@ from typing import List, Dict, Any, Optional
 
 from albert import *
 
-md_iid = "2.4"
+md_iid = "2.3"
 md_version = "2.4"
 md_name = "S-Exp Eval"
 md_description = "Evaluate S-Expression via Fennel, Emacs, Janet, Racket or Hylang."
@@ -48,7 +48,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         with config_path.open() as f:
             return json.load(f)
 
-    def _run_subprocess(self, lang: str, script: str) -> Optional[subprocess.CompletedProcess]:
+    def _run_subprocess(
+        self, lang: str, script: str
+    ) -> Optional[subprocess.CompletedProcess]:
         """Run a subprocess for the given language and script."""
         args = self.lang_opts[lang]
         try:
@@ -67,10 +69,10 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         """Detect available languages that support S-Expressions."""
         detected_langs: List[str] = []
         for lang in self.lang_opts:
-            test_sexp = "`+`(1, 1)" if lang.lower() == 'r' else "(+ 1 1)"
+            test_sexp = "`+`(1, 1)" if lang.lower() == "r" else "(+ 1 1)"
             debug(f"Testing {lang} with: {test_sexp}")
             proc = self._run_subprocess(lang, test_sexp)
-            if proc and proc.returncode == 0 and proc.stdout.strip() == b'2':
+            if proc and proc.returncode == 0 and proc.stdout.strip() == b"2":
                 detected_langs.append(lang)
                 debug(f"Confirmed working {lang} installation.")
         return detected_langs
@@ -86,7 +88,11 @@ class Plugin(PluginInstance, TriggerQueryHandler):
     def _initialize_icon(self):
         """Initialize the icon for the plugin."""
         icon_fname = Path(__file__).parent / self.lang_opts[self._lang]["url"]
-        self.iconUrls = [f"file:{icon_fname}"] if icon_fname.exists() else [f"file:{Path(__file__).parent}/lambda.svg"]
+        self.iconUrls = (
+            [f"file:{icon_fname}"]
+            if icon_fname.exists()
+            else [f"file:{Path(__file__).parent}/lambda.svg"]
+        )
 
     def _initialize_trigger_query_handler(self):
         """Initialize the trigger query handler."""
