@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from albert import *
 
 md_iid = "3.0"
-md_version = "1.8"
+md_version = "1.9"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
@@ -321,8 +321,11 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
         sortedItems = sorted(results.values(), key=lambda item: "%s_%s_%s" % (
             '{:03d}'.format(item.priority), '{:03d}'.format(item.sortIndex), item.project.name), reverse=False)
 
+        items: list[StandardItem] = []
         for i in sortedItems:
-            query.add(self._createItem(i.project, query))
+            items.append(self._createItem(i.project, query))
+
+        query.add(items)
 
     # Creates an item for the query based on the project and plugin settings
     def _createItem(self, project: Project, query: Query) -> StandardItem:
