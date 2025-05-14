@@ -25,12 +25,13 @@ from albert import (  # type: ignore
 )
 from dateutil.parser import isoparse
 
-md_iid = '2.3'
-md_version = "0.2"
+md_iid = '3.0'
+md_version = "1.0"
 md_name = "Zed Workspaces"
 md_description = "Open your Zed workspaces"
 md_license = "MIT"
 md_url = "https://github.com/HarshNarayanJha/albert_zed_workspaces"
+md_lib_dependencies = ["python-dateutil"]
 md_authors = ["@HarshNarayanJha"]
 
 
@@ -106,10 +107,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
 
     def __init__(self):
         PluginInstance.__init__(self)
-        TriggerQueryHandler.__init__(
-            self, self.id, self.name, self.description,
-            defaultTrigger='zd '
-        )
+        TriggerQueryHandler.__init__(self)
 
         self._systemicon: bool | Any = self.readConfig('systemicon', bool)
 
@@ -133,6 +131,12 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                 binaries=["zed", "zeditor", "zedit", "zed-cli"])
         ]
         self.editors = [e for e in editors if e.binary is not None]
+
+    def defaultTrigger(self) -> str:
+        return "zd "
+
+    def synopsis(self, query: Query) -> str:
+        return "<workspace name|path>"
 
     def handleTriggerQuery(self, query: Query):
         editor_workspace_pairs = []
