@@ -68,8 +68,9 @@ class Plugin(PluginInstance, TriggerQueryHandler):
         ]
 
     def handleTriggerQuery(self, query):
+        results = []
         if query.string.strip().lower() == "sync":
-            query.add(
+            results.append(
                 StandardItem(
                     id="sync",
                     text="Sync Bitwarden Vault",
@@ -85,7 +86,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             )
 
         for p in self._filter_items(query):
-            query.add(
+            results.append(
                 StandardItem(
                     id=p["id"],
                     text=p["path"],
@@ -117,6 +118,8 @@ class Plugin(PluginInstance, TriggerQueryHandler):
                     ],
                 )
             )
+
+        query.add(results)
 
     def _get_items(self):
         not_first_time = self._cached_items is not None
