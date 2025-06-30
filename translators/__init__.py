@@ -13,9 +13,9 @@ from albert import *
 import translators as ts
 
 md_iid = "3.0"
-md_version = "2.0"
+md_version = "2.1"
 md_name = "Translator"
-md_description = "Translate sentences using 'translators' package"
+md_description = "Translate text using online translators"
 md_license = "MIT"
 md_url = "https://github.com/albertlauncher/python/tree/main/translators"
 md_authors = "@manuelschneid3r"
