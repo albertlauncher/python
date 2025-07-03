@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from albert import *
 
 md_iid = "3.0"
-md_version = "1.9"
+md_version = "1.10"
 md_name = "VSCode projects"
 md_description = "Open VSCode projects"
 md_url = "https://github.com/albertlauncher/python/tree/master/vscode_projects"
@@ -103,7 +103,7 @@ class Plugin(PluginInstance, TriggerQueryHandler):
             warning(
                 "Project Manager search was enabled, but configuration file was not found")
             notif = Notification(
-                title=f"{self.name}",
+                title=self.name,
                 text=f"Configuration file was not found for the Project Manager extension. Please make sure the extension is installed."
             )
             notif.send()
@@ -359,7 +359,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
             text=project.displayName,
             subtext=f"{subtext}{project.path}",
             iconUrls=self.iconUrls,
-            inputActionText=f"{query.trigger}{project.displayName}",
+            inputActionText=project.displayName,
             actions=actions,
         )
 
