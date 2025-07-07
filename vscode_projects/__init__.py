@@ -25,6 +25,7 @@ class Project:
     displayName: str
     name: str
     path: str
+    isDirectory: bool
     tags: list[str]
 
 
@@ -241,6 +242,7 @@ PM extension: https://marketplace.visualstudio.com/items?itemName=alefragnani.pr
                 "type": "label",
                 "text": """
 The way VSCode is opened can be overridden through terminal command.
+This only works for projects, or recent directories, not workspaces or recent files.
 Terminal will enter the working directory of the project upon selection, execute the command and then close itself.
 
 Usecase with direnv - To load direnv environment before opening VSCode, enter the following custom command: direnv exec . code .
@@ -309,15 +311,17 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
 
         items: list[StandardItem] = []
         for i in sortedItems:
-            items.append(self._createItem(i.project, query))
+            items.append(self._createItem(i.project))
 
         query.add(items)
 
     # Creates an item for the query based on the project and plugin settings
-    def _createItem(self, project: Project, query: Query) -> StandardItem:
+    def _createItem(self, project: Project) -> StandardItem:
         actions: list[Action] = []
 
-        if self.terminalCommand != "":
+        # Only add terminal command action if the project is a directory
+        # Handling single files or workspaces would likely over-complicate the code and options
+        if self.terminalCommand != "" and project.isDirectory:
             actions.append(
                 Action(
                     id="open-terminal",
@@ -463,12 +467,26 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
                         data = json.loads(row[1])
 
                         for entry in data["entries"]:
-                            # Make sure the recent entry has a path to a directory
-                            if not "folderUri" in entry:
-                                continue
+                            isDirectory = False
+                            isWorkspace = False
 
-                            # Get the full path to the project
-                            parsed_uri = urlparse(entry["folderUri"])
+                            # Get the full path to the recent entry
+                            if "folderUri" in entry:
+                                isDirectory = True
+                                parsed_uri = urlparse(
+                                    entry["folderUri"]
+                                )
+                            elif "workspace" in entry:
+                                isWorkspace = True
+                                parsed_uri = urlparse(
+                                    entry["workspace"]["configPath"]
+                                )
+                            elif "fileUri" in entry:
+                                parsed_uri = urlparse(
+                                    entry["fileUri"]
+                                )
+                            else:
+                                continue
 
                             # Only support file URIs
                             if parsed_uri.scheme != "file":
@@ -484,10 +502,16 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
 
                             # Get the name of the project from the path
                             displayName = os.path.basename(recentPath)
+                            if isWorkspace:
+                                # Remove .code-workspace from the display name
+                                if recentPath.endswith(".code-workspace"):
+                                    displayName = displayName[:-15]
+                                displayName += " (Workspace)"
 
                             # Add the project to the config
                             newConf.projects.append(Project(
                                 displayName=displayName,
+                                isDirectory=isDirectory,
                                 name=displayName,
                                 path=recentPath,
                                 tags=[],
@@ -551,6 +575,7 @@ Usecase with single VSCode instance - To reuse the VSCode window instead of open
 
                     project = Project(
                         displayName=p["name"],
+                        isDirectory=True,
                         name=p["name"],
                         path=rootPath,
                         tags=[],
