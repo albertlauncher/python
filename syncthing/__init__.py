@@ -55,12 +55,13 @@ class Plugin(PluginInstance, GlobalQueryHandler):
         return [
             {
                 'type': 'label',
-                'text': """Syncthing API Key"""
+                'text': __doc__.strip(),
             },
             {
                 'type': 'lineedit',
                 'property': 'api_key',
-                'label': 'API key'
+                'label': 'API key',
+                'widget_properties': {'tooltip': 'You can find the API key using the web frontend.'}
             }
         ]
 
