@@ -41,7 +41,6 @@ class Plugin(PluginInstance, GlobalQueryHandler):
     @property
     def api_key(self) -> str:
         return self._api_key
-        # return '1234'
 
     @api_key.setter
     def api_key(self, value: str):
